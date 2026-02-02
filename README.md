@@ -1,2 +1,0 @@
-# manuRaj
-manuRaj - beta version
