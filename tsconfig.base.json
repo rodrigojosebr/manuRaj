@@ -1,21 +1,37 @@
 {
   "compilerOptions": {
     "composite": true,
+    "declaration": true,
     "declarationMap": true,
-    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["es2022"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "noEmitOnError": true,
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@manu-raj/source"]
-  }
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@manuraj/domain": ["libs/domain/src/index.ts"],
+      "@manuraj/data-access": ["libs/data-access/src/index.ts"],
+      "@manuraj/auth": ["libs/auth/src/index.ts"],
+      "@manuraj/auth/*": ["libs/auth/src/*"],
+      "@manuraj/config": ["libs/config/src/index.ts"],
+      "@manuraj/ui": ["libs/ui/src/index.ts"],
+      "@manuraj/ads": ["libs/ads/src/index.ts"],
+      "@manuraj/shared-utils": ["libs/shared-utils/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next"]
 }

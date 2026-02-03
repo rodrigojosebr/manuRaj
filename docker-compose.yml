@@ -1,0 +1,47 @@
+# =============================================================================
+# Docker Compose - MongoDB Local (OPCIONAL)
+# =============================================================================
+# Este arquivo é opcional. Use apenas se preferir MongoDB local via Docker.
+# Para usar MongoDB Atlas (recomendado), basta configurar MONGODB_URI no .env.local
+# =============================================================================
+
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: manuraj-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: manuraj
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/manuraj --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Optional: MongoDB Express for database visualization
+  mongo-express:
+    image: mongo-express
+    container_name: manuraj-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  mongodb_data:

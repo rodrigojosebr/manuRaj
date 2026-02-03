@@ -48,7 +48,7 @@ Thumbs.db
 # Environment variables (secrets)
 .env
 .env.local
-.env*.local
+.env.*.local
 
 # NX
 .nx/cache
@@ -56,9 +56,7 @@ Thumbs.db
 
 # Next.js
 .next
-/.next/
 out
-/out/
 
 # Vercel
 .vercel
