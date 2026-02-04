@@ -17,6 +17,7 @@ const nextConfig = {
     '@manuraj/config',
     '@manuraj/ui',
     '@manuraj/shared-utils',
+    '@manuraj/ads',
   ],
 
   // Server external packages

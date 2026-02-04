@@ -103,7 +103,8 @@ manuRaj/
 │   │   │   ├── page.tsx               # Redirect para login
 │   │   │   ├── login/page.tsx
 │   │   │   └── t/[tenantSlug]/        # Rotas do tenant
-│   │   │       ├── layout.tsx         # Bottom tab navigation
+│   │   │       ├── layout.tsx         # Server component (auth + tenant + ads config)
+│   │   │       ├── TorqueLayoutClient.tsx  # Client: header, bottom nav, AdProvider/AdBanner
 │   │   │       └── page.tsx           # Home com stats (HARDCODED - TODO)
 │   │   │       # ⚠️ FALTAM (planejado mas não implementado):
 │   │   │       # ├── minhas-os/       # Lista de OS do usuário
@@ -720,6 +721,15 @@ import { AdProvider, AdBanner, AdRail, AdInFeed, AdPlaceholder } from '@manuraj/
 - Se `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID` estiver vazio, mostra placeholders
 - Lazy loading com IntersectionObserver
 - Respeita `tenant.adsEnabled` para mostrar/ocultar
+- **Ads apenas no Pitlane e Torque** - Showroom NUNCA terá anúncios
+
+### Estratégia de Monetização
+- **Fase 1**: Free com anúncios (AdSense) no Pitlane e Torque
+- **Fase 2**: Modelo por máquina
+  - Até 30 máquinas: grátis (com ads)
+  - 31-100 máquinas: R$1,00/máquina/mês (sem ads)
+  - 100+ máquinas: R$0,80/máquina/mês (sem ads)
+- Campos `tenant.plan` e `tenant.adsEnabled` já suportam essa lógica
 
 ---
 
@@ -998,12 +1008,15 @@ npm run test                                       # Watch mode
 18. ✅ Build scripts corrigidos (bypass de bug NX com `next build` direto)
 19. ✅ global-error.tsx criado para os 3 apps
 20. ✅ 3 builds passando sem erros (Pitlane, Torque, Showroom)
+21. ✅ Ads integrados no Torque (AdProvider + AdBanner no TorqueLayoutClient)
+22. ✅ Torque layout convertido para server component (auth + tenant fetch + ads config)
+23. ✅ Next.js alinhado em ^16.1.6 nos 3 apps (corrigido conflito ~16.0.1 no Torque/Showroom)
 
 ### Status por app
 | App | Páginas | API Routes | Completude |
 |-----|---------|------------|------------|
 | **Pitlane** (admin) | 12 páginas | 17 endpoints | ~85% funcional |
-| **Torque** (campo) | 3 páginas (login + redirect + dashboard hardcoded) | 0 (usa Pitlane) | ~20% stub |
+| **Torque** (campo) | 3 páginas (login + redirect + dashboard hardcoded) | 0 (usa Pitlane) | ~30% (layout com auth + ads) |
 | **Showroom** (landing) | 1 página (landing estática) | 0 | ~30% |
 
 ### Correções de segurança aplicadas

@@ -251,6 +251,7 @@ Todas as rotas exigem autenticacao e respeitam isolamento multi-tenant.
 |---------|----------|
 | `CLAUDE.md` | Documentacao tecnica completa (tipos, schemas, padroes de codigo, troubleshooting) |
 | `UNIVERSE.md` | Narrativa de produto, metafora F1, visao de cada app |
+| `STYLES.md` | Guia de estilos (paletas, layouts, tipografia, componentes PitKit) |
 | `.env.example` | Todas as variaveis de ambiente com explicacoes |
 
 ---
