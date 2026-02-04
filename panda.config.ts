@@ -3,9 +3,13 @@ import { defineConfig } from '@pandacss/dev';
 export default defineConfig({
   preflight: true,
   include: [
-    './apps/web/app/**/*.{ts,tsx}',
-    './apps/web/components/**/*.{ts,tsx}',
-    './libs/ui/src/**/*.{ts,tsx}',
+    './apps/pitlane/app/**/*.{ts,tsx}',
+    './apps/pitlane/components/**/*.{ts,tsx}',
+    './apps/torque/app/**/*.{ts,tsx}',
+    './apps/torque/components/**/*.{ts,tsx}',
+    './apps/showroom/app/**/*.{ts,tsx}',
+    './apps/showroom/components/**/*.{ts,tsx}',
+    './libs/pitkit/src/**/*.{ts,tsx}',
     './libs/ads/src/**/*.{ts,tsx}',
   ],
   exclude: [],

@@ -116,8 +116,8 @@ export class PreventivePlanRepository {
     const newDueDate = new Date(plan.nextDueDate);
     newDueDate.setDate(newDueDate.getDate() + plan.periodicityDays);
 
-    return PreventivePlanModel.findByIdAndUpdate(
-      id,
+    return PreventivePlanModel.findOneAndUpdate(
+      { _id: new Types.ObjectId(id), tenantId: new Types.ObjectId(tenantId) },
       { $set: { nextDueDate: newDueDate } },
       { new: true }
     )

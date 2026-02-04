@@ -1,0 +1,72 @@
+@layer reset, base, tokens, recipes, utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #f9fafb;
+  color: #111827;
+  min-height: 100vh;
+  /* Mobile-first: prevent zoom on input focus */
+  touch-action: manipulation;
+}
+
+/* Mobile-optimized inputs */
+input, select, textarea {
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+/* Safe area for notched phones */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Spin animation for loading spinners */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Focus visible styles */
+:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Touch-friendly tap highlight */
+a, button {
+  -webkit-tap-highlight-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}

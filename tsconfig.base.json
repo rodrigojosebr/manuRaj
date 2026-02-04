@@ -28,7 +28,8 @@
       "@manuraj/auth": ["libs/auth/src/index.ts"],
       "@manuraj/auth/*": ["libs/auth/src/*"],
       "@manuraj/config": ["libs/config/src/index.ts"],
-      "@manuraj/ui": ["libs/ui/src/index.ts"],
+      "@manuraj/pitkit": ["libs/pitkit/src/index.ts"],
+      "@manuraj/ui": ["libs/pitkit/src/index.ts"],
       "@manuraj/ads": ["libs/ads/src/index.ts"],
       "@manuraj/shared-utils": ["libs/shared-utils/src/index.ts"]
     }

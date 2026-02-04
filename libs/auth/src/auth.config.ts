@@ -56,7 +56,7 @@ export const authConfig: NextAuthConfig = {
     async jwt({ token, user }) {
       if (user) {
         // Initial sign in - store user data in token
-        token.id = user.id;
+        token.id = user.id!;
         token.tenantId = user.tenantId;
         token.tenantSlug = user.tenantSlug;
         token.name = user.name;
@@ -74,6 +74,7 @@ export const authConfig: NextAuthConfig = {
         name: token.name as string,
         email: token.email as string,
         role: token.role as SessionUser['role'],
+        emailVerified: null,
       };
       return session;
     },

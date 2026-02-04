@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/manuraj';
+function getMongoURI(): string {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI não definida. Configure no .env.local');
+  }
+  return uri;
+}
 
 // Global cache for mongoose connection (serverless-safe)
 interface MongooseCache {
@@ -40,7 +46,7 @@ export async function connectDB(): Promise<typeof mongoose> {
       socketTimeoutMS: 45000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+    cached.promise = mongoose.connect(getMongoURI(), opts).then((mongooseInstance) => {
       console.log('[MongoDB] Connected successfully');
       return mongooseInstance;
     });
