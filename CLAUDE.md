@@ -1,13 +1,29 @@
 # manuRaj - Documentação Completa do Projeto
 
 > Este arquivo é lido automaticamente pelo Claude Code para manter contexto entre sessões.
-> Última atualização: Fevereiro 2025
+> Última atualização: 04 de Fevereiro de 2026
+>
+> 📎 **Guia de estilos**: Veja `STYLES.md` para paletas de cores, layouts e padrões visuais.
 
 ---
 
 ## 1. Visão Geral
 
 **manuRaj** é um SaaS multi-tenant de gestão de manutenção industrial (CMMS - Computerized Maintenance Management System).
+
+> 📖 **Storytelling completo**: Veja `UNIVERSE.md` para a narrativa de produto e nomenclatura.
+
+### O Universo (Metáfora F1)
+
+| Projeto | Metáfora | Função |
+|---------|----------|--------|
+| **Torque** | O piloto | App operacional (mobile-first) |
+| **Pitlane** | O pit stop | Admin de gestão (desktop) |
+| **Showroom** | A vitrine | Landing page pública |
+| **PitKit** | O kit de ferramentas | Design System |
+| **garage-*** | A garagem | Backend/APIs |
+
+> *"Torque resolve. Pitlane decide. Showroom conquista. A Garage sustenta. E o PitKit garante padrão."*
 
 ### Propósito
 Permite que empresas gerenciem:
@@ -40,35 +56,70 @@ Permite que empresas gerenciem:
 
 ---
 
-## 3. Estrutura do Monorepo
+## 3. Estrutura do Monorepo (Multi-App)
+
+O projeto possui **3 aplicações** separadas:
+
+| App | Porta | Público | Descrição |
+|-----|-------|---------|-----------|
+| `pitlane` | 3000 | Supervisores | Gestão completa (máquinas, OS, planos, usuários) |
+| `torque` | 3001 | Operadores/Manutentores | App mobile-first para execução de OS |
+| `showroom` | 3002 | Público | Site institucional, signup, pricing |
 
 ```
 manuRaj/
 ├── apps/
-│   └── web/                          # Aplicação Next.js principal
+│   ├── pitlane/                       # 🏁 Painel administrativo (supervisores)
+│   │   ├── app/
+│   │   │   ├── layout.tsx
+│   │   │   ├── global.css
+│   │   │   ├── page.tsx               # Redirect para login
+│   │   │   ├── login/page.tsx
+│   │   │   ├── signup/page.tsx
+│   │   │   ├── api/                   # API Routes (garage-pitlane)
+│   │   │   │   ├── auth/[...nextauth]/route.ts
+│   │   │   │   ├── signup/route.ts
+│   │   │   │   ├── metrics/route.ts
+│   │   │   │   ├── users/
+│   │   │   │   ├── machines/
+│   │   │   │   ├── work-orders/
+│   │   │   │   └── preventive-plans/
+│   │   │   └── t/[tenantSlug]/        # Rotas do tenant
+│   │   │       └── (dashboard)/
+│   │   │           ├── page.tsx       # Dashboard
+│   │   │           ├── machines/
+│   │   │           ├── work-orders/
+│   │   │           ├── preventive-plans/
+│   │   │           └── admin/users/
+│   │   ├── middleware.ts
+│   │   ├── panda.config.ts
+│   │   ├── postcss.config.cjs
+│   │   └── next.config.js
+│   │
+│   ├── torque/                        # 🏎️ App operacional (mobile-first)
+│   │   ├── app/
+│   │   │   ├── layout.tsx             # PWA-ready layout
+│   │   │   ├── global.css             # Mobile-optimized styles
+│   │   │   ├── page.tsx               # Redirect para login
+│   │   │   ├── login/page.tsx
+│   │   │   └── t/[tenantSlug]/        # Rotas do tenant
+│   │   │       ├── layout.tsx         # Bottom tab navigation
+│   │   │       └── page.tsx           # Home com stats (HARDCODED - TODO)
+│   │   │       # ⚠️ FALTAM (planejado mas não implementado):
+│   │   │       # ├── minhas-os/       # Lista de OS do usuário
+│   │   │       # ├── nova-solicitacao/ # Abrir nova solicitação
+│   │   │       # ├── maquinas/        # Consultar máquinas
+│   │   │       # └── config/          # Configurações
+│   │   ├── panda.config.ts
+│   │   ├── postcss.config.cjs
+│   │   └── next.config.js
+│   │
+│   └── showroom/                      # 🏪 Site público (landing)
 │       ├── app/
-│       │   ├── layout.tsx            # Layout raiz
-│       │   ├── global.css            # CSS global + PandaCSS layers
-│       │   ├── page.tsx              # Landing page (/)
-│       │   ├── login/page.tsx        # Tela de login
-│       │   ├── signup/page.tsx       # Cadastro de empresa
-│       │   ├── api/                   # API Routes
-│       │   │   ├── auth/[...nextauth]/route.ts
-│       │   │   ├── signup/route.ts
-│       │   │   ├── metrics/route.ts
-│       │   │   ├── users/
-│       │   │   ├── machines/
-│       │   │   ├── work-orders/
-│       │   │   └── preventive-plans/
-│       │   └── t/[tenantSlug]/        # Rotas do tenant
-│       │       └── (dashboard)/       # Layout autenticado
-│       │           ├── page.tsx       # Dashboard
-│       │           ├── machines/
-│       │           ├── work-orders/
-│       │           ├── preventive-plans/
-│       │           └── admin/users/
-│       ├── middleware.ts              # Auth middleware (Edge Runtime)
-│       ├── panda.config.ts            # Config PandaCSS (USAR ESTE!)
+│       │   ├── layout.tsx
+│       │   ├── global.css
+│       │   └── page.tsx               # Homepage com hero, features, pricing
+│       ├── panda.config.ts
 │       ├── postcss.config.cjs
 │       └── next.config.js
 │
@@ -104,7 +155,7 @@ manuRaj/
 │   │       ├── auth.ts                # Config completa (Node.js)
 │   │       └── index.ts
 │   │
-│   ├── ui/                            # Design System próprio
+│   ├── pitkit/                        # 🧰 PitKit - Design System próprio
 │   │   └── src/
 │   │       ├── Button.tsx
 │   │       ├── Input.tsx
@@ -151,12 +202,13 @@ manuRaj/
 
 ---
 
-## 4. Design System (@manuraj/ui)
+## 4. Design System - PitKit (@manuraj/pitkit)
 
 ### Filosofia
 - **Componentes 100% próprios** - SEM Bootstrap, MaterialUI ou similares
 - **PandaCSS + CVA** - Variants tipadas com Class Variance Authority
 - **Design Tokens** - Cores, fontes e espaçamentos centralizados
+- **PitKit obrigatório em TODOS os apps** - Pitlane, Torque e Showroom DEVEM usar componentes PitKit (`<Button>`, `<Input>`, `<Select>`, etc.) em vez de elementos HTML nativos (`<button>`, `<input>`, `<select>`). Se o componente necessário não existir no PitKit, **crie-o primeiro** em `libs/pitkit/src/` antes de usar na página. Isso garante consistência visual e facilita evolução do design system.
 
 ### Componentes Disponíveis
 
@@ -176,7 +228,7 @@ manuRaj/
 ### Padrão para Criar Novos Componentes
 
 ```tsx
-// libs/ui/src/NovoComponente.tsx
+// libs/pitkit/src/NovoComponente.tsx
 'use client';
 
 import { forwardRef } from 'react';
@@ -239,20 +291,26 @@ export const NovoComponente = forwardRef<HTMLDivElement, NovoComponenteProps>(
 NovoComponente.displayName = 'NovoComponente';
 ```
 
-**Depois exportar em `libs/ui/src/index.ts`:**
+**Depois exportar em `libs/pitkit/src/index.ts`:**
 ```tsx
 export * from './NovoComponente';
 ```
 
 ### Design Tokens (panda.config.ts)
 
+Cada app tem seu próprio `panda.config.ts` com paleta `brand` diferente:
+- **Pitlane**: Azul (`#2563eb` = brand.600)
+- **Torque**: Verde esmeralda (`#059669` = brand.600)
+
+Detalhes completos das paletas em `STYLES.md`.
+
 ```ts
-// Cores principais
+// Cores por app (brand varia, o resto é igual)
 colors: {
-  brand: { 50, 100, 200, 300, 400, 500, 600, 700, 800, 900 }, // Azul
-  success: { 500, 600 },  // Verde (#22c55e)
-  warning: { 500, 600 },  // Amarelo (#f59e0b)
-  danger: { 500, 600 },   // Vermelho (#ef4444)
+  brand: { 50-900 },     // Azul (Pitlane) ou Verde (Torque)
+  success: { 500, 600 }, // Verde (#22c55e)
+  warning: { 500, 600 }, // Amarelo (#f59e0b)
+  danger: { 500, 600 },  // Vermelho (#ef4444)
 }
 
 // Tokens semânticos (suportam dark mode)
@@ -297,7 +355,7 @@ O middleware roda em **Edge Runtime**, que não suporta módulos Node.js como `c
 **Solução implementada:**
 - `libs/auth/src/auth.config.ts` → Configuração Edge-safe (callbacks, pages)
 - `libs/auth/src/auth.ts` → Configuração completa com Credentials provider
-- `apps/web/middleware.ts` → Importa apenas `auth.config.ts`
+- `apps/pitlane/middleware.ts` → Importa apenas `auth.config.ts`
 
 ```ts
 // middleware.ts - CORRETO
@@ -485,7 +543,7 @@ export async function POST(request: Request) {
 ### Estrutura Padrão
 
 ```
-apps/web/app/api/
+apps/pitlane/app/api/
 ├── auth/[...nextauth]/route.ts    # NextAuth handler
 ├── signup/route.ts                 # Cadastro de empresa
 ├── metrics/route.ts                # Dashboard metrics
@@ -668,13 +726,31 @@ import { AdProvider, AdBanner, AdRail, AdInFeed, AdPlaceholder } from '@manuraj/
 ## 13. Scripts NPM
 
 ```bash
-# Desenvolvimento
-npm run dev              # Inicia servidor Next.js com Turbopack
-npm run build            # Build de produção
-npm run start            # Inicia build de produção
+# Desenvolvimento (separados)
+npm run dev              # Pitlane - Admin (porta 3000)
+npm run dev:pitlane      # Pitlane - Admin (porta 3000)
+npm run dev:torque       # Torque - App operacional (porta 3001)
+npm run dev:showroom     # Showroom - Landing page (porta 3002)
+
+# Desenvolvimento (juntos)
+npm run dev:all          # 3 apps em paralelo (3000, 3001, 3002)
+npm run dev:apps         # Pitlane + Torque (sem Showroom)
+
+# Build
+npm run build            # Build pitlane
+npm run build:pitlane    # Build pitlane
+npm run build:torque     # Build torque
+npm run build:showroom   # Build showroom
+npm run build:all        # Build todos os apps
+
+# Start (produção)
+npm run start            # Start pitlane
+npm run start:torque     # Start torque
+npm run start:showroom   # Start showroom
 
 # Database
 npm run db:seed          # Popula banco com dados demo
+npm run db:check         # Diagnóstico do banco
 npm run db:up            # Sobe MongoDB local (Docker)
 npm run db:down          # Para MongoDB local
 
@@ -684,9 +760,11 @@ npm run panda:codegen    # Regenera styled-system
 # Testes
 npm run test             # Roda Vitest em watch mode
 npm run test:run         # Roda testes uma vez
+npm run test:coverage    # Com relatório de cobertura
 
 # Lint
 npm run lint             # ESLint
+npm run lint:all         # Lint em todos os projetos
 ```
 
 ### Dados de Teste (após seed)
@@ -724,7 +802,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 // 2. Libs internas (@manuraj/*)
-import { Button, Card } from '@manuraj/ui';
+import { Button, Card } from '@manuraj/pitkit';
 import { WorkOrder, hasPermission, PERMISSIONS } from '@manuraj/domain';
 import { api, formatDate } from '@manuraj/shared-utils';
 
@@ -741,13 +819,14 @@ import { MyLocalComponent } from './MyLocalComponent';
 // Estilos pontuais - usar css()
 <div className={css({ display: 'flex', gap: '4', padding: '6' })}>
 
-// Componentes com variants - criar na @manuraj/ui com cva()
+// Componentes com variants - criar na @manuraj/pitkit com cva()
 
 // NUNCA usar:
 // - CSS modules
 // - Tailwind classes
 // - styled-components
 // - Inline styles (style={})
+// - Elementos HTML nativos (button, input, select) quando existir equivalente PitKit
 ```
 
 ---
@@ -758,9 +837,9 @@ import { MyLocalComponent } from './MyLocalComponent';
 2. [ ] **Schema Zod** - Validação em `libs/domain/src/schemas.ts`
 3. [ ] **Model Mongoose** - Se nova collection, em `libs/data-access/src/models/`
 4. [ ] **Repository** - Em `libs/data-access/src/repositories/`
-5. [ ] **API Route** - Em `apps/web/app/api/`
-6. [ ] **Componentes UI** - Se reutilizável, em `libs/ui/src/`
-7. [ ] **Página** - Em `apps/web/app/t/[tenantSlug]/(dashboard)/`
+5. [ ] **API Route** - Em `apps/pitlane/app/api/`
+6. [ ] **Componentes UI** - Se reutilizável, em `libs/pitkit/src/`
+7. [ ] **Página** - Em `apps/pitlane/app/t/[tenantSlug]/(dashboard)/`
 8. [ ] **Permissões** - Verificar RBAC no backend E frontend
 9. [ ] **Multi-tenant** - SEMPRE filtrar por tenantId
 10. [ ] **Testes** - Adicionar em `tests/`
@@ -807,12 +886,17 @@ CRON_SECRET=...
 **Causa**: NX não tem task "serve" para Next.js
 **Solução**: Usar `npm run dev` (que executa `nx dev web`)
 
+### Build falha com erro `/_global-error` prerendering
+**Causa**: Bug conhecido do NX plugin com Next.js 16
+**Solução**: Usar `node_modules/.bin/next build apps/X` em vez de `nx build X`
+
 ### Estilos não aplicam
 **Causa**: PandaCSS não está gerando CSS
 **Solução**:
-1. Verificar se `apps/web/panda.config.ts` existe
-2. Verificar se `apps/web/postcss.config.cjs` existe
+1. Verificar se `apps/<app>/panda.config.ts` existe
+2. Verificar se `apps/<app>/postcss.config.cjs` existe
 3. Rodar `npm run panda:codegen`
+4. Consultar `STYLES.md` para paletas e padrões visuais
 
 ### Login retorna "Credenciais inválidas"
 **Causas possíveis**:
@@ -822,21 +906,161 @@ CRON_SECRET=...
 
 ---
 
-## 18. Pendências Conhecidas
+## 18. Testes Automatizados
 
-- [ ] Ajustes de padding/spacing em algumas telas
-- [ ] Testes automatizados (Vitest configurado, falta escrever)
-- [ ] PWA / Mobile responsivo
-- [ ] Notificações real-time
-- [ ] Dashboard com gráficos/métricas visuais
+### Estado Atual
+- **Framework**: Vitest 4.x (`vitest.config.ts` na raiz com path aliases)
+- **Total**: 175 testes unitários passando + 7 testes de integração (tenant isolation, excluído do run padrão)
+- **Tempo**: ~1s para rodar testes unitários
+
+### Estrutura de Testes
+
+```
+tests/
+├── domain/
+│   ├── schemas.test.ts          # ✅ 65 testes - Validação Zod (todos os schemas)
+│   ├── permissions.test.ts      # ✅ 33 testes - RBAC (5 roles, hasPermission, hierarchy)
+│   └── constants.test.ts        # ✅ 16 testes - Display names (pt-BR) + badge variant helpers
+├── shared-utils/
+│   ├── format.test.ts           # ✅ 44 testes - Formatadores (date, time, filesize, etc)
+│   └── api.test.ts              # ✅ 17 testes - buildQueryString, ApiRequestError, api methods
+└── tenant-isolation.test.ts     # ⏳ 7 testes - Isolamento multi-tenant (precisa MongoDB)
+```
+
+### Comandos
+
+```bash
+npx vitest run                                     # Unitários (exclui integração)
+npx vitest run tests/tenant-isolation.test.ts      # Integração (precisa MongoDB)
+npm run test                                       # Watch mode
+```
+
+### Cobertura Pendente (próximos testes a implementar)
+
+| Camada | O que falta | Tipo | Dificuldade |
+|--------|-------------|------|-------------|
+| **Auth guards** | requireAuth, requirePermission, etc (12 funções) | Unit (mock) | Médio |
+| **Repositories** | 6 classes, ~47 métodos (CRUD + queries) | Integration | Médio |
+| **UI Components** | 8 componentes PitKit (precisa @testing-library/react) | Component | Baixo |
+
+---
+
+## 19. Pendências Conhecidas
+
+### Torque (Prioridade Alta - app 70% incompleto)
+- [ ] `/minhas-os` - Lista de ordens do técnico (não existe)
+- [ ] `/nova-solicitacao` - Criar solicitação (não existe)
+- [ ] `/maquinas` - Consultar máquinas (não existe)
+- [ ] Dashboard com dados reais (hoje hardcoded com TODO no código)
+- [ ] Pode consumir as mesmas APIs do Pitlane (`/api/*` já prontas)
+
+### Showroom (Prioridade Média - landing page básica)
+- [ ] Formulário de contato/lead capture (rota `/contact` referenciada mas não existe)
+- [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
+- [ ] FAQ e depoimentos
+
+### Pitlane (Funcionalidades adicionais)
+- [ ] Dashboard com gráficos/métricas visuais (hoje só números)
+- [ ] Notificações real-time (quando OS é atribuída/alterada)
 - [ ] Exportação de relatórios (PDF/Excel)
 - [ ] Histórico de alterações (audit log)
+- [ ] Ajustes de padding/spacing em algumas telas
+
+### Técnico
+- [ ] Expandir cobertura de testes (auth guards, repositories)
+- [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
+- [ ] Email transacional (confirmação de signup, notificações)
+- [ ] Rate limiting nos endpoints públicos
 - [ ] Internacionalização (i18n) - futuro
 
 ---
 
-## 19. Contato e Referências
+## 20. Estado da Sessão (Última Atualização: 04 Fevereiro 2026)
+
+### O que está funcionando
+1. ✅ Estrutura multi-app criada (Pitlane, Torque, Showroom)
+2. ✅ Renaming completo do universo F1 (libs/ui → libs/pitkit, apps/web → apps/pitlane)
+3. ✅ PandaCSS configurado e funcionando em todos os apps
+4. ✅ MongoDB Atlas configurado e conectado
+5. ✅ Seed executado com dados demo (6 users, 7 machines, 7 WOs, 5 plans)
+6. ✅ Login funcionando contra Atlas (NextAuth + Credentials)
+7. ✅ 175 testes unitários escritos e passando (~1s)
+8. ✅ Todos os erros TypeScript corrigidos (0 erros nos 3 apps)
+9. ✅ Documentação completa (CLAUDE.md + UNIVERSE.md + STYLES.md)
+10. ✅ nx.json configurado com sync.applyChanges: true
+11. ✅ vitest.config.ts com path aliases para todos os @manuraj/* packages
+12. ✅ Testes de integração separados do run padrão
+13. ✅ Paletas de cores diferenciadas (Pitlane=azul, Torque=verde esmeralda)
+14. ✅ Títulos das abas identificando cada app
+15. ✅ Login pages com layout split-screen padronizado (ambos os apps)
+16. ✅ Correções de segurança aplicadas (open redirect, passwordHash, query params, tenant isolation)
+17. ✅ Next.js atualizado para 16.1.6
+18. ✅ Build scripts corrigidos (bypass de bug NX com `next build` direto)
+19. ✅ global-error.tsx criado para os 3 apps
+20. ✅ 3 builds passando sem erros (Pitlane, Torque, Showroom)
+
+### Status por app
+| App | Páginas | API Routes | Completude |
+|-----|---------|------------|------------|
+| **Pitlane** (admin) | 12 páginas | 17 endpoints | ~85% funcional |
+| **Torque** (campo) | 3 páginas (login + redirect + dashboard hardcoded) | 0 (usa Pitlane) | ~20% stub |
+| **Showroom** (landing) | 1 página (landing estática) | 0 | ~30% |
+
+### Correções de segurança aplicadas
+- Open redirect no callbackUrl (validação `startsWith('/') && !startsWith('//')`)
+- Stripping de passwordHash na resposta do PUT /users/:id
+- Validação de query params (role, status) com Zod schemas
+- Tenant isolation no `advanceNextDueDate` (findOneAndUpdate com tenantId)
+- Remoção de fallback localhost na conexão MongoDB
+- Remoção de logging de hash parcial no check-db.ts
+
+### Correções TypeScript aplicadas
+- `React.FormEvent` → `React.FormEvent<HTMLFormElement>` (10 arquivos)
+- `tsconfig.json` do pitlane: adicionado `../../libs/**/*.ts` no include
+- `machine.model.ts`: conflito `model` (string vs método Mongoose) resolvido via Omit
+- `auth.config.ts`: `user.id!` assertion + `emailVerified: null`
+- `api.post` sem body → adicionado `{}`
+- Imports não usados removidos (Link, useParams)
+- Badge `size="sm"` removido (prop inexistente)
+
+### Próximos passos sugeridos (por prioridade)
+1. **Completar o Torque** (prioridade alta) - minhas-os, nova-solicitacao, maquinas, dados reais no dashboard
+2. Implementar testes de auth guards (requireAuth, requirePermission - com mocks)
+3. Expandir funcionalidades do Showroom (contato, signup flow)
+4. Dashboard Pitlane com gráficos visuais
+5. Implementar testes de repositories (com MongoDB Atlas)
+6. Testes de componentes PitKit (precisa @testing-library/react)
+
+### Dados de teste no MongoDB Atlas
+
+```
+Cluster: manuraj.d1mhwdn.mongodb.net
+Database: manuraj
+
+Tenant: demo (slug: "demo")
+Usuários (senha: demo1234):
+  - admin@demo.com       → Supervisor Geral
+  - supervisor@demo.com  → Supervisor Manutenção
+  - joao@demo.com        → Manutentor
+  - pedro@demo.com       → Manutentor
+  - maria@demo.com       → Operador
+  - lucas@demo.com       → Operador
+```
+
+### APIs disponíveis para o Torque consumir
+O Torque pode consumir todas as APIs já prontas no Pitlane:
+- `GET /api/work-orders` (com filtro por assignedTo para "minhas OS")
+- `POST /api/work-orders` (criar solicitação)
+- `POST /api/work-orders/[id]/start` (iniciar OS)
+- `POST /api/work-orders/[id]/finish` (finalizar OS)
+- `GET /api/machines` (listar máquinas)
+- `GET /api/metrics` (dashboard stats)
+
+---
+
+## 21. Contato e Referências
 
 - **Repositório**: Local em `/Users/raj/reposRAJ/manuRaj`
+- **GitHub**: https://github.com/rodrigojosebr/manuRaj.git
 - **Desenvolvedor**: Raj
-- **Comunicação**: Português brasileiro
+- **Comunicação**: Português brasileiro (pt-BR)

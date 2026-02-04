@@ -67,7 +67,7 @@ const workOrderSchema = new mongoose.Schema({
   }],
   notes: String,
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-}, { timestamps: true });
+}, { timestamps: true, collection: 'work_orders' });
 
 const preventivePlanSchema = new mongoose.Schema({
   tenantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Tenant' },
@@ -80,7 +80,7 @@ const preventivePlanSchema = new mongoose.Schema({
   }],
   nextDueDate: Date,
   active: { type: Boolean, default: true },
-}, { timestamps: true });
+}, { timestamps: true, collection: 'preventive_plans' });
 
 const Tenant = mongoose.model('Tenant', tenantSchema);
 const User = mongoose.model('User', userSchema);

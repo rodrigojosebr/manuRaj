@@ -44,8 +44,7 @@ const tenantSchema = new Schema<TenantDocument>(
   }
 );
 
-// Indexes
-tenantSchema.index({ slug: 1 }, { unique: true });
+// Indexes (slug index already created by `unique: true` on field)
 tenantSchema.index({ active: 1 });
 
 // Prevent model recompilation in hot reload

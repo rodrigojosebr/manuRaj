@@ -4,7 +4,13 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/web"
+      "path": "./apps/showroom"
+    },
+    {
+      "path": "./apps/pitlane"
+    },
+    {
+      "path": "./apps/torque"
     }
   ]
 }

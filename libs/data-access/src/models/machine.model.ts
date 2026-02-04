@@ -1,11 +1,13 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 import type { Machine, MachineStatus } from '@manuraj/domain';
 
-export interface MachineDocument extends Omit<Machine, '_id' | 'tenantId'>, Document {
+export interface MachineDocument extends Omit<Machine, '_id' | 'tenantId' | 'model'>, Document {
   tenantId: Types.ObjectId;
 }
 
-const machineSchema = new Schema<MachineDocument>(
+// Schema defined without strict generic to avoid `model` property conflict
+// (Machine.model is a string field, but Document.model is a method)
+const machineSchema = new Schema(
   {
     tenantId: {
       type: Schema.Types.ObjectId,
