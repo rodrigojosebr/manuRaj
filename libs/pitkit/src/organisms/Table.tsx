@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { css } from '../../../styled-system/css';
+import { css } from '../../../../styled-system/css';
 
 interface TableProps {
   children: ReactNode;

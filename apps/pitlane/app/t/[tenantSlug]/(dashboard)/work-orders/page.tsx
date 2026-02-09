@@ -21,7 +21,7 @@ import {
   TableEmpty,
   SkeletonTable,
   Modal,
-} from '@manuraj/ui';
+} from '@pitkit';
 import {
   WORK_ORDER_STATUS_DISPLAY,
   WORK_ORDER_TYPE_DISPLAY,

@@ -2,7 +2,9 @@
 
 > Documento de referência para padrões visuais e de layout do projeto.
 > Consultado pelo Claude Code para manter consistência entre sessões.
-> Última atualização: Fevereiro 2026
+> Última atualização: 05 de Fevereiro de 2026
+>
+> 🧰 **Catálogo completo de componentes**: Veja `PITKIT.md` para documentação detalhada do Design System.
 
 ---
 
@@ -248,7 +250,11 @@ width: { base: '100%', lg: '50%' }
 
 ## 7. Componentes PitKit - Uso Padrão
 
-### Button
+> 📖 **Catálogo completo**: Veja `PITKIT.md` para documentação detalhada de todos os componentes.
+
+O PitKit segue **Atomic Design**: Atoms → Molecules → Organisms.
+
+### Button (Átomo)
 
 ```tsx
 // Primário (ação principal)
@@ -267,19 +273,27 @@ width: { base: '100%', lg: '50%' }
 <Button variant="link">Ver mais</Button>
 ```
 
-### Input
+### TextField (Molécula) - Substitui antigo Input
 
 ```tsx
-<Input
-  label="Email"           // Label acima do campo
-  type="email"            // Tipo HTML
-  placeholder="seu@email" // Placeholder
+<TextField
+  label="Email"              // Label acima do campo
+  type="email"               // Tipo HTML
+  placeholder="seu@email"    // Placeholder
   value={value}
   onChange={(e) => set(e.target.value)}
-  error="Campo obrigatório" // Mensagem de erro (opcional)
-  helperText="Dica"         // Texto auxiliar (opcional)
-  required                  // Obrigatório
+  error="Campo obrigatório"  // Mensagem de erro (opcional)
+  helperText="Dica"          // Texto auxiliar (opcional)
+  required                   // Obrigatório
 />
+```
+
+### Field + InputBase (Abordagem Atômica)
+
+```tsx
+<Field label="Email" error={errors.email} required>
+  <InputBase type="email" placeholder="seu@email" />
+</Field>
 ```
 
 ### Card

@@ -15,7 +15,7 @@ import {
   Badge,
   Modal,
   Skeleton,
-} from '@manuraj/ui';
+} from '@pitkit';
 import { api, formatDate, daysUntil } from '@manuraj/shared-utils';
 
 interface PreventivePlan {

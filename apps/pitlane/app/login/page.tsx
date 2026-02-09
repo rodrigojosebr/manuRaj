@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { css } from '../../../../styled-system/css';
-import { Button, Input } from '@manuraj/ui';
+import { Button, Input } from '@pitkit';
 
 export default function LoginPage() {
   return (

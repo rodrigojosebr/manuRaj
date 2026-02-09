@@ -12,7 +12,7 @@ const nextConfig = {
   // Transpile monorepo packages
   transpilePackages: [
     '@manuraj/domain',
-    '@manuraj/ui',
+    '@manuraj/pitkit',
     '@manuraj/shared-utils',
   ],
 

@@ -5,8 +5,12 @@
  * Run with: npm run db:seed
  */
 
+import { config } from 'dotenv';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+
+// Load .env.local
+config({ path: '.env.local' });
 
 // Connection string from environment
 const MONGODB_URI = process.env.MONGODB_URI;

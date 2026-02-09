@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { css } from '../../../styled-system/css';
+import { css } from '../../../../styled-system/css';
 
 interface ModalProps {
   isOpen: boolean;

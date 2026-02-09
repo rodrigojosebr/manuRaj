@@ -185,7 +185,7 @@ Pit stop funciona porque todo mundo usa o mesmo padrão:
 - Sem improviso
 
 O PitKit é isso, só que pra interface:
-- Botões, inputs, cards, tabelas
+- **Atomic Design**: Átomos (InputBase, Label) → Moléculas (Field, TextField) → Organismos (Card, Table, Modal)
 - Tokens de cor/tipografia/espaçamento
 - Padrões de formulário, estados, feedback
 - Consistência entre Pitlane, Torque e Showroom
@@ -196,8 +196,10 @@ O PitKit é isso, só que pra interface:
 
 ### Tecnologia
 - Lib: `libs/pitkit`
-- Import: `@manuraj/pitkit` (ou `@manuraj/ui` por compatibilidade)
+- Import: `@manuraj/pitkit`
+- Arquitetura: Atomic Design (atoms, molecules, organisms)
 - Stack: PandaCSS + CVA (Class Variance Authority)
+- Docs: `PITKIT.md`
 
 ---
 

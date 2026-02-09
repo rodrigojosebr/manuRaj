@@ -1,9 +1,10 @@
 # manuRaj - Documentação Completa do Projeto
 
 > Este arquivo é lido automaticamente pelo Claude Code para manter contexto entre sessões.
-> Última atualização: 04 de Fevereiro de 2026
+> Última atualização: 05 de Fevereiro de 2026
 >
 > 📎 **Guia de estilos**: Veja `STYLES.md` para paletas de cores, layouts e padrões visuais.
+> 🧰 **Design System**: Veja `PITKIT.md` para documentação completa do PitKit (Atomic Design).
 
 ---
 
@@ -119,7 +120,18 @@ manuRaj/
 │       ├── app/
 │       │   ├── layout.tsx
 │       │   ├── global.css
-│       │   └── page.tsx               # Homepage com hero, features, pricing
+│       │   ├── page.tsx               # Homepage (compõe seções)
+│       │   └── components/            # Componentes da landing
+│       │       ├── Header/            # Header fixo com menu hamburger
+│       │       ├── Hero/              # Seção hero com visual animado
+│       │       ├── SectionHeader/     # Tag + título + subtítulo de seção
+│       │       ├── StatCard/          # Card de estatística
+│       │       ├── FeatureCard/       # Card de feature
+│       │       ├── StepCard/          # Card de passo numerado
+│       │       ├── TestimonialCard/   # Card de depoimento
+│       │       ├── PricingCard/       # Card de pricing (com variants)
+│       │       ├── FaqItem/           # Item de FAQ expansível
+│       │       └── Footer/            # Rodapé
 │       ├── panda.config.ts
 │       ├── postcss.config.cjs
 │       └── next.config.js
@@ -156,17 +168,18 @@ manuRaj/
 │   │       ├── auth.ts                # Config completa (Node.js)
 │   │       └── index.ts
 │   │
-│   ├── pitkit/                        # 🧰 PitKit - Design System próprio
+│   ├── pitkit/                        # 🧰 PitKit - Design System (Atomic Design)
 │   │   └── src/
-│   │       ├── Button.tsx
-│   │       ├── Input.tsx
-│   │       ├── Select.tsx
-│   │       ├── Card.tsx
-│   │       ├── Badge.tsx
-│   │       ├── Table.tsx
-│   │       ├── Modal.tsx
-│   │       ├── Skeleton.tsx
-│   │       └── index.ts
+│   │       ├── atoms/                 # Elementos indivisíveis
+│   │       │   ├── Button.tsx, Badge.tsx, Heading.tsx, Text.tsx, Icon.tsx
+│   │       │   ├── Label.tsx, HelperText.tsx, Spinner.tsx, Skeleton.tsx
+│   │       │   └── InputBase.tsx, SelectBase.tsx, TextareaBase.tsx
+│   │       ├── molecules/             # Combinação de átomos
+│   │       │   ├── Field.tsx          # Label + children + HelperText
+│   │       │   └── TextField.tsx, SelectField.tsx, TextareaField.tsx
+│   │       ├── organisms/             # Componentes complexos
+│   │       │   └── Card.tsx, Table.tsx, Modal.tsx
+│   │       └── index.ts               # Re-exports + aliases
 │   │
 │   ├── shared-utils/                  # Utilitários compartilhados
 │   │   └── src/
@@ -203,42 +216,93 @@ manuRaj/
 
 ---
 
-## 4. Design System - PitKit (@manuraj/pitkit)
+## 4. Design System - PitKit (@pitkit)
 
-### Filosofia
-- **Componentes 100% próprios** - SEM Bootstrap, MaterialUI ou similares
-- **PandaCSS + CVA** - Variants tipadas com Class Variance Authority
-- **Design Tokens** - Cores, fontes e espaçamentos centralizados
-- **PitKit obrigatório em TODOS os apps** - Pitlane, Torque e Showroom DEVEM usar componentes PitKit (`<Button>`, `<Input>`, `<Select>`, etc.) em vez de elementos HTML nativos (`<button>`, `<input>`, `<select>`). Se o componente necessário não existir no PitKit, **crie-o primeiro** em `libs/pitkit/src/` antes de usar na página. Isso garante consistência visual e facilita evolução do design system.
+> 📖 **Documentação completa**: Veja `PITKIT.md` para catálogo detalhado com exemplos de código.
+
+### Filosofia (Atomic Design)
+
+O PitKit segue **Atomic Design** - metodologia que organiza componentes em níveis de complexidade:
+
+| Nível | Pasta | Descrição |
+|-------|-------|-----------|
+| **Atoms** | `atoms/` | Elementos indivisíveis (Button, InputBase, Label, Badge) |
+| **Molecules** | `molecules/` | Combinação de átomos (Field, TextField, SelectField) |
+| **Organisms** | `organisms/` | Componentes complexos (Card, Table, Modal) |
+
+### Regras
+- **PitKit obrigatório** - NUNCA usar `<button>`, `<input>`, `<select>` HTML diretamente
+- **Sem libs externas** - NADA de Bootstrap, MaterialUI, Tailwind, styled-components
+- **PandaCSS + CVA** - Toda estilização via `css()` e `cva()` com design tokens
+- **Genérico > Específico** - Se o componente não existir, crie no PitKit antes de usar
 
 ### Componentes Disponíveis
 
+#### Atoms (Átomos)
 | Componente | Props/Variants | Descrição |
 |------------|----------------|-----------|
-| `Button` | `variant`: primary, secondary, danger, ghost, link<br>`size`: sm, md, lg<br>`fullWidth`, `isLoading` | Botão com loading spinner |
-| `Input` | `label`, `error`, `helperText`, `type` | Campo de entrada |
-| `Select` | `label`, `options`, `error` | Dropdown nativo estilizado |
+| `Button` | `variant`, `size`, `fullWidth`, `isLoading` | Botão com spinner |
+| `Badge` | `variant`: default, success, warning, danger, info | Tag de status |
+| `Heading` | `as`: h1-h6, `color` | Títulos |
+| `Text` | `as`, `size`, `color`, `weight` | Parágrafos |
+| `Icon` | `emoji`, `size`, `variant`, `bg` | Wrapper para emojis/svg |
+| `Label` | `size`, `required` | Label de formulário |
+| `HelperText` | `variant`: default, error, success | Texto de ajuda/erro |
+| `InputBase` | `size`, `state` | Input puro (sem label) |
+| `SelectBase` | `size`, `state`, `children` | Select puro (sem label) |
+| `TextareaBase` | `size`, `state` | Textarea puro (sem label) |
+| `Spinner` | `size` | Loading spinner |
+| `Skeleton` | - | Loading placeholder |
+
+#### Molecules (Moléculas)
+| Componente | Props | Descrição |
+|------------|-------|-----------|
+| `Field` | `label`, `error`, `helperText`, `required`, `children` | Wrapper: Label + input + helper |
+| `TextField` | `label`, `error`, `helperText`, `type`, etc. | Field + InputBase (convenience) |
+| `SelectField` | `label`, `options`, `placeholder`, `error` | Field + SelectBase + options |
+| `TextareaField` | `label`, `error`, `helperText`, `rows` | Field + TextareaBase |
+
+#### Organisms (Organismos)
+| Componente | Props | Descrição |
+|------------|-------|-----------|
 | `Card` | `padding`: none, sm, md, lg | Container com sombra |
 | `CardHeader`, `CardContent`, `CardFooter` | - | Composição do Card |
-| `Badge` | `variant`: default, success, warning, danger, info | Tag de status |
 | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell` | - | Tabela completa |
-| `TableEmpty` | `colSpan`, `message` | Estado vazio da tabela |
-| `Modal` | `isOpen`, `onClose`, `title`, `size`: sm, md, lg, xl | Dialog modal |
-| `Skeleton`, `SkeletonText`, `SkeletonTable` | - | Loading placeholders |
+| `TableEmpty` | `colSpan`, `message` | Estado vazio |
+| `Modal` | `isOpen`, `onClose`, `title`, `size` | Dialog modal |
+
+### Uso Recomendado
+
+```tsx
+// Abordagem atômica (máximo controle)
+import { Field, InputBase } from '@pitkit';
+
+<Field label="Email" error={errors.email} required>
+  <InputBase type="email" placeholder="Digite..." />
+</Field>
+
+// Abordagem conveniente (menos código)
+import { TextField, SelectField } from '@pitkit';
+
+<TextField label="Email" error={errors.email} required type="email" />
+<SelectField label="Cargo" options={roles} placeholder="Selecione..." />
+```
+
+### Compatibilidade
+
+Para código legado, `Input` e `Select` continuam funcionando (são aliases para `TextField` e `SelectField`).
 
 ### Padrão para Criar Novos Componentes
 
 ```tsx
-// libs/pitkit/src/NovoComponente.tsx
+// libs/pitkit/src/atoms/NovoAtomo.tsx
 'use client';
 
 import { forwardRef } from 'react';
-import { css, cva } from '../../../styled-system/css';
+import { cva } from '../../../../styled-system/css';
 
-// 1. Definir estilos com CVA
-const componentStyles = cva({
+const styles = cva({
   base: {
-    // Estilos base que sempre aplicam
     display: 'flex',
     borderRadius: 'md',
   },
@@ -267,7 +331,7 @@ const componentStyles = cva({
 });
 
 // 2. Definir interface de props
-interface NovoComponenteProps {
+export interface NovoAtomoProps {
   variant?: 'primary' | 'secondary';
   size?: 'sm' | 'md' | 'lg';
   children: React.ReactNode;
@@ -275,12 +339,12 @@ interface NovoComponenteProps {
 }
 
 // 3. Criar componente com forwardRef
-export const NovoComponente = forwardRef<HTMLDivElement, NovoComponenteProps>(
+export const NovoAtomo = forwardRef<HTMLDivElement, NovoAtomoProps>(
   ({ variant, size, children, className, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={`${componentStyles({ variant, size })} ${className || ''}`}
+        className={`${styles({ variant, size })} ${className || ''}`}
         {...props}
       >
         {children}
@@ -289,10 +353,10 @@ export const NovoComponente = forwardRef<HTMLDivElement, NovoComponenteProps>(
   }
 );
 
-NovoComponente.displayName = 'NovoComponente';
+NovoAtomo.displayName = 'NovoAtomo';
 ```
 
-**Depois exportar em `libs/pitkit/src/index.ts`:**
+**Depois exportar em `libs/pitkit/src/atoms/index.ts`:**
 ```tsx
 export * from './NovoComponente';
 ```
@@ -812,31 +876,95 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 // 2. Libs internas (@manuraj/*)
-import { Button, Card } from '@manuraj/pitkit';
+import { Button, Card } from '@pitkit';
 import { WorkOrder, hasPermission, PERMISSIONS } from '@manuraj/domain';
 import { api, formatDate } from '@manuraj/shared-utils';
 
-// 3. Styled-system
+// 3. Styled-system (apenas em page.styles.ts)
 import { css } from '../../../styled-system/css';
 
-// 4. Relativos locais
+// 4. Estilos da página
+import * as S from './page.styles';
+
+// 5. Relativos locais
 import { MyLocalComponent } from './MyLocalComponent';
 ```
 
 ### Estilização
 
-```tsx
-// Estilos pontuais - usar css()
-<div className={css({ display: 'flex', gap: '4', padding: '6' })}>
+#### Padrão de Separação de Estilos (`page.styles.ts`)
 
-// Componentes com variants - criar na @manuraj/pitkit com cva()
+**Obrigatório para todas as páginas.** Cada página deve ter um arquivo de estilos co-localizado:
+
+```
+app/
+├── page.tsx              # Estrutura, lógica, dados
+├── page.styles.ts        # Todos os estilos da página
+├── login/
+│   ├── page.tsx
+│   └── page.styles.ts
+```
+
+**Import padrão:**
+```tsx
+// page.tsx
+import * as S from './page.styles';
+
+// Uso:
+<header className={S.header}>
+  <div className={S.headerInner}>
+```
+
+**Estilos estáticos** — exportar como constante:
+```ts
+// page.styles.ts
+import { css } from '../../../../styled-system/css';
+
+export const header = css({
+  position: 'fixed',
+  top: 0,
+  width: '100%',
+  zIndex: 50,
+});
+```
+
+**Estilos dinâmicos (com estado/parâmetro)** — exportar como função:
+```ts
+export const faqItem = (isOpen: boolean) => css({
+  backgroundColor: isOpen ? '#f8fafc' : 'white',
+  borderColor: isOpen ? 'brand.200' : '#e2e8f0',
+});
+
+export const pricingCard = (highlighted?: boolean) => css({
+  border: highlighted ? '2px solid' : '1px solid',
+  borderColor: highlighted ? 'brand.500' : '#e2e8f0',
+});
+```
+
+**Uso de estilos dinâmicos no componente:**
+```tsx
+<div className={S.faqItem(isOpen)}>
+<div className={S.pricingCard(plan.highlighted)}>
+```
+
+**Regras:**
+- Página (`page.tsx`) fica limpa — só estrutura, lógica e dados
+- Todos os `css()` vão para `page.styles.ts` — **nunca inline na página**
+- Componentes PitKit com variants continuam usando `cva()` em `libs/pitkit/src/`
+- Dados/arrays constantes (NAV_LINKS, FEATURES, etc.) ficam no `page.tsx`, não no styles
+
+#### Regras Gerais
+
+```tsx
+// Componentes com variants - criar na @pitkit com cva()
 
 // NUNCA usar:
 // - CSS modules
 // - Tailwind classes
 // - styled-components
-// - Inline styles (style={})
+// - Inline styles (style={}) — exceto para propriedades não suportadas pelo PandaCSS (ex: WebkitBackgroundClip)
 // - Elementos HTML nativos (button, input, select) quando existir equivalente PitKit
+// - css() inline diretamente no JSX da página (usar page.styles.ts)
 ```
 
 ---
@@ -1036,13 +1164,30 @@ npm run test                                       # Watch mode
 - Imports não usados removidos (Link, useParams)
 - Badge `size="sm"` removido (prop inexistente)
 
-### Próximos passos sugeridos (por prioridade)
-1. **Completar o Torque** (prioridade alta) - minhas-os, nova-solicitacao, maquinas, dados reais no dashboard
-2. Implementar testes de auth guards (requireAuth, requirePermission - com mocks)
-3. Expandir funcionalidades do Showroom (contato, signup flow)
-4. Dashboard Pitlane com gráficos visuais
-5. Implementar testes de repositories (com MongoDB Atlas)
-6. Testes de componentes PitKit (precisa @testing-library/react)
+### Roadmap priorizado
+
+**Prioridade Alta - Completar o Torque (~30% → funcional)**
+1. [ ] `/minhas-os` - Lista de OS do técnico logado (consumir GET /api/work-orders?assignedTo=)
+2. [ ] `/nova-solicitacao` - Formulário para abrir solicitação (consumir POST /api/work-orders)
+3. [ ] `/maquinas` - Consulta de máquinas em campo (consumir GET /api/machines)
+4. [ ] Dashboard com dados reais (substituir hardcoded por GET /api/metrics)
+5. [ ] `/config` - Configurações do usuário
+
+**Prioridade Média - Showroom (~30% → apresentável)**
+6. [ ] Formulário de contato/lead capture
+7. [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
+8. [ ] FAQ e depoimentos
+
+**Prioridade Média - Pitlane (melhorias)**
+9. [ ] Dashboard com gráficos visuais (hoje só números)
+10. [ ] Notificações (quando OS é atribuída/alterada)
+11. [ ] Exportação de relatórios (PDF/Excel)
+
+**Técnico**
+12. [ ] Testes de auth guards (requireAuth, requirePermission - com mocks)
+13. [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
+14. [ ] Testes de componentes PitKit (precisa @testing-library/react)
+15. [ ] Testes de repositories (com MongoDB Atlas)
 
 ### Dados de teste no MongoDB Atlas
 

@@ -3,12 +3,27 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'manuRaj - Gestão de Manutenção Industrial',
-  description: 'Sistema completo de gestão de manutenção industrial (CMMS). Gerencie máquinas, ordens de serviço e equipes de manutenção.',
-  keywords: ['manutenção', 'industrial', 'gestão', 'CMMS', 'manutenção preventiva', 'ordem de serviço'],
+  description:
+    'Sistema completo de gestão de manutenção industrial (CMMS). Gerencie máquinas, ordens de serviço e equipes. Comece grátis.',
+  keywords: [
+    'manutenção industrial',
+    'CMMS',
+    'gestão de manutenção',
+    'manutenção preventiva',
+    'ordem de serviço',
+    'gestão de máquinas',
+    'manutenção corretiva',
+    'SaaS industrial',
+  ],
   openGraph: {
     title: 'manuRaj - Gestão de Manutenção Industrial',
-    description: 'Sistema completo de gestão de manutenção industrial',
+    description:
+      'Sistema completo de gestão de manutenção industrial. Gerencie máquinas, ordens de serviço e equipes. Comece grátis.',
     type: 'website',
+    siteName: 'manuRaj',
+  },
+  other: {
+    'theme-color': '#2563eb',
   },
 };
 

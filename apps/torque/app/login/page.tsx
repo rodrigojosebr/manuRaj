@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { css } from '../../../../styled-system/css';
-import { Button, Input } from '@manuraj/ui';
+import { Button, Input } from '@pitkit';
 
 export default function LoginPage() {
   const router = useRouter();
