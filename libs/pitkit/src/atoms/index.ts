@@ -13,3 +13,4 @@ export * from './Heading';
 export * from './Text';
 export * from './Icon';
 export * from './Skeleton';
+export * from './EmptyState';

@@ -1,10 +1,11 @@
 # manuRaj - Documentação Completa do Projeto
 
 > Este arquivo é lido automaticamente pelo Claude Code para manter contexto entre sessões.
-> Última atualização: 05 de Fevereiro de 2026
+> Última atualização: 09 de Fevereiro de 2026
 >
 > 📎 **Guia de estilos**: Veja `STYLES.md` para paletas de cores, layouts e padrões visuais.
 > 🧰 **Design System**: Veja `PITKIT.md` para documentação completa do PitKit (Atomic Design).
+> 🏎️ **Torque**: Veja `TORQUE.md` para particularidades mobile-first do app operacional.
 
 ---
 
@@ -106,9 +107,12 @@ manuRaj/
 │   │   │   └── t/[tenantSlug]/        # Rotas do tenant
 │   │   │       ├── layout.tsx         # Server component (auth + tenant + ads config)
 │   │   │       ├── TorqueLayoutClient.tsx  # Client: header, bottom nav, AdProvider/AdBanner
-│   │   │       └── page.tsx           # Home com stats (HARDCODED - TODO)
-│   │   │       # ⚠️ FALTAM (planejado mas não implementado):
-│   │   │       # ├── minhas-os/       # Lista de OS do usuário
+│   │   │       ├── page.tsx           # Dashboard com stats reais (server component)
+│   │   │       ├── TorqueDashboardClient.tsx  # Client: render stats + actions
+│   │   │       └── minhas-os/         # Lista de OS do usuário
+│   │   │           ├── page.tsx       # Server: auth + findAssignedToUser
+│   │   │           └── MinhasOsClient.tsx  # Client: tabs + cards
+│   │   │       # ⚠️ PENDENTES:
 │   │   │       # ├── nova-solicitacao/ # Abrir nova solicitação
 │   │   │       # ├── maquinas/        # Consultar máquinas
 │   │   │       # └── config/          # Configurações
@@ -1083,136 +1087,60 @@ npm run test                                       # Watch mode
 
 ---
 
-## 19. Pendências Conhecidas
+## 19. Roadmap
 
-### Torque (Prioridade Alta - app 70% incompleto)
-- [ ] `/minhas-os` - Lista de ordens do técnico (não existe)
-- [ ] `/nova-solicitacao` - Criar solicitação (não existe)
-- [ ] `/maquinas` - Consultar máquinas (não existe)
-- [ ] Dashboard com dados reais (hoje hardcoded com TODO no código)
-- [ ] Pode consumir as mesmas APIs do Pitlane (`/api/*` já prontas)
+### Prioridade Alta — Completar o Torque (~50% → funcional)
+1. [ ] `/nova-solicitacao` — Formulário para abrir solicitação (POST /api/work-orders)
+2. [ ] `/maquinas` — Consulta de máquinas em campo (repository direto)
+3. [ ] `/config` — Configurações do usuário
 
-### Showroom (Prioridade Média - landing page básica)
-- [ ] Formulário de contato/lead capture (rota `/contact` referenciada mas não existe)
-- [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
-- [ ] FAQ e depoimentos
+### Prioridade Média — Showroom (~30% → apresentável)
+4. [ ] Formulário de contato/lead capture
+5. [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
 
-### Pitlane (Funcionalidades adicionais)
-- [ ] Dashboard com gráficos/métricas visuais (hoje só números)
-- [ ] Notificações real-time (quando OS é atribuída/alterada)
-- [ ] Exportação de relatórios (PDF/Excel)
-- [ ] Histórico de alterações (audit log)
-- [ ] Ajustes de padding/spacing em algumas telas
+### Prioridade Média — Pitlane (melhorias)
+6. [ ] Dashboard com gráficos visuais (hoje só números)
+7. [ ] Notificações (quando OS é atribuída/alterada)
+8. [ ] Exportação de relatórios (PDF/Excel)
 
 ### Técnico
-- [ ] Expandir cobertura de testes (auth guards, repositories)
-- [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
-- [ ] Email transacional (confirmação de signup, notificações)
-- [ ] Rate limiting nos endpoints públicos
-- [ ] Internacionalização (i18n) - futuro
+9. [ ] Testes de auth guards (requireAuth, requirePermission — com mocks)
+10. [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
 
 ---
 
-## 20. Estado da Sessão (Última Atualização: 04 Fevereiro 2026)
-
-### O que está funcionando
-1. ✅ Estrutura multi-app criada (Pitlane, Torque, Showroom)
-2. ✅ Renaming completo do universo F1 (libs/ui → libs/pitkit, apps/web → apps/pitlane)
-3. ✅ PandaCSS configurado e funcionando em todos os apps
-4. ✅ MongoDB Atlas configurado e conectado
-5. ✅ Seed executado com dados demo (6 users, 7 machines, 7 WOs, 5 plans)
-6. ✅ Login funcionando contra Atlas (NextAuth + Credentials)
-7. ✅ 175 testes unitários escritos e passando (~1s)
-8. ✅ Todos os erros TypeScript corrigidos (0 erros nos 3 apps)
-9. ✅ Documentação completa (CLAUDE.md + UNIVERSE.md + STYLES.md)
-10. ✅ nx.json configurado com sync.applyChanges: true
-11. ✅ vitest.config.ts com path aliases para todos os @manuraj/* packages
-12. ✅ Testes de integração separados do run padrão
-13. ✅ Paletas de cores diferenciadas (Pitlane=azul, Torque=verde esmeralda)
-14. ✅ Títulos das abas identificando cada app
-15. ✅ Login pages com layout split-screen padronizado (ambos os apps)
-16. ✅ Correções de segurança aplicadas (open redirect, passwordHash, query params, tenant isolation)
-17. ✅ Next.js atualizado para 16.1.6
-18. ✅ Build scripts corrigidos (bypass de bug NX com `next build` direto)
-19. ✅ global-error.tsx criado para os 3 apps
-20. ✅ 3 builds passando sem erros (Pitlane, Torque, Showroom)
-21. ✅ Ads integrados no Torque (AdProvider + AdBanner no TorqueLayoutClient)
-22. ✅ Torque layout convertido para server component (auth + tenant fetch + ads config)
-23. ✅ Next.js alinhado em ^16.1.6 nos 3 apps (corrigido conflito ~16.0.1 no Torque/Showroom)
+## 20. Estado da Sessão (Última Atualização: 09 Fevereiro 2026)
 
 ### Status por app
 | App | Páginas | API Routes | Completude |
 |-----|---------|------------|------------|
 | **Pitlane** (admin) | 12 páginas | 17 endpoints | ~85% funcional |
-| **Torque** (campo) | 3 páginas (login + redirect + dashboard hardcoded) | 0 (usa Pitlane) | ~30% (layout com auth + ads) |
+| **Torque** (campo) | 4 páginas (login + redirect + dashboard + minhas-os) | 0 (usa repos/APIs Pitlane) | ~50% |
 | **Showroom** (landing) | 1 página (landing estática) | 0 | ~30% |
 
-### Correções de segurança aplicadas
-- Open redirect no callbackUrl (validação `startsWith('/') && !startsWith('//')`)
-- Stripping de passwordHash na resposta do PUT /users/:id
-- Validação de query params (role, status) com Zod schemas
-- Tenant isolation no `advanceNextDueDate` (findOneAndUpdate com tenantId)
-- Remoção de fallback localhost na conexão MongoDB
-- Remoção de logging de hash parcial no check-db.ts
+### Infraestrutura consolidada
+- 3 builds passando (Pitlane, Torque, Showroom) — 0 erros TypeScript
+- 175 testes unitários passando (~1s)
+- MongoDB Atlas conectado — seed com 6 users, 7 machines, 7 WOs, 5 plans
+- NextAuth + Credentials + JWT funcionando
+- PandaCSS com spacing tokens semânticos (`page`, `section`, `card-padding`, `card-gap`, `field-gap`)
+- Correções de segurança aplicadas (open redirect, passwordHash, tenant isolation, query params)
 
-### Correções TypeScript aplicadas
-- `React.FormEvent` → `React.FormEvent<HTMLFormElement>` (10 arquivos)
-- `tsconfig.json` do pitlane: adicionado `../../libs/**/*.ts` no include
-- `machine.model.ts`: conflito `model` (string vs método Mongoose) resolvido via Omit
-- `auth.config.ts`: `user.id!` assertion + `emailVerified: null`
-- `api.post` sem body → adicionado `{}`
-- Imports não usados removidos (Link, useParams)
-- Badge `size="sm"` removido (prop inexistente)
-
-### Roadmap priorizado
-
-**Prioridade Alta - Completar o Torque (~30% → funcional)**
-1. [ ] `/minhas-os` - Lista de OS do técnico logado (consumir GET /api/work-orders?assignedTo=)
-2. [ ] `/nova-solicitacao` - Formulário para abrir solicitação (consumir POST /api/work-orders)
-3. [ ] `/maquinas` - Consulta de máquinas em campo (consumir GET /api/machines)
-4. [ ] Dashboard com dados reais (substituir hardcoded por GET /api/metrics)
-5. [ ] `/config` - Configurações do usuário
-
-**Prioridade Média - Showroom (~30% → apresentável)**
-6. [ ] Formulário de contato/lead capture
-7. [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
-8. [ ] FAQ e depoimentos
-
-**Prioridade Média - Pitlane (melhorias)**
-9. [ ] Dashboard com gráficos visuais (hoje só números)
-10. [ ] Notificações (quando OS é atribuída/alterada)
-11. [ ] Exportação de relatórios (PDF/Excel)
-
-**Técnico**
-12. [ ] Testes de auth guards (requireAuth, requirePermission - com mocks)
-13. [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
-14. [ ] Testes de componentes PitKit (precisa @testing-library/react)
-15. [ ] Testes de repositories (com MongoDB Atlas)
-
-### Dados de teste no MongoDB Atlas
+### Dados de teste
 
 ```
-Cluster: manuraj.d1mhwdn.mongodb.net
-Database: manuraj
-
-Tenant: demo (slug: "demo")
-Usuários (senha: demo1234):
-  - admin@demo.com       → Supervisor Geral
-  - supervisor@demo.com  → Supervisor Manutenção
-  - joao@demo.com        → Manutentor
-  - pedro@demo.com       → Manutentor
-  - maria@demo.com       → Operador
-  - lucas@demo.com       → Operador
+Tenant: demo (slug: "demo") — senha: demo1234
+  admin@demo.com (Supervisor Geral) | supervisor@demo.com (Sup. Manutenção)
+  joao@demo.com (Manutentor) | pedro@demo.com (Manutentor)
+  maria@demo.com (Operador) | lucas@demo.com (Operador)
 ```
 
 ### APIs disponíveis para o Torque consumir
-O Torque pode consumir todas as APIs já prontas no Pitlane:
-- `GET /api/work-orders` (com filtro por assignedTo para "minhas OS")
+Repositories direto (server components) ou APIs do Pitlane (client actions):
+- `workOrderRepository.findAssignedToUser()` / `countAssignedByStatus()` / `countOverdueByAssignee()`
+- `machineRepository.findByTenant()`
 - `POST /api/work-orders` (criar solicitação)
-- `POST /api/work-orders/[id]/start` (iniciar OS)
-- `POST /api/work-orders/[id]/finish` (finalizar OS)
-- `GET /api/machines` (listar máquinas)
-- `GET /api/metrics` (dashboard stats)
+- `POST /api/work-orders/[id]/start` | `finish` (iniciar/finalizar OS)
 
 ---
 
