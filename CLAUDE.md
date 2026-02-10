@@ -1,7 +1,7 @@
 # manuRaj - Documentação Completa do Projeto
 
 > Este arquivo é lido automaticamente pelo Claude Code para manter contexto entre sessões.
-> Última atualização: 09 de Fevereiro de 2026
+> Última atualização: 10 de Fevereiro de 2026
 >
 > 📎 **Guia de estilos**: Veja `STYLES.md` para paletas de cores, layouts e padrões visuais.
 > 🧰 **Design System**: Veja `PITKIT.md` para documentação completa do PitKit (Atomic Design).
@@ -109,11 +109,15 @@ manuRaj/
 │   │   │       ├── TorqueLayoutClient.tsx  # Client: header, bottom nav, AdProvider/AdBanner
 │   │   │       ├── page.tsx           # Dashboard com stats reais (server component)
 │   │   │       ├── TorqueDashboardClient.tsx  # Client: render stats + actions
-│   │   │       └── minhas-os/         # Lista de OS do usuário
-│   │   │           ├── page.tsx       # Server: auth + findAssignedToUser
-│   │   │           └── MinhasOsClient.tsx  # Client: tabs + cards
+│   │   │       ├── minhas-os/         # Lista de OS do usuário
+│   │   │       │   ├── page.tsx       # Server: auth + findAssignedToUser
+│   │   │       │   └── MinhasOsClient.tsx  # Client: tabs + cards
+│   │   │       └── nova-solicitacao/  # Abrir nova solicitação
+│   │   │           ├── page.tsx       # Server: auth + fetch máquinas + serialize
+│   │   │           ├── NovaSolicitacaoClient.tsx  # Client: form + submit
+│   │   │           ├── actions.ts     # Server Action: validação + create
+│   │   │           └── page.styles.ts
 │   │   │       # ⚠️ PENDENTES:
-│   │   │       # ├── nova-solicitacao/ # Abrir nova solicitação
 │   │   │       # ├── maquinas/        # Consultar máquinas
 │   │   │       # └── config/          # Configurações
 │   │   ├── panda.config.ts
@@ -1089,8 +1093,8 @@ npm run test                                       # Watch mode
 
 ## 19. Roadmap
 
-### Prioridade Alta — Completar o Torque (~50% → funcional)
-1. [ ] `/nova-solicitacao` — Formulário para abrir solicitação (POST /api/work-orders)
+### Prioridade Alta — Completar o Torque (~65% → funcional)
+1. [x] `/nova-solicitacao` — Formulário para abrir solicitação (Server Action)
 2. [ ] `/maquinas` — Consulta de máquinas em campo (repository direto)
 3. [ ] `/config` — Configurações do usuário
 
@@ -1109,13 +1113,13 @@ npm run test                                       # Watch mode
 
 ---
 
-## 20. Estado da Sessão (Última Atualização: 09 Fevereiro 2026)
+## 20. Estado da Sessão (Última Atualização: 10 Fevereiro 2026)
 
 ### Status por app
 | App | Páginas | API Routes | Completude |
 |-----|---------|------------|------------|
 | **Pitlane** (admin) | 12 páginas | 17 endpoints | ~85% funcional |
-| **Torque** (campo) | 4 páginas (login + redirect + dashboard + minhas-os) | 0 (usa repos/APIs Pitlane) | ~50% |
+| **Torque** (campo) | 5 páginas (login + redirect + dashboard + minhas-os + nova-solicitacao) | 0 (usa repos direto + server actions) | ~65% |
 | **Showroom** (landing) | 1 página (landing estática) | 0 | ~30% |
 
 ### Infraestrutura consolidada
@@ -1124,7 +1128,7 @@ npm run test                                       # Watch mode
 - MongoDB Atlas conectado — seed com 6 users, 7 machines, 7 WOs, 5 plans
 - NextAuth + Credentials + JWT funcionando
 - PandaCSS com spacing tokens semânticos (`page`, `section`, `card-padding`, `card-gap`, `field-gap`)
-- Correções de segurança aplicadas (open redirect, passwordHash, tenant isolation, query params)
+- Torque usa Server Actions (não API routes) para mutations — padrão `actions.ts` com `'use server'`
 
 ### Dados de teste
 
@@ -1135,12 +1139,10 @@ Tenant: demo (slug: "demo") — senha: demo1234
   maria@demo.com (Operador) | lucas@demo.com (Operador)
 ```
 
-### APIs disponíveis para o Torque consumir
-Repositories direto (server components) ou APIs do Pitlane (client actions):
-- `workOrderRepository.findAssignedToUser()` / `countAssignedByStatus()` / `countOverdueByAssignee()`
-- `machineRepository.findByTenant()`
-- `POST /api/work-orders` (criar solicitação)
-- `POST /api/work-orders/[id]/start` | `finish` (iniciar/finalizar OS)
+### APIs e padrões disponíveis para o Torque
+- **Leitura (server components)**: repositories direto (`workOrderRepository`, `machineRepository`)
+- **Escrita (server actions)**: `actions.ts` com `'use server'` — valida Zod, check RBAC, chama repository
+- **APIs Pitlane (alternativa)**: `POST /api/work-orders/[id]/start` | `finish`
 
 ---
 

@@ -15,9 +15,10 @@ O **Torque** é o app mobile-first para manutentores e operadores executarem ord
 O Torque segue o padrão de split entre server components (dados) e client components (interação):
 
 ```
-layout.tsx (server) ──── auth + tenant fetch ──→ TorqueLayoutClient.tsx (client: nav, ads, logout)
-page.tsx   (server) ──── stats do MongoDB   ──→ TorqueDashboardClient.tsx (client: render)
-minhas-os/page.tsx (server) ── OS do user  ──→ MinhasOsClient.tsx (client: tabs, cards, filtros)
+layout.tsx (server) ──────── auth + tenant fetch ──→ TorqueLayoutClient.tsx (client: nav, ads, logout)
+page.tsx   (server) ──────── stats do MongoDB   ──→ TorqueDashboardClient.tsx (client: render)
+minhas-os/page.tsx (server) ── OS do user       ──→ MinhasOsClient.tsx (client: tabs, cards, filtros)
+nova-solicitacao/page.tsx (server) ── máquinas  ──→ NovaSolicitacaoClient.tsx (client: form → server action)
 ```
 
 - **Server components**: autenticação, `connectDB()`, queries via repository, redirect se não autenticado
@@ -72,14 +73,16 @@ Uso nos styles: `padding: 'page'`, `gap: 'card-gap'`, etc.
 Todos os arquivos seguem o padrão de estilos extraídos:
 
 ```
-page.tsx                           → import * as S from './page.styles'
-page.styles.ts                     → exports de css()
-TorqueLayoutClient.tsx             → import * as S from './TorqueLayoutClient.styles'
-TorqueLayoutClient.styles.ts       → exports de css()
-login/page.tsx                     → import * as S from './page.styles'
-login/page.styles.ts               → exports de css()
-minhas-os/page.tsx                 → import * as S from './page.styles'  (via MinhasOsClient)
-minhas-os/page.styles.ts           → exports de css()
+page.tsx                                   → import * as S from './page.styles'
+page.styles.ts                             → exports de css()
+TorqueLayoutClient.tsx                     → import * as S from './TorqueLayoutClient.styles'
+TorqueLayoutClient.styles.ts               → exports de css()
+login/page.tsx                             → import * as S from './page.styles'
+login/page.styles.ts                       → exports de css()
+minhas-os/MinhasOsClient.tsx               → import * as S from './page.styles'
+minhas-os/page.styles.ts                   → exports de css()
+nova-solicitacao/NovaSolicitacaoClient.tsx  → import * as S from './page.styles'
+nova-solicitacao/page.styles.ts            → exports de css()
 ```
 
 **Regra**: Zero `css()` inline nos arquivos `.tsx` do Torque.
@@ -131,15 +134,26 @@ Arquitetura:
 
 ---
 
-## APIs e Repositories
+## APIs, Repositories e Server Actions
 
-O Torque usa **repositories direto** nos server components (sem API intermediária):
+### Leitura (server components → repositories direto)
 - `workOrderRepository.findAssignedToUser()` — lista de OS
 - `workOrderRepository.countAssignedByStatus()` — stats do dashboard
 - `workOrderRepository.countOverdueByAssignee()` — OS vencidas
+- `machineRepository.findByTenant()` — lista de máquinas
 
-Para ações que precisam de POST (iniciar/finalizar OS), usa APIs do Pitlane:
-- `POST /api/work-orders` (criar solicitação)
+### Escrita (client → server actions)
+O Torque usa **Server Actions** (`'use server'`) para mutations, evitando duplicar API routes do Pitlane:
+- `nova-solicitacao/actions.ts` → `createWorkOrderAction()` — cria OS tipo `request`
+
+Padrão de um server action no Torque:
+1. `auth()` — verifica sessão
+2. `hasPermission()` — verifica RBAC
+3. `schema.safeParse()` — valida input com Zod
+4. `repository.method()` — executa no banco
+5. Retorna `{ success: true }` ou `{ success: false, error: string }`
+
+### APIs do Pitlane (alternativa para ações futuras)
 - `POST /api/work-orders/[id]/start` (iniciar OS)
 - `POST /api/work-orders/[id]/finish` (finalizar OS)
 
@@ -158,6 +172,25 @@ Configurados em `global.css`:
 
 ---
 
+## Página /nova-solicitacao (Formulário)
+
+Arquitetura:
+- `page.tsx` (server): auth → `machineRepository.findByTenant(tenantId, { limit: 200 })` → filtra decommissioned → serializa → props
+- `NovaSolicitacaoClient.tsx` (client): formulário com submit via server action
+- `actions.ts` (server action): auth + RBAC + Zod + cria OS tipo `request`
+
+**Campos do formulário:**
+| Campo | Componente PitKit | Obrigatório |
+|-------|-------------------|-------------|
+| Máquina | `SelectField` (lista do server) | Sim |
+| Prioridade | `SelectField` (Baixa/Média/Alta/Crítica, default: Média) | Sim |
+| Descrição | `TextareaField` (max 2000 chars) | Sim |
+
+**Fluxo de sucesso**: Mostra card verde com botões "Ver Minhas OS" e "Nova Solicitação"
+**Permissão**: `WORK_ORDERS_CREATE_REQUEST` (operadores) ou `WORK_ORDERS_CREATE` (supervisores)
+
+---
+
 ## Navegação (Rotas)
 
 | Rota | Status | Descrição |
@@ -165,6 +198,6 @@ Configurados em `global.css`:
 | `/login` | ✅ Implementado | Login com tenant + email + senha |
 | `/t/[slug]` | ✅ Implementado | Dashboard com stats reais |
 | `/t/[slug]/minhas-os` | ✅ Implementado | Lista de OS com tabs e cards |
-| `/t/[slug]/nova-solicitacao` | ❌ Pendente | Abrir nova solicitação |
+| `/t/[slug]/nova-solicitacao` | ✅ Implementado | Formulário para abrir solicitação |
 | `/t/[slug]/maquinas` | ❌ Pendente | Consultar máquinas |
 | `/t/[slug]/config` | ❌ Pendente | Configurações do usuário |
