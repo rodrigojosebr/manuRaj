@@ -19,7 +19,7 @@ import {
   TableEmpty,
   SkeletonTable,
   Modal,
-} from '@manuraj/ui';
+} from '@pitkit';
 import { api, formatDate } from '@manuraj/shared-utils';
 
 interface PreventivePlan {

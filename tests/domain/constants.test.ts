@@ -17,7 +17,7 @@ import {
   getStatusBadgeVariant,
   getPriorityBadgeVariant,
   getMachineStatusBadgeVariant,
-} from '@manuraj/pitkit';
+} from '@pitkit';
 
 describe('Display Name Maps', () => {
   describe('MACHINE_STATUS_DISPLAY', () => {

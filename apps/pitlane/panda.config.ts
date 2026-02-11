@@ -57,6 +57,13 @@ export default defineConfig({
           pulse: { value: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
           spin: { value: 'spin 1s linear infinite' },
         },
+        spacing: {
+          page: { value: '{spacing.6}' },           // 24px — padding de página
+          section: { value: '{spacing.8}' },         // 32px — gap entre seções
+          'card-padding': { value: '{spacing.6}' },  // 24px — padding interno de card
+          'card-gap': { value: '{spacing.5}' },      // 20px — gap entre cards
+          'field-gap': { value: '{spacing.4}' },     // 16px — gap entre campos
+        },
       },
       semanticTokens: {
         colors: {

@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, ButtonHTMLAttributes } from 'react';
-import { css, cva } from '../../../styled-system/css';
+import { css, cva } from '../../../../styled-system/css';
 
 const buttonStyles = cva({
   base: {

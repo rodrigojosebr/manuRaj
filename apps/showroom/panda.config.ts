@@ -23,6 +23,14 @@ export default defineConfig({
           from: { opacity: '0', transform: 'translateY(20px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
+        fadeInUp: {
+          from: { opacity: '0', transform: 'translateY(32px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
       },
       tokens: {
         colors: {
@@ -37,6 +45,11 @@ export default defineConfig({
             700: { value: '#1d4ed8' },
             800: { value: '#1e40af' },
             900: { value: '#1e3a8a' },
+          },
+          navy: {
+            800: { value: '#172554' },
+            900: { value: '#0f172a' },
+            950: { value: '#0a1128' },
           },
           success: {
             500: { value: '#22c55e' },
@@ -60,6 +73,8 @@ export default defineConfig({
           pulse: { value: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
           spin: { value: 'spin 1s linear infinite' },
           fadeIn: { value: 'fadeIn 0.5s ease-out forwards' },
+          fadeInUp: { value: 'fadeInUp 0.7s ease-out forwards' },
+          float: { value: 'float 6s ease-in-out infinite' },
         },
       },
     },

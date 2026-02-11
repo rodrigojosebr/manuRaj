@@ -21,6 +21,7 @@ body {
   background-color: #ffffff;
   color: #111827;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* Focus visible styles */
@@ -31,19 +32,25 @@ body {
 
 /* Scrollbar styles */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #94a3b8;
+}
+
+/* Selection */
+::selection {
+  background-color: #2563eb;
+  color: #ffffff;
 }

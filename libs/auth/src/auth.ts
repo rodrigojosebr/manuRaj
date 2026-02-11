@@ -11,6 +11,8 @@ import { authConfig } from './auth.config';
  * Full NextAuth configuration with providers.
  * This runs in Node.js runtime only (not edge).
  */
+console.log('[Auth] Initializing NextAuth...');
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   providers: [

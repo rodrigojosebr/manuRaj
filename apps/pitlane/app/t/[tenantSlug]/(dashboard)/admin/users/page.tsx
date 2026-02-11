@@ -18,7 +18,7 @@ import {
   TableEmpty,
   SkeletonTable,
   Modal,
-} from '@manuraj/ui';
+} from '@pitkit';
 import { ROLE_DISPLAY_NAMES } from '@manuraj/domain';
 import { api, formatDate } from '@manuraj/shared-utils';
 

@@ -20,7 +20,7 @@ import {
   TableEmpty,
   SkeletonTable,
   Modal,
-} from '@manuraj/ui';
+} from '@pitkit';
 import { MACHINE_STATUS_DISPLAY } from '@manuraj/domain';
 import { api } from '@manuraj/shared-utils';
 

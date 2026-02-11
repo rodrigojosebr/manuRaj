@@ -26,7 +26,7 @@ manuRaj permite que empresas gerenciem:
 
 | Lib | Pacote | Descricao |
 |-----|--------|-----------|
-| **PitKit** | `@manuraj/pitkit` | Design system (Button, Input, Card, Badge, Table, Modal, etc) |
+| **PitKit** | `@manuraj/pitkit` | Design System Atomic Design (atoms, molecules, organisms) |
 | **Domain** | `@manuraj/domain` | Tipos, schemas Zod, constantes, permissoes RBAC |
 | **Data Access** | `@manuraj/data-access` | Models Mongoose + repositories |
 | **Auth** | `@manuraj/auth` | NextAuth v5, guards, helpers de response |
@@ -192,7 +192,7 @@ manuRaj/
 │   ├── domain/           # Tipos, schemas, permissoes
 │   ├── data-access/      # Models + repositories MongoDB
 │   ├── auth/             # NextAuth + guards
-│   ├── pitkit/           # Design system (componentes UI)
+│   ├── pitkit/           # Design System (atoms → molecules → organisms)
 │   ├── shared-utils/     # API client, formatadores
 │   ├── ads/              # Google AdSense
 │   └── config/           # Configuracoes
@@ -251,6 +251,8 @@ Todas as rotas exigem autenticacao e respeitam isolamento multi-tenant.
 |---------|----------|
 | `CLAUDE.md` | Documentacao tecnica completa (tipos, schemas, padroes de codigo, troubleshooting) |
 | `UNIVERSE.md` | Narrativa de produto, metafora F1, visao de cada app |
+| `STYLES.md` | Guia de estilos (paletas, layouts, tipografia, componentes PitKit) |
+| `PITKIT.md` | Catalogo completo do Design System (Atomic Design, componentes, exemplos de uso) |
 | `.env.example` | Todas as variaveis de ambiente com explicacoes |
 
 ---

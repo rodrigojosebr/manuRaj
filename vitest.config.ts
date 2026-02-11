@@ -8,6 +8,7 @@ export default defineConfig({
       '@manuraj/data-access': path.resolve(__dirname, 'libs/data-access/src/index.ts'),
       '@manuraj/auth': path.resolve(__dirname, 'libs/auth/src/index.ts'),
       '@manuraj/config': path.resolve(__dirname, 'libs/config/src/index.ts'),
+      '@pitkit': path.resolve(__dirname, 'libs/pitkit/src/index.ts'),
       '@manuraj/pitkit': path.resolve(__dirname, 'libs/pitkit/src/index.ts'),
       '@manuraj/ui': path.resolve(__dirname, 'libs/pitkit/src/index.ts'),
       '@manuraj/ads': path.resolve(__dirname, 'libs/ads/src/index.ts'),

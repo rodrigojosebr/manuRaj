@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { css } from '../../../../styled-system/css';
-import { Button, Input, Card, CardContent, CardHeader, CardTitle } from '@manuraj/ui';
+import { Button, Input, Card, CardContent, CardHeader, CardTitle } from '@pitkit';
 
 export default function SignupPage() {
   const router = useRouter();

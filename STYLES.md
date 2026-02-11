@@ -2,7 +2,9 @@
 
 > Documento de referência para padrões visuais e de layout do projeto.
 > Consultado pelo Claude Code para manter consistência entre sessões.
-> Última atualização: Fevereiro 2026
+> Última atualização: 09 de Fevereiro de 2026
+>
+> 🧰 **Catálogo completo de componentes**: Veja `PITKIT.md` para documentação detalhada do Design System.
 
 ---
 
@@ -220,6 +222,25 @@ Usar tokens do PandaCSS (baseados em múltiplos de 4px):
 | `12` | 48px | Padding de painéis tablet |
 | `16` | 64px | Padding de painéis desktop |
 
+### Tokens Semânticos de Spacing
+
+Definidos em `panda.config.ts` de cada app (valores idênticos):
+
+| Token | Referência | Px | Uso |
+|-------|-----------|-----|-----|
+| `page` | `spacing.6` | 24px | Padding de página/conteúdo |
+| `section` | `spacing.8` | 32px | Margem entre seções |
+| `card-padding` | `spacing.6` | 24px | Padding interno de cards |
+| `card-gap` | `spacing.5` | 20px | Gap entre cards na lista |
+| `field-gap` | `spacing.4` | 16px | Gap entre campos de form |
+
+```tsx
+// Uso nos page.styles.ts
+export const wrapper = css({ padding: 'page' });
+export const grid = css({ gap: 'card-gap' });
+export const card = css({ padding: 'card-padding' });
+```
+
 ---
 
 ## 6. Breakpoints Responsivos
@@ -248,7 +269,11 @@ width: { base: '100%', lg: '50%' }
 
 ## 7. Componentes PitKit - Uso Padrão
 
-### Button
+> 📖 **Catálogo completo**: Veja `PITKIT.md` para documentação detalhada de todos os componentes.
+
+O PitKit segue **Atomic Design**: Atoms → Molecules → Organisms.
+
+### Button (Átomo)
 
 ```tsx
 // Primário (ação principal)
@@ -267,19 +292,27 @@ width: { base: '100%', lg: '50%' }
 <Button variant="link">Ver mais</Button>
 ```
 
-### Input
+### TextField (Molécula) - Substitui antigo Input
 
 ```tsx
-<Input
-  label="Email"           // Label acima do campo
-  type="email"            // Tipo HTML
-  placeholder="seu@email" // Placeholder
+<TextField
+  label="Email"              // Label acima do campo
+  type="email"               // Tipo HTML
+  placeholder="seu@email"    // Placeholder
   value={value}
   onChange={(e) => set(e.target.value)}
-  error="Campo obrigatório" // Mensagem de erro (opcional)
-  helperText="Dica"         // Texto auxiliar (opcional)
-  required                  // Obrigatório
+  error="Campo obrigatório"  // Mensagem de erro (opcional)
+  helperText="Dica"          // Texto auxiliar (opcional)
+  required                   // Obrigatório
 />
+```
+
+### Field + InputBase (Abordagem Atômica)
+
+```tsx
+<Field label="Email" error={errors.email} required>
+  <InputBase type="email" placeholder="seu@email" />
+</Field>
 ```
 
 ### Card

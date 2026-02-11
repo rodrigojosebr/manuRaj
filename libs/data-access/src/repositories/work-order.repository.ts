@@ -274,6 +274,29 @@ export class WorkOrderRepository {
     });
   }
 
+  async countAssignedByStatus(
+    tenantId: string,
+    userId: string,
+    status: WorkOrderStatus
+  ): Promise<number> {
+    if (!Types.ObjectId.isValid(tenantId) || !Types.ObjectId.isValid(userId)) return 0;
+    return WorkOrderModel.countDocuments({
+      tenantId: new Types.ObjectId(tenantId),
+      assignedTo: new Types.ObjectId(userId),
+      status,
+    });
+  }
+
+  async countOverdueByAssignee(tenantId: string, userId: string): Promise<number> {
+    if (!Types.ObjectId.isValid(tenantId) || !Types.ObjectId.isValid(userId)) return 0;
+    return WorkOrderModel.countDocuments({
+      tenantId: new Types.ObjectId(tenantId),
+      assignedTo: new Types.ObjectId(userId),
+      status: { $nin: ['completed', 'cancelled'] },
+      dueDate: { $lt: new Date() },
+    });
+  }
+
   async getAvgCompletionTime(tenantId: string): Promise<number> {
     if (!Types.ObjectId.isValid(tenantId)) return 0;
 

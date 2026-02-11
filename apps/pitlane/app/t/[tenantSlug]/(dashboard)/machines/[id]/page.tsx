@@ -16,7 +16,7 @@ import {
   getMachineStatusBadgeVariant,
   Modal,
   Skeleton,
-} from '@manuraj/ui';
+} from '@pitkit';
 import { MACHINE_STATUS_DISPLAY, DOCUMENT_TYPE_DISPLAY } from '@manuraj/domain';
 import { api, formatDate } from '@manuraj/shared-utils';
 

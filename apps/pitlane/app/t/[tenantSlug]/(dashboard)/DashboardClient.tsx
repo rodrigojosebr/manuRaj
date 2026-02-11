@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { css } from '../../../../../../styled-system/css';
-import { Card, CardContent, CardHeader, CardTitle, Badge, getStatusBadgeVariant, getMachineStatusBadgeVariant } from '@manuraj/ui';
+import { Card, CardContent, CardHeader, CardTitle, Badge, getStatusBadgeVariant, getMachineStatusBadgeVariant } from '@pitkit';
 import type { SessionUser, MetricsResponse } from '@manuraj/domain';
 import { ROLE_DISPLAY_NAMES, WORK_ORDER_STATUS_DISPLAY, MACHINE_STATUS_DISPLAY } from '@manuraj/domain';
 import { formatRelativeTime } from '@manuraj/shared-utils';

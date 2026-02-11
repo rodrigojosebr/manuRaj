@@ -1,9 +1,11 @@
 # manuRaj - Documentação Completa do Projeto
 
 > Este arquivo é lido automaticamente pelo Claude Code para manter contexto entre sessões.
-> Última atualização: 04 de Fevereiro de 2026
+> Última atualização: 10 de Fevereiro de 2026
 >
 > 📎 **Guia de estilos**: Veja `STYLES.md` para paletas de cores, layouts e padrões visuais.
+> 🧰 **Design System**: Veja `PITKIT.md` para documentação completa do PitKit (Atomic Design).
+> 🏎️ **Torque**: Veja `TORQUE.md` para particularidades mobile-first do app operacional.
 
 ---
 
@@ -103,13 +105,27 @@ manuRaj/
 │   │   │   ├── page.tsx               # Redirect para login
 │   │   │   ├── login/page.tsx
 │   │   │   └── t/[tenantSlug]/        # Rotas do tenant
-│   │   │       ├── layout.tsx         # Bottom tab navigation
-│   │   │       └── page.tsx           # Home com stats (HARDCODED - TODO)
-│   │   │       # ⚠️ FALTAM (planejado mas não implementado):
-│   │   │       # ├── minhas-os/       # Lista de OS do usuário
-│   │   │       # ├── nova-solicitacao/ # Abrir nova solicitação
-│   │   │       # ├── maquinas/        # Consultar máquinas
-│   │   │       # └── config/          # Configurações
+│   │   │       ├── layout.tsx         # Server component (auth + tenant + ads config)
+│   │   │       ├── TorqueLayoutClient.tsx  # Client: sidebar colapsável, AdProvider/AdBanner
+│   │   │       ├── page.tsx           # Dashboard com stats reais (server component)
+│   │   │       ├── TorqueDashboardClient.tsx  # Client: render stats + actions
+│   │   │       ├── minhas-os/         # Lista de OS do usuário
+│   │   │       │   ├── page.tsx       # Server: auth + findAssignedToUser
+│   │   │       │   └── MinhasOsClient.tsx  # Client: tabs + cards
+│   │   │       ├── nova-solicitacao/  # Abrir nova solicitação
+│   │   │       │   ├── page.tsx       # Server: auth + fetch máquinas + serialize
+│   │   │       │   ├── NovaSolicitacaoClient.tsx  # Client: form + submit
+│   │   │       │   ├── actions.ts     # Server Action: validação + create
+│   │   │       │   └── page.styles.ts
+│   │   │       └── maquinas/          # Consultar máquinas (read-only)
+│   │   │           ├── page.tsx       # Server: auth + findByTenant
+│   │   │           ├── MaquinasClient.tsx  # Client: tabs + cards
+│   │   │           └── page.styles.ts
+│   │   │       └── config/             # Configurações do usuário
+│   │   │           ├── page.tsx       # Server: auth + fetch user + serialize
+│   │   │           ├── ConfigClient.tsx  # Client: perfil, forms, logout
+│   │   │           ├── actions.ts     # Server Actions: updateProfile + changePassword
+│   │   │           └── page.styles.ts
 │   │   ├── panda.config.ts
 │   │   ├── postcss.config.cjs
 │   │   └── next.config.js
@@ -118,7 +134,18 @@ manuRaj/
 │       ├── app/
 │       │   ├── layout.tsx
 │       │   ├── global.css
-│       │   └── page.tsx               # Homepage com hero, features, pricing
+│       │   ├── page.tsx               # Homepage (compõe seções)
+│       │   └── components/            # Componentes da landing
+│       │       ├── Header/            # Header fixo com menu hamburger
+│       │       ├── Hero/              # Seção hero com visual animado
+│       │       ├── SectionHeader/     # Tag + título + subtítulo de seção
+│       │       ├── StatCard/          # Card de estatística
+│       │       ├── FeatureCard/       # Card de feature
+│       │       ├── StepCard/          # Card de passo numerado
+│       │       ├── TestimonialCard/   # Card de depoimento
+│       │       ├── PricingCard/       # Card de pricing (com variants)
+│       │       ├── FaqItem/           # Item de FAQ expansível
+│       │       └── Footer/            # Rodapé
 │       ├── panda.config.ts
 │       ├── postcss.config.cjs
 │       └── next.config.js
@@ -155,17 +182,18 @@ manuRaj/
 │   │       ├── auth.ts                # Config completa (Node.js)
 │   │       └── index.ts
 │   │
-│   ├── pitkit/                        # 🧰 PitKit - Design System próprio
+│   ├── pitkit/                        # 🧰 PitKit - Design System (Atomic Design)
 │   │   └── src/
-│   │       ├── Button.tsx
-│   │       ├── Input.tsx
-│   │       ├── Select.tsx
-│   │       ├── Card.tsx
-│   │       ├── Badge.tsx
-│   │       ├── Table.tsx
-│   │       ├── Modal.tsx
-│   │       ├── Skeleton.tsx
-│   │       └── index.ts
+│   │       ├── atoms/                 # Elementos indivisíveis
+│   │       │   ├── Button.tsx, Badge.tsx, Heading.tsx, Text.tsx, Icon.tsx
+│   │       │   ├── Label.tsx, HelperText.tsx, Spinner.tsx, Skeleton.tsx
+│   │       │   └── InputBase.tsx, SelectBase.tsx, TextareaBase.tsx
+│   │       ├── molecules/             # Combinação de átomos
+│   │       │   ├── Field.tsx          # Label + children + HelperText
+│   │       │   └── TextField.tsx, SelectField.tsx, TextareaField.tsx
+│   │       ├── organisms/             # Componentes complexos
+│   │       │   └── Card.tsx, Table.tsx, Modal.tsx
+│   │       └── index.ts               # Re-exports + aliases
 │   │
 │   ├── shared-utils/                  # Utilitários compartilhados
 │   │   └── src/
@@ -202,42 +230,93 @@ manuRaj/
 
 ---
 
-## 4. Design System - PitKit (@manuraj/pitkit)
+## 4. Design System - PitKit (@pitkit)
 
-### Filosofia
-- **Componentes 100% próprios** - SEM Bootstrap, MaterialUI ou similares
-- **PandaCSS + CVA** - Variants tipadas com Class Variance Authority
-- **Design Tokens** - Cores, fontes e espaçamentos centralizados
-- **PitKit obrigatório em TODOS os apps** - Pitlane, Torque e Showroom DEVEM usar componentes PitKit (`<Button>`, `<Input>`, `<Select>`, etc.) em vez de elementos HTML nativos (`<button>`, `<input>`, `<select>`). Se o componente necessário não existir no PitKit, **crie-o primeiro** em `libs/pitkit/src/` antes de usar na página. Isso garante consistência visual e facilita evolução do design system.
+> 📖 **Documentação completa**: Veja `PITKIT.md` para catálogo detalhado com exemplos de código.
+
+### Filosofia (Atomic Design)
+
+O PitKit segue **Atomic Design** - metodologia que organiza componentes em níveis de complexidade:
+
+| Nível | Pasta | Descrição |
+|-------|-------|-----------|
+| **Atoms** | `atoms/` | Elementos indivisíveis (Button, InputBase, Label, Badge) |
+| **Molecules** | `molecules/` | Combinação de átomos (Field, TextField, SelectField) |
+| **Organisms** | `organisms/` | Componentes complexos (Card, Table, Modal) |
+
+### Regras
+- **PitKit obrigatório** - NUNCA usar `<button>`, `<input>`, `<select>` HTML diretamente
+- **Sem libs externas** - NADA de Bootstrap, MaterialUI, Tailwind, styled-components
+- **PandaCSS + CVA** - Toda estilização via `css()` e `cva()` com design tokens
+- **Genérico > Específico** - Se o componente não existir, crie no PitKit antes de usar
 
 ### Componentes Disponíveis
 
+#### Atoms (Átomos)
 | Componente | Props/Variants | Descrição |
 |------------|----------------|-----------|
-| `Button` | `variant`: primary, secondary, danger, ghost, link<br>`size`: sm, md, lg<br>`fullWidth`, `isLoading` | Botão com loading spinner |
-| `Input` | `label`, `error`, `helperText`, `type` | Campo de entrada |
-| `Select` | `label`, `options`, `error` | Dropdown nativo estilizado |
+| `Button` | `variant`, `size`, `fullWidth`, `isLoading` | Botão com spinner |
+| `Badge` | `variant`: default, success, warning, danger, info | Tag de status |
+| `Heading` | `as`: h1-h6, `color` | Títulos |
+| `Text` | `as`, `size`, `color`, `weight` | Parágrafos |
+| `Icon` | `emoji`, `size`, `variant`, `bg` | Wrapper para emojis/svg |
+| `Label` | `size`, `required` | Label de formulário |
+| `HelperText` | `variant`: default, error, success | Texto de ajuda/erro |
+| `InputBase` | `size`, `state` | Input puro (sem label) |
+| `SelectBase` | `size`, `state`, `children` | Select puro (sem label) |
+| `TextareaBase` | `size`, `state` | Textarea puro (sem label) |
+| `Spinner` | `size` | Loading spinner |
+| `Skeleton` | - | Loading placeholder |
+
+#### Molecules (Moléculas)
+| Componente | Props | Descrição |
+|------------|-------|-----------|
+| `Field` | `label`, `error`, `helperText`, `required`, `children` | Wrapper: Label + input + helper |
+| `TextField` | `label`, `error`, `helperText`, `type`, etc. | Field + InputBase (convenience) |
+| `SelectField` | `label`, `options`, `placeholder`, `error` | Field + SelectBase + options |
+| `TextareaField` | `label`, `error`, `helperText`, `rows` | Field + TextareaBase |
+
+#### Organisms (Organismos)
+| Componente | Props | Descrição |
+|------------|-------|-----------|
 | `Card` | `padding`: none, sm, md, lg | Container com sombra |
 | `CardHeader`, `CardContent`, `CardFooter` | - | Composição do Card |
-| `Badge` | `variant`: default, success, warning, danger, info | Tag de status |
 | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell` | - | Tabela completa |
-| `TableEmpty` | `colSpan`, `message` | Estado vazio da tabela |
-| `Modal` | `isOpen`, `onClose`, `title`, `size`: sm, md, lg, xl | Dialog modal |
-| `Skeleton`, `SkeletonText`, `SkeletonTable` | - | Loading placeholders |
+| `TableEmpty` | `colSpan`, `message` | Estado vazio |
+| `Modal` | `isOpen`, `onClose`, `title`, `size` | Dialog modal |
+
+### Uso Recomendado
+
+```tsx
+// Abordagem atômica (máximo controle)
+import { Field, InputBase } from '@pitkit';
+
+<Field label="Email" error={errors.email} required>
+  <InputBase type="email" placeholder="Digite..." />
+</Field>
+
+// Abordagem conveniente (menos código)
+import { TextField, SelectField } from '@pitkit';
+
+<TextField label="Email" error={errors.email} required type="email" />
+<SelectField label="Cargo" options={roles} placeholder="Selecione..." />
+```
+
+### Compatibilidade
+
+Para código legado, `Input` e `Select` continuam funcionando (são aliases para `TextField` e `SelectField`).
 
 ### Padrão para Criar Novos Componentes
 
 ```tsx
-// libs/pitkit/src/NovoComponente.tsx
+// libs/pitkit/src/atoms/NovoAtomo.tsx
 'use client';
 
 import { forwardRef } from 'react';
-import { css, cva } from '../../../styled-system/css';
+import { cva } from '../../../../styled-system/css';
 
-// 1. Definir estilos com CVA
-const componentStyles = cva({
+const styles = cva({
   base: {
-    // Estilos base que sempre aplicam
     display: 'flex',
     borderRadius: 'md',
   },
@@ -266,7 +345,7 @@ const componentStyles = cva({
 });
 
 // 2. Definir interface de props
-interface NovoComponenteProps {
+export interface NovoAtomoProps {
   variant?: 'primary' | 'secondary';
   size?: 'sm' | 'md' | 'lg';
   children: React.ReactNode;
@@ -274,12 +353,12 @@ interface NovoComponenteProps {
 }
 
 // 3. Criar componente com forwardRef
-export const NovoComponente = forwardRef<HTMLDivElement, NovoComponenteProps>(
+export const NovoAtomo = forwardRef<HTMLDivElement, NovoAtomoProps>(
   ({ variant, size, children, className, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={`${componentStyles({ variant, size })} ${className || ''}`}
+        className={`${styles({ variant, size })} ${className || ''}`}
         {...props}
       >
         {children}
@@ -288,10 +367,10 @@ export const NovoComponente = forwardRef<HTMLDivElement, NovoComponenteProps>(
   }
 );
 
-NovoComponente.displayName = 'NovoComponente';
+NovoAtomo.displayName = 'NovoAtomo';
 ```
 
-**Depois exportar em `libs/pitkit/src/index.ts`:**
+**Depois exportar em `libs/pitkit/src/atoms/index.ts`:**
 ```tsx
 export * from './NovoComponente';
 ```
@@ -720,6 +799,15 @@ import { AdProvider, AdBanner, AdRail, AdInFeed, AdPlaceholder } from '@manuraj/
 - Se `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID` estiver vazio, mostra placeholders
 - Lazy loading com IntersectionObserver
 - Respeita `tenant.adsEnabled` para mostrar/ocultar
+- **Ads apenas no Pitlane e Torque** - Showroom NUNCA terá anúncios
+
+### Estratégia de Monetização
+- **Fase 1**: Free com anúncios (AdSense) no Pitlane e Torque
+- **Fase 2**: Modelo por máquina
+  - Até 30 máquinas: grátis (com ads)
+  - 31-100 máquinas: R$1,00/máquina/mês (sem ads)
+  - 100+ máquinas: R$0,80/máquina/mês (sem ads)
+- Campos `tenant.plan` e `tenant.adsEnabled` já suportam essa lógica
 
 ---
 
@@ -802,31 +890,95 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 // 2. Libs internas (@manuraj/*)
-import { Button, Card } from '@manuraj/pitkit';
+import { Button, Card } from '@pitkit';
 import { WorkOrder, hasPermission, PERMISSIONS } from '@manuraj/domain';
 import { api, formatDate } from '@manuraj/shared-utils';
 
-// 3. Styled-system
+// 3. Styled-system (apenas em page.styles.ts)
 import { css } from '../../../styled-system/css';
 
-// 4. Relativos locais
+// 4. Estilos da página
+import * as S from './page.styles';
+
+// 5. Relativos locais
 import { MyLocalComponent } from './MyLocalComponent';
 ```
 
 ### Estilização
 
-```tsx
-// Estilos pontuais - usar css()
-<div className={css({ display: 'flex', gap: '4', padding: '6' })}>
+#### Padrão de Separação de Estilos (`page.styles.ts`)
 
-// Componentes com variants - criar na @manuraj/pitkit com cva()
+**Obrigatório para todas as páginas.** Cada página deve ter um arquivo de estilos co-localizado:
+
+```
+app/
+├── page.tsx              # Estrutura, lógica, dados
+├── page.styles.ts        # Todos os estilos da página
+├── login/
+│   ├── page.tsx
+│   └── page.styles.ts
+```
+
+**Import padrão:**
+```tsx
+// page.tsx
+import * as S from './page.styles';
+
+// Uso:
+<header className={S.header}>
+  <div className={S.headerInner}>
+```
+
+**Estilos estáticos** — exportar como constante:
+```ts
+// page.styles.ts
+import { css } from '../../../../styled-system/css';
+
+export const header = css({
+  position: 'fixed',
+  top: 0,
+  width: '100%',
+  zIndex: 50,
+});
+```
+
+**Estilos dinâmicos (com estado/parâmetro)** — exportar como função:
+```ts
+export const faqItem = (isOpen: boolean) => css({
+  backgroundColor: isOpen ? '#f8fafc' : 'white',
+  borderColor: isOpen ? 'brand.200' : '#e2e8f0',
+});
+
+export const pricingCard = (highlighted?: boolean) => css({
+  border: highlighted ? '2px solid' : '1px solid',
+  borderColor: highlighted ? 'brand.500' : '#e2e8f0',
+});
+```
+
+**Uso de estilos dinâmicos no componente:**
+```tsx
+<div className={S.faqItem(isOpen)}>
+<div className={S.pricingCard(plan.highlighted)}>
+```
+
+**Regras:**
+- Página (`page.tsx`) fica limpa — só estrutura, lógica e dados
+- Todos os `css()` vão para `page.styles.ts` — **nunca inline na página**
+- Componentes PitKit com variants continuam usando `cva()` em `libs/pitkit/src/`
+- Dados/arrays constantes (NAV_LINKS, FEATURES, etc.) ficam no `page.tsx`, não no styles
+
+#### Regras Gerais
+
+```tsx
+// Componentes com variants - criar na @pitkit com cva()
 
 // NUNCA usar:
 // - CSS modules
 // - Tailwind classes
 // - styled-components
-// - Inline styles (style={})
+// - Inline styles (style={}) — exceto para propriedades não suportadas pelo PandaCSS (ex: WebkitBackgroundClip)
 // - Elementos HTML nativos (button, input, select) quando existir equivalente PitKit
+// - css() inline diretamente no JSX da página (usar page.styles.ts)
 ```
 
 ---
@@ -945,116 +1097,62 @@ npm run test                                       # Watch mode
 
 ---
 
-## 19. Pendências Conhecidas
+## 19. Roadmap
 
-### Torque (Prioridade Alta - app 70% incompleto)
-- [ ] `/minhas-os` - Lista de ordens do técnico (não existe)
-- [ ] `/nova-solicitacao` - Criar solicitação (não existe)
-- [ ] `/maquinas` - Consultar máquinas (não existe)
-- [ ] Dashboard com dados reais (hoje hardcoded com TODO no código)
-- [ ] Pode consumir as mesmas APIs do Pitlane (`/api/*` já prontas)
+### Prioridade Alta — Torque (~85% funcional, todas as páginas implementadas)
+1. [x] `/nova-solicitacao` — Formulário para abrir solicitação (Server Action)
+2. [x] `/maquinas` — Consulta de máquinas em campo (repository direto, read-only)
+3. [x] `/config` — Configurações do usuário (perfil, senha, logout)
 
-### Showroom (Prioridade Média - landing page básica)
-- [ ] Formulário de contato/lead capture (rota `/contact` referenciada mas não existe)
-- [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
-- [ ] FAQ e depoimentos
+### Prioridade Média — Showroom (~30% → apresentável)
+4. [ ] Formulário de contato/lead capture
+5. [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
 
-### Pitlane (Funcionalidades adicionais)
-- [ ] Dashboard com gráficos/métricas visuais (hoje só números)
-- [ ] Notificações real-time (quando OS é atribuída/alterada)
-- [ ] Exportação de relatórios (PDF/Excel)
-- [ ] Histórico de alterações (audit log)
-- [ ] Ajustes de padding/spacing em algumas telas
+### Prioridade Média — Pitlane (melhorias)
+6. [ ] Dashboard com gráficos visuais (hoje só números)
+7. [ ] Notificações (quando OS é atribuída/alterada)
+8. [ ] Exportação de relatórios (PDF/Excel)
 
 ### Técnico
-- [ ] Expandir cobertura de testes (auth guards, repositories)
-- [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
-- [ ] Email transacional (confirmação de signup, notificações)
-- [ ] Rate limiting nos endpoints públicos
-- [ ] Internacionalização (i18n) - futuro
+9. [ ] Testes de auth guards (requireAuth, requirePermission — com mocks)
+10. [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
 
 ---
 
-## 20. Estado da Sessão (Última Atualização: 04 Fevereiro 2026)
-
-### O que está funcionando
-1. ✅ Estrutura multi-app criada (Pitlane, Torque, Showroom)
-2. ✅ Renaming completo do universo F1 (libs/ui → libs/pitkit, apps/web → apps/pitlane)
-3. ✅ PandaCSS configurado e funcionando em todos os apps
-4. ✅ MongoDB Atlas configurado e conectado
-5. ✅ Seed executado com dados demo (6 users, 7 machines, 7 WOs, 5 plans)
-6. ✅ Login funcionando contra Atlas (NextAuth + Credentials)
-7. ✅ 175 testes unitários escritos e passando (~1s)
-8. ✅ Todos os erros TypeScript corrigidos (0 erros nos 3 apps)
-9. ✅ Documentação completa (CLAUDE.md + UNIVERSE.md + STYLES.md)
-10. ✅ nx.json configurado com sync.applyChanges: true
-11. ✅ vitest.config.ts com path aliases para todos os @manuraj/* packages
-12. ✅ Testes de integração separados do run padrão
-13. ✅ Paletas de cores diferenciadas (Pitlane=azul, Torque=verde esmeralda)
-14. ✅ Títulos das abas identificando cada app
-15. ✅ Login pages com layout split-screen padronizado (ambos os apps)
-16. ✅ Correções de segurança aplicadas (open redirect, passwordHash, query params, tenant isolation)
-17. ✅ Next.js atualizado para 16.1.6
-18. ✅ Build scripts corrigidos (bypass de bug NX com `next build` direto)
-19. ✅ global-error.tsx criado para os 3 apps
-20. ✅ 3 builds passando sem erros (Pitlane, Torque, Showroom)
+## 20. Estado da Sessão (Última Atualização: 10 Fevereiro 2026)
 
 ### Status por app
 | App | Páginas | API Routes | Completude |
 |-----|---------|------------|------------|
 | **Pitlane** (admin) | 12 páginas | 17 endpoints | ~85% funcional |
-| **Torque** (campo) | 3 páginas (login + redirect + dashboard hardcoded) | 0 (usa Pitlane) | ~20% stub |
+| **Torque** (campo) | 7 páginas (login + redirect + dashboard + minhas-os + nova-solicitacao + maquinas + config) | 0 (usa repos direto + server actions) | ~85% |
 | **Showroom** (landing) | 1 página (landing estática) | 0 | ~30% |
 
-### Correções de segurança aplicadas
-- Open redirect no callbackUrl (validação `startsWith('/') && !startsWith('//')`)
-- Stripping de passwordHash na resposta do PUT /users/:id
-- Validação de query params (role, status) com Zod schemas
-- Tenant isolation no `advanceNextDueDate` (findOneAndUpdate com tenantId)
-- Remoção de fallback localhost na conexão MongoDB
-- Remoção de logging de hash parcial no check-db.ts
+### Infraestrutura consolidada
+- 3 builds passando (Pitlane, Torque, Showroom) — 0 erros TypeScript
+- 175 testes unitários passando (~1s)
+- MongoDB Atlas conectado — seed com 6 users, 7 machines, 7 WOs, 5 plans
+- NextAuth + Credentials + JWT funcionando
+- PandaCSS com spacing tokens semânticos (`page`, `section`, `card-padding`, `card-gap`, `field-gap`)
+- Torque usa Server Actions (não API routes) para mutations — padrão `actions.ts` com `'use server'`
+- PitKit Card refatorado com `cva()` + variants: `default`, `elevated`, `outlined`, `filled` + `colorScheme`, `interactive`, `borderPosition`
+- Torque layout: sidebar colapsável (64px colapsada / 240px expandida) — substitui header fixo + bottom nav
+- Dashboard Torque rico: 5 seções (saudação + role, stats 4 cards, OS recentes, manutenções programadas, ações rápidas)
+- Minhas OS usa `Card variant="outlined" borderPosition="left"` para borda lateral por status
 
-### Correções TypeScript aplicadas
-- `React.FormEvent` → `React.FormEvent<HTMLFormElement>` (10 arquivos)
-- `tsconfig.json` do pitlane: adicionado `../../libs/**/*.ts` no include
-- `machine.model.ts`: conflito `model` (string vs método Mongoose) resolvido via Omit
-- `auth.config.ts`: `user.id!` assertion + `emailVerified: null`
-- `api.post` sem body → adicionado `{}`
-- Imports não usados removidos (Link, useParams)
-- Badge `size="sm"` removido (prop inexistente)
-
-### Próximos passos sugeridos (por prioridade)
-1. **Completar o Torque** (prioridade alta) - minhas-os, nova-solicitacao, maquinas, dados reais no dashboard
-2. Implementar testes de auth guards (requireAuth, requirePermission - com mocks)
-3. Expandir funcionalidades do Showroom (contato, signup flow)
-4. Dashboard Pitlane com gráficos visuais
-5. Implementar testes de repositories (com MongoDB Atlas)
-6. Testes de componentes PitKit (precisa @testing-library/react)
-
-### Dados de teste no MongoDB Atlas
+### Dados de teste
 
 ```
-Cluster: manuraj.d1mhwdn.mongodb.net
-Database: manuraj
-
-Tenant: demo (slug: "demo")
-Usuários (senha: demo1234):
-  - admin@demo.com       → Supervisor Geral
-  - supervisor@demo.com  → Supervisor Manutenção
-  - joao@demo.com        → Manutentor
-  - pedro@demo.com       → Manutentor
-  - maria@demo.com       → Operador
-  - lucas@demo.com       → Operador
+Tenant: demo (slug: "demo") — senha: demo1234
+  admin@demo.com (Supervisor Geral) | supervisor@demo.com (Sup. Manutenção)
+  joao@demo.com (Manutentor) | pedro@demo.com (Manutentor)
+  maria@demo.com (Operador) | lucas@demo.com (Operador)
 ```
 
-### APIs disponíveis para o Torque consumir
-O Torque pode consumir todas as APIs já prontas no Pitlane:
-- `GET /api/work-orders` (com filtro por assignedTo para "minhas OS")
-- `POST /api/work-orders` (criar solicitação)
-- `POST /api/work-orders/[id]/start` (iniciar OS)
-- `POST /api/work-orders/[id]/finish` (finalizar OS)
-- `GET /api/machines` (listar máquinas)
-- `GET /api/metrics` (dashboard stats)
+### APIs e padrões disponíveis para o Torque
+- **Leitura (server components)**: repositories direto (`workOrderRepository`, `machineRepository`, `preventivePlanRepository`)
+- **Escrita (server actions)**: `actions.ts` com `'use server'` — valida Zod, check RBAC, chama repository
+- **APIs Pitlane (alternativa)**: `POST /api/work-orders/[id]/start` | `finish`
 
 ---
 

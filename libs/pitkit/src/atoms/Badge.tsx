@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { cva } from '../../../styled-system/css';
+import { cva } from '../../../../styled-system/css';
 
 const badgeStyles = cva({
   base: {
