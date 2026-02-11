@@ -249,10 +249,11 @@ Todas as rotas exigem autenticacao e respeitam isolamento multi-tenant.
 
 | Arquivo | Conteudo |
 |---------|----------|
-| `CLAUDE.md` | Documentacao tecnica completa (tipos, schemas, padroes de codigo, troubleshooting) |
+| `CLAUDE.md` | Documentacao tecnica (regras, convencoes, estado atual, troubleshooting) |
+| `TORQUE.md` | App operacional mobile-first (sidebar, paginas, PWA, server actions) |
+| `PITKIT.md` | Catalogo do Design System (Atomic Design, componentes, exemplos de uso) |
+| `STYLES.md` | Guia de estilos (paletas, layouts, tipografia, spacing tokens) |
 | `UNIVERSE.md` | Narrativa de produto, metafora F1, visao de cada app |
-| `STYLES.md` | Guia de estilos (paletas, layouts, tipografia, componentes PitKit) |
-| `PITKIT.md` | Catalogo completo do Design System (Atomic Design, componentes, exemplos de uso) |
 | `.env.example` | Todas as variaveis de ambiente com explicacoes |
 
 ---

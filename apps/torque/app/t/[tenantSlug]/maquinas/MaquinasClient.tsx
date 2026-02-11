@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   Heading,
   Text,
@@ -106,7 +107,13 @@ export function MaquinasClient({ machines, tenantSlug }: MaquinasClientProps) {
       {filtered.length > 0 ? (
         <div className={S.cardList}>
           {filtered.map((m) => (
-            <MachineCard key={m._id} machine={m} />
+            <Link
+              key={m._id}
+              href={`/t/${tenantSlug}/maquinas/${m._id}`}
+              className={S.cardLink}
+            >
+              <MachineCard machine={m} />
+            </Link>
           ))}
         </div>
       ) : (

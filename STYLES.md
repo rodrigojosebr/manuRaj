@@ -2,7 +2,7 @@
 
 > Documento de referência para padrões visuais e de layout do projeto.
 > Consultado pelo Claude Code para manter consistência entre sessões.
-> Última atualização: 09 de Fevereiro de 2026
+> Última atualização: 11 de Fevereiro de 2026
 >
 > 🧰 **Catálogo completo de componentes**: Veja `PITKIT.md` para documentação detalhada do Design System.
 

@@ -110,6 +110,12 @@ export const woList = css({
   gap: 'card-gap',
 });
 
+export const woCardLink = css({
+  textDecoration: 'none',
+  color: 'inherit',
+  display: 'block',
+});
+
 export const woCard = (status: string) => {
   const colorMap: Record<string, string> = {
     assigned: 'brand.500',
@@ -126,6 +132,10 @@ export const woCard = (status: string) => {
     borderLeft: '4px solid',
     borderLeftColor: borderColor,
     boxShadow: 'sm',
+    cursor: 'pointer',
+    transition: 'box-shadow 0.2s, transform 0.1s',
+    _hover: { boxShadow: 'md' },
+    _active: { transform: 'scale(0.98)' },
   });
 };
 

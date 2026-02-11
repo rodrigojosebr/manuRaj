@@ -49,6 +49,12 @@ export const cardList = css({
   gap: 'card-gap',
 });
 
+export const cardLink = css({
+  textDecoration: 'none',
+  color: 'inherit',
+  display: 'block',
+});
+
 // ─── Machine Card (internal styles) ────────────────────────────────────────
 export const machineHeader = css({
   display: 'flex',

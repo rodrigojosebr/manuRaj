@@ -160,7 +160,13 @@ export function TorqueDashboardClient({
         {recentWorkOrders.length > 0 ? (
           <div className={S.woList}>
             {recentWorkOrders.map((wo) => (
-              <RecentWOCard key={wo._id} wo={wo} />
+              <Link
+                key={wo._id}
+                href={`${basePath}/minhas-os/${wo._id}`}
+                className={S.woCardLink}
+              >
+                <RecentWOCard wo={wo} />
+              </Link>
             ))}
           </div>
         ) : (

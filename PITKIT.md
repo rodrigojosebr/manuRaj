@@ -2,7 +2,7 @@
 
 > *"O kit de pit stop. O resto só corre porque ele existe."*
 >
-> Última atualização: 05 de Fevereiro de 2026
+> Última atualização: 11 de Fevereiro de 2026
 
 ---
 
@@ -238,6 +238,62 @@ import { Skeleton, SkeletonText, SkeletonTable } from '@pitkit';
 <Skeleton />           // Retângulo genérico
 <SkeletonText />       // Linhas de texto
 <SkeletonTable />      // Tabela fantasma
+```
+
+#### EmptyState
+```tsx
+import { EmptyState } from '@pitkit';
+
+<EmptyState
+  icon="📋"
+  title="Nenhuma OS encontrada"
+  description="Você não possui ordens de serviço atribuídas."
+  size="md"
+/>
+
+// Com ação
+<EmptyState
+  icon="⚙️"
+  title="Nenhuma máquina"
+  description="Nenhum equipamento cadastrado."
+  action={<Button>Cadastrar</Button>}
+  size="lg"
+/>
+```
+
+| Prop | Valores | Default | Descrição |
+|------|---------|---------|-----------|
+| `icon` | string (emoji) | - | Ícone acima do título |
+| `title` | string | - | Título principal (obrigatório) |
+| `description` | string | - | Texto explicativo |
+| `action` | ReactNode | - | Botão ou link de ação |
+| `size` | `sm`, `md`, `lg` | `md` | Tamanho (padding + font) |
+
+#### Badge Helper Functions
+
+Funções utilitárias exportadas junto com o Badge para mapear status/prioridade para variantes:
+
+```tsx
+import {
+  getStatusBadgeVariant,
+  getPriorityBadgeVariant,
+  getMachineStatusBadgeVariant,
+} from '@pitkit';
+
+// Work Order status → Badge variant
+getStatusBadgeVariant('in_progress')  // → 'warning'
+getStatusBadgeVariant('completed')    // → 'success'
+getStatusBadgeVariant('assigned')     // → 'info'
+
+// Priority → Badge variant
+getPriorityBadgeVariant('critical')   // → 'danger'
+getPriorityBadgeVariant('high')       // → 'warning'
+getPriorityBadgeVariant('medium')     // → 'default'
+
+// Machine status → Badge variant
+getMachineStatusBadgeVariant('operational')  // → 'success'
+getMachineStatusBadgeVariant('maintenance')  // → 'warning'
+getMachineStatusBadgeVariant('stopped')      // → 'danger'
 ```
 
 ---
@@ -579,28 +635,6 @@ const buttonStyles = cva({
 });
 ```
 
-### 6.2 Usando `styled()` (para componentes de página)
-
-```tsx
-import { styled } from '../../../../styled-system/jsx';
-
-const Card = styled('div', {
-  base: {
-    padding: '32px',
-    backgroundColor: 'white',
-    borderRadius: '16px',
-  },
-  variants: {
-    highlighted: {
-      true: { border: '2px solid', borderColor: 'brand.500' },
-      false: { border: '1px solid', borderColor: '#e2e8f0' },
-    },
-  },
-});
-
-// Uso: <Card highlighted={true}>...</Card>
-```
-
 ---
 
 ## 7. Checklist para Novos Componentes
@@ -625,8 +659,10 @@ import {
   TextField, SelectField, Field, InputBase,
   Card, CardHeader, CardContent, CardFooter,
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
-  Modal, Spinner, Skeleton
+  Modal, Spinner, Skeleton, EmptyState,
+  getStatusBadgeVariant, getPriorityBadgeVariant, getMachineStatusBadgeVariant,
 } from '@pitkit';
+import type { CardColorScheme, CardBorderPosition } from '@pitkit';
 ```
 
 ---

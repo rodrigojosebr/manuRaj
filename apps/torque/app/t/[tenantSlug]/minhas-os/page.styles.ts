@@ -50,6 +50,12 @@ export const cardList = css({
   gap: 'card-gap',
 });
 
+export const cardLink = css({
+  textDecoration: 'none',
+  color: 'inherit',
+  display: 'block',
+});
+
 // ─── Work Order Card ───────────────────────────────────────────────────────
 const borderColorMap: Record<string, string> = {
   open: '#3b82f6',       // blue-500

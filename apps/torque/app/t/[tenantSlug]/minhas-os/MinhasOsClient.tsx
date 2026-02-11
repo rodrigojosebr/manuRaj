@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   Heading,
   Text,
@@ -126,7 +127,13 @@ export function MinhasOsClient({ workOrders, tenantSlug }: MinhasOsClientProps) 
       {filtered.length > 0 ? (
         <div className={S.cardList}>
           {filtered.map((wo) => (
-            <WorkOrderCard key={wo._id} wo={wo} />
+            <Link
+              key={wo._id}
+              href={`/t/${tenantSlug}/minhas-os/${wo._id}`}
+              className={S.cardLink}
+            >
+              <WorkOrderCard wo={wo} />
+            </Link>
           ))}
         </div>
       ) : (

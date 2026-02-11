@@ -18,8 +18,10 @@ O Torque segue o padrão de split entre server components (dados) e client compo
 layout.tsx (server) ──────── auth + tenant fetch ──→ TorqueLayoutClient.tsx (client: nav, ads, logout)
 page.tsx   (server) ──────── stats do MongoDB   ──→ TorqueDashboardClient.tsx (client: render)
 minhas-os/page.tsx (server) ── OS do user       ──→ MinhasOsClient.tsx (client: tabs, cards, filtros)
+minhas-os/[id]/page.tsx (server) ── OS detail   ──→ WoDetailClient.tsx (client: info + start/finish actions)
 nova-solicitacao/page.tsx (server) ── máquinas  ──→ NovaSolicitacaoClient.tsx (client: form → server action)
 maquinas/page.tsx (server) ──────── máquinas   ──→ MaquinasClient.tsx (client: tabs, cards, filtros)
+maquinas/[id]/page.tsx (server) ── machine det  ──→ MachineDetailClient.tsx (client: info + OS recentes)
 config/page.tsx   (server) ──────── user data  ──→ ConfigClient.tsx (client: perfil, forms → server actions)
 ```
 
@@ -92,10 +94,14 @@ login/page.tsx                             → import * as S from './page.styles
 login/page.styles.ts                       → exports de css()
 minhas-os/MinhasOsClient.tsx               → import * as S from './page.styles'
 minhas-os/page.styles.ts                   → exports de css()
+minhas-os/[id]/WoDetailClient.tsx          → import * as S from './page.styles'
+minhas-os/[id]/page.styles.ts             → exports de css()
 nova-solicitacao/NovaSolicitacaoClient.tsx  → import * as S from './page.styles'
 nova-solicitacao/page.styles.ts            → exports de css()
 maquinas/MaquinasClient.tsx                → import * as S from './page.styles'
 maquinas/page.styles.ts                    → exports de css()
+maquinas/[id]/MachineDetailClient.tsx      → import * as S from './page.styles'
+maquinas/[id]/page.styles.ts              → exports de css()
 config/ConfigClient.tsx                    → import * as S from './page.styles'
 config/page.styles.ts                      → exports de css()
 ```
@@ -152,10 +158,11 @@ Arquitetura:
 
 **Tabs**: Todas | Atribuídas | Em Andamento | Concluídas (filtro client-side)
 
-**Card de OS** usa `<Card variant="outlined" colorScheme={status} borderPosition="left">`:
-- Borda esquerda 4px colorida por status (via `getCardColorScheme` + Card PitKit)
-- OS vencidas: `colorScheme="danger"` overrides
-- Conteúdo interno: máquina (🔧), descrição (80 chars), badges, prazo, status bar
+**Card de OS** usa `div` com `css()` estilizado (borda esquerda dinâmica via `S.card(status)`):
+- Borda esquerda 4px colorida por status: assigned→brand, in_progress→warning, completed→success, open→blue
+- OS vencidas: borda vermelha via `S.cardOverdue`
+- Conteúdo interno: máquina (🔧), descrição (80 chars), badges (tipo + prioridade), prazo, status bar
+- Cards clicáveis via `<Link>` → `/minhas-os/[id]`
 
 **Componentes PitKit usados**: `Heading`, `Text`, `Badge`, `Card`, `getPriorityBadgeVariant`, `EmptyState`
 **Formatadores**: `formatDate`, `formatMinutes`, `isOverdue`, `truncate`
@@ -167,16 +174,20 @@ Arquitetura:
 
 ### Leitura (server components → repositories direto)
 - `workOrderRepository.findAssignedToUser()` — lista de OS + OS recentes do dashboard
+- `workOrderRepository.findById()` — detalhe de OS (`/minhas-os/[id]`)
+- `workOrderRepository.findByTenant({ machineId })` — OS de uma máquina (`/maquinas/[id]`)
 - `workOrderRepository.countAssignedByStatus()` — stats do dashboard
 - `workOrderRepository.countOverdueByAssignee()` — OS vencidas
 - `workOrderRepository.countCompletedThisMonth()` — concluídas no mês
 - `machineRepository.findByTenant()` — lista de máquinas
+- `machineRepository.findById()` — detalhe de máquina (`/maquinas/[id]`)
 - `machineRepository.countByTenant()` — total de máquinas (dashboard)
 
 ### Escrita (client → server actions)
 O Torque usa **Server Actions** (`'use server'`) para mutations, evitando duplicar API routes do Pitlane:
 - `nova-solicitacao/actions.ts` → `createWorkOrderAction()` — cria OS tipo `request`
 - `config/actions.ts` → `updateProfileAction()` — edita nome/email + `changePasswordAction()` — troca senha
+- `minhas-os/[id]/actions.ts` → `startWorkOrderAction()` — inicia OS (status → in_progress) + `finishWorkOrderAction()` — finaliza OS (status → completed, timeSpentMin, notes)
 
 Padrão de um server action no Torque:
 1. `auth()` — verifica sessão
@@ -184,10 +195,6 @@ Padrão de um server action no Torque:
 3. `schema.safeParse()` — valida input com Zod
 4. `repository.method()` — executa no banco
 5. Retorna `{ success: true }` ou `{ success: false, error: string }`
-
-### APIs do Pitlane (alternativa para ações futuras)
-- `POST /api/work-orders/[id]/start` (iniciar OS)
-- `POST /api/work-orders/[id]/finish` (finalizar OS)
 
 ---
 
@@ -223,6 +230,33 @@ Arquitetura:
 
 ---
 
+## Página /minhas-os/[id] (Detalhe de OS)
+
+Arquitetura:
+- `page.tsx` (server): auth → `workOrderRepository.findById(tenantId, id)` → redirect se não encontrada → serializa (incluindo machine, assignedTo, partsUsed) → props
+- `WoDetailClient.tsx` (client): info completa da OS + ações de iniciar/finalizar
+- `actions.ts` (server actions): `startWorkOrderAction()` + `finishWorkOrderAction()`
+- `page.styles.ts`: estilos extraídos (padrão Torque)
+
+**Layout:**
+1. **Voltar** — Link ← para `/minhas-os`
+2. **Header** — Máquina (nome + código) + badges (status, tipo, prioridade, vencida)
+3. **Descrição** — Texto completo da OS
+4. **Informações** — Grid com ícones: localização, prazo, atribuído a, criada em, iniciada em
+5. **Resultado** (se completed) — Data conclusão, tempo gasto, notas
+6. **Ações** — Botão "Iniciar OS" (se assigned/open) ou "Finalizar OS" (se in_progress, com form de tempo + notas)
+
+**Permissões**: `WORK_ORDERS_START` para iniciar, `WORK_ORDERS_FINISH` para finalizar
+**Componentes PitKit**: `Badge`, `Button`, `TextField`, `TextareaField`, `getStatusBadgeVariant`, `getPriorityBadgeVariant`
+**Formatadores**: `formatDate`, `formatMinutes`, `daysUntil`, `isOverdue`
+
+**Navegação para detalhe:**
+- Dashboard → OS Recentes (cards clicáveis com Link)
+- /minhas-os → cards clicáveis com Link
+- /maquinas/[id] → OS recentes da máquina (cards clicáveis com Link)
+
+---
+
 ## Página /maquinas (Consulta de Máquinas)
 
 Arquitetura:
@@ -239,6 +273,27 @@ Arquitetura:
 
 **Componentes PitKit usados**: `Heading`, `Text`, `Badge`, `Card`, `getMachineStatusBadgeVariant`, `EmptyState`
 **Display names**: `MACHINE_STATUS_DISPLAY`
+
+---
+
+## Página /maquinas/[id] (Detalhe de Máquina)
+
+Arquitetura:
+- `page.tsx` (server): auth → `machineRepository.findById(tenantId, id)` → redirect se não encontrada → `workOrderRepository.findByTenant(tenantId, { machineId, limit: 5 })` → serializa → props
+- `MachineDetailClient.tsx` (client): info completa da máquina + OS recentes clicáveis
+- `page.styles.ts`: estilos extraídos (padrão Torque)
+
+**Layout:**
+1. **Voltar** — Link ← para `/maquinas`
+2. **Header** — Nome da máquina + badges (código, status)
+3. **Informações** — Grid com ícones: localização (📍), fabricante (🏭), modelo (📐), serial (🔢)
+4. **OS Recentes** — Últimas 5 OS da máquina, cards clicáveis → `/minhas-os/[id]` (borda esquerda por status)
+
+**Navegação para detalhe:** /maquinas → cards clicáveis com Link
+
+**Componentes PitKit**: `Badge`, `getMachineStatusBadgeVariant`, `getStatusBadgeVariant`, `getPriorityBadgeVariant`
+**Display names**: `MACHINE_STATUS_DISPLAY`, `WORK_ORDER_STATUS_DISPLAY`, `WORK_ORDER_PRIORITY_DISPLAY`
+**Formatadores**: `truncate`, `formatDate`
 
 ---
 
@@ -276,7 +331,9 @@ Arquitetura:
 |------|--------|-----------|
 | `/login` | ✅ Implementado | Login com tenant + email + senha |
 | `/t/[slug]` | ✅ Implementado | Dashboard com stats reais |
-| `/t/[slug]/minhas-os` | ✅ Implementado | Lista de OS com tabs e cards |
+| `/t/[slug]/minhas-os` | ✅ Implementado | Lista de OS com tabs e cards clicáveis |
+| `/t/[slug]/minhas-os/[id]` | ✅ Implementado | Detalhe da OS: info completa + iniciar/finalizar |
 | `/t/[slug]/nova-solicitacao` | ✅ Implementado | Formulário para abrir solicitação |
-| `/t/[slug]/maquinas` | ✅ Implementado | Consultar máquinas (read-only, filtro por status) |
+| `/t/[slug]/maquinas` | ✅ Implementado | Consultar máquinas (cards clicáveis, filtro por status) |
+| `/t/[slug]/maquinas/[id]` | ✅ Implementado | Detalhe da máquina: info + OS recentes |
 | `/t/[slug]/config` | ✅ Implementado | Configurações: perfil, senha, logout |
