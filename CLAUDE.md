@@ -106,20 +106,26 @@ manuRaj/
 │   │   │   ├── login/page.tsx
 │   │   │   └── t/[tenantSlug]/        # Rotas do tenant
 │   │   │       ├── layout.tsx         # Server component (auth + tenant + ads config)
-│   │   │       ├── TorqueLayoutClient.tsx  # Client: header, bottom nav, AdProvider/AdBanner
+│   │   │       ├── TorqueLayoutClient.tsx  # Client: sidebar colapsável, AdProvider/AdBanner
 │   │   │       ├── page.tsx           # Dashboard com stats reais (server component)
 │   │   │       ├── TorqueDashboardClient.tsx  # Client: render stats + actions
 │   │   │       ├── minhas-os/         # Lista de OS do usuário
 │   │   │       │   ├── page.tsx       # Server: auth + findAssignedToUser
 │   │   │       │   └── MinhasOsClient.tsx  # Client: tabs + cards
-│   │   │       └── nova-solicitacao/  # Abrir nova solicitação
-│   │   │           ├── page.tsx       # Server: auth + fetch máquinas + serialize
-│   │   │           ├── NovaSolicitacaoClient.tsx  # Client: form + submit
-│   │   │           ├── actions.ts     # Server Action: validação + create
+│   │   │       ├── nova-solicitacao/  # Abrir nova solicitação
+│   │   │       │   ├── page.tsx       # Server: auth + fetch máquinas + serialize
+│   │   │       │   ├── NovaSolicitacaoClient.tsx  # Client: form + submit
+│   │   │       │   ├── actions.ts     # Server Action: validação + create
+│   │   │       │   └── page.styles.ts
+│   │   │       └── maquinas/          # Consultar máquinas (read-only)
+│   │   │           ├── page.tsx       # Server: auth + findByTenant
+│   │   │           ├── MaquinasClient.tsx  # Client: tabs + cards
 │   │   │           └── page.styles.ts
-│   │   │       # ⚠️ PENDENTES:
-│   │   │       # ├── maquinas/        # Consultar máquinas
-│   │   │       # └── config/          # Configurações
+│   │   │       └── config/             # Configurações do usuário
+│   │   │           ├── page.tsx       # Server: auth + fetch user + serialize
+│   │   │           ├── ConfigClient.tsx  # Client: perfil, forms, logout
+│   │   │           ├── actions.ts     # Server Actions: updateProfile + changePassword
+│   │   │           └── page.styles.ts
 │   │   ├── panda.config.ts
 │   │   ├── postcss.config.cjs
 │   │   └── next.config.js
@@ -1093,10 +1099,10 @@ npm run test                                       # Watch mode
 
 ## 19. Roadmap
 
-### Prioridade Alta — Completar o Torque (~65% → funcional)
+### Prioridade Alta — Torque (~85% funcional, todas as páginas implementadas)
 1. [x] `/nova-solicitacao` — Formulário para abrir solicitação (Server Action)
-2. [ ] `/maquinas` — Consulta de máquinas em campo (repository direto)
-3. [ ] `/config` — Configurações do usuário
+2. [x] `/maquinas` — Consulta de máquinas em campo (repository direto, read-only)
+3. [x] `/config` — Configurações do usuário (perfil, senha, logout)
 
 ### Prioridade Média — Showroom (~30% → apresentável)
 4. [ ] Formulário de contato/lead capture
@@ -1119,7 +1125,7 @@ npm run test                                       # Watch mode
 | App | Páginas | API Routes | Completude |
 |-----|---------|------------|------------|
 | **Pitlane** (admin) | 12 páginas | 17 endpoints | ~85% funcional |
-| **Torque** (campo) | 5 páginas (login + redirect + dashboard + minhas-os + nova-solicitacao) | 0 (usa repos direto + server actions) | ~65% |
+| **Torque** (campo) | 7 páginas (login + redirect + dashboard + minhas-os + nova-solicitacao + maquinas + config) | 0 (usa repos direto + server actions) | ~85% |
 | **Showroom** (landing) | 1 página (landing estática) | 0 | ~30% |
 
 ### Infraestrutura consolidada
@@ -1129,6 +1135,10 @@ npm run test                                       # Watch mode
 - NextAuth + Credentials + JWT funcionando
 - PandaCSS com spacing tokens semânticos (`page`, `section`, `card-padding`, `card-gap`, `field-gap`)
 - Torque usa Server Actions (não API routes) para mutations — padrão `actions.ts` com `'use server'`
+- PitKit Card refatorado com `cva()` + variants: `default`, `elevated`, `outlined`, `filled` + `colorScheme`, `interactive`, `borderPosition`
+- Torque layout: sidebar colapsável (64px colapsada / 240px expandida) — substitui header fixo + bottom nav
+- Dashboard Torque rico: 5 seções (saudação + role, stats 4 cards, OS recentes, manutenções programadas, ações rápidas)
+- Minhas OS usa `Card variant="outlined" borderPosition="left"` para borda lateral por status
 
 ### Dados de teste
 
@@ -1140,7 +1150,7 @@ Tenant: demo (slug: "demo") — senha: demo1234
 ```
 
 ### APIs e padrões disponíveis para o Torque
-- **Leitura (server components)**: repositories direto (`workOrderRepository`, `machineRepository`)
+- **Leitura (server components)**: repositories direto (`workOrderRepository`, `machineRepository`, `preventivePlanRepository`)
 - **Escrita (server actions)**: `actions.ts` com `'use server'` — valida Zod, check RBAC, chama repository
 - **APIs Pitlane (alternativa)**: `POST /api/work-orders/[id]/start` | `finish`
 

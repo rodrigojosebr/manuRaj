@@ -333,7 +333,9 @@ import { TextareaField } from '@pitkit';
 #### Card
 ```tsx
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@pitkit';
+import type { CardColorScheme, CardBorderPosition } from '@pitkit';
 
+// Default — mesmo visual de sempre (backward compatible)
 <Card padding="md">
   <CardHeader>
     <CardTitle>Título do Card</CardTitle>
@@ -346,11 +348,41 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@pitkit';
     <Button>Salvar</Button>
   </CardFooter>
 </Card>
+
+// Filled — stat cards com background colorido
+<Card variant="filled" colorScheme="brand" padding="md">
+  <p>42</p>
+  <p>OS Abertas</p>
+</Card>
+
+// Outlined com borda lateral — OS cards
+<Card variant="outlined" colorScheme="danger" borderPosition="left" padding="md">
+  <p>Torno CNC</p>
+  <p>Motor com vibração</p>
+</Card>
+
+// Elevated + interactive — action cards clicáveis
+<Link href="/nova-os">
+  <Card variant="elevated" interactive padding="md">
+    <span>➕</span>
+    <p>Nova Solicitação</p>
+  </Card>
+</Link>
 ```
 
-| Prop (Card) | Valores | Default |
-|-------------|---------|---------|
-| `padding` | `none`, `sm`, `md`, `lg` | `md` |
+| Prop (Card) | Valores | Default | Descrição |
+|-------------|---------|---------|-----------|
+| `variant` | `default`, `elevated`, `outlined`, `filled` | `default` | Estilo visual base |
+| `padding` | `none`, `sm`, `md`, `lg` | `md` | Padding interno |
+| `colorScheme` | `brand`, `success`, `warning`, `danger`, `info`, `neutral` | — | Cor para bg (filled) ou border accent |
+| `interactive` | `boolean` | `false` | Hover shadow + active scale + cursor pointer |
+| `borderPosition` | `none`, `left`, `top` | `none` | Borda colorida de accent (usa colorScheme) |
+
+**Variants:**
+- `default` — branco, borda gray.200, sombra sm (comportamento original)
+- `elevated` — branco, sem borda, sombra md (cards clicáveis)
+- `outlined` — branco, borda gray.200, sem sombra (info/OS cards)
+- `filled` — background colorido sutil (brand.50, green.50, etc.)
 
 #### Table
 ```tsx

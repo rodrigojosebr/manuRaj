@@ -152,6 +152,21 @@ export const updatePreventivePlanSchema = z.object({
   active: z.boolean().optional(),
 });
 
+// --- Profile Self-Service Schemas (Torque /config) ---
+export const updateProfileSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+});
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8),
+  confirmPassword: z.string().min(8),
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: 'As senhas não coincidem',
+  path: ['confirmPassword'],
+});
+
 // --- Query Schemas ---
 export const paginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
@@ -182,5 +197,7 @@ export type AssignWorkOrderInput = z.infer<typeof assignWorkOrderSchema>;
 export type FinishWorkOrderInput = z.infer<typeof finishWorkOrderSchema>;
 export type CreatePreventivePlanInput = z.infer<typeof createPreventivePlanSchema>;
 export type UpdatePreventivePlanInput = z.infer<typeof updatePreventivePlanSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type PaginationInput = z.infer<typeof paginationSchema>;
 export type WorkOrderQueryInput = z.infer<typeof workOrderQuerySchema>;

@@ -42,6 +42,7 @@ export default async function TenantLayout({ children, params }: TenantLayoutPro
     <TorqueLayoutClient
       tenant={tenantConfig}
       userName={session.user.name || ''}
+      userRole={session.user.role}
     >
       {children}
     </TorqueLayoutClient>
