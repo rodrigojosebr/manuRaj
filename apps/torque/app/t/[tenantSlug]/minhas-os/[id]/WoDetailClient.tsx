@@ -52,6 +52,7 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
   const [isFinishing, setIsFinishing] = useState(false);
   const [showFinishForm, setShowFinishForm] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [timeSpentMin, setTimeSpentMin] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -65,6 +66,8 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
     const result = await startWorkOrderAction(wo._id);
     setIsStarting(false);
     if (result.success) {
+      setSuccessMessage('OS iniciada com sucesso!');
+      setTimeout(() => setSuccessMessage(null), 3000);
       router.refresh();
     } else {
       setActionError(result.error || 'Erro ao iniciar OS.');
@@ -81,6 +84,9 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
     const result = await finishWorkOrderAction(wo._id, data);
     setIsFinishing(false);
     if (result.success) {
+      setSuccessMessage('OS finalizada com sucesso!');
+      setTimeout(() => setSuccessMessage(null), 3000);
+      setShowFinishForm(false);
       router.refresh();
     } else {
       setActionError(result.error || 'Erro ao finalizar OS.');
@@ -216,6 +222,11 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
             )}
           </div>
         </div>
+      )}
+
+      {/* Success banner */}
+      {successMessage && (
+        <div className={S.successBanner}>{successMessage}</div>
       )}
 
       {/* Action area */}

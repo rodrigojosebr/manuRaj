@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, useMemo, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
@@ -65,7 +65,31 @@ const Icons = {
       <polyline points="9 18 15 12 9 6" />
     </svg>
   ),
+  user: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
 };
+
+// Nav structure types
+interface NavItem {
+  type: 'item';
+  href: string;
+  icon: ReactNode;
+  label: string;
+}
+
+interface NavSection {
+  type: 'section';
+  key: string;
+  icon: ReactNode;
+  label: string;
+  children: { href: string; label: string }[];
+}
+
+type NavEntry = NavItem | NavSection;
 
 interface TorqueLayoutClientProps {
   children: ReactNode;
@@ -86,6 +110,7 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
 
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
   const adConfig = {
     enabled: tenant.adsEnabled,
@@ -93,13 +118,46 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
     adUnitIds: tenant.adUnitIds,
   };
 
-  const navItems = [
-    { href: basePath, icon: Icons.home, label: 'Inicio' },
-    { href: `${basePath}/minhas-os`, icon: Icons.clipboard, label: 'Minhas OS' },
-    { href: `${basePath}/nova-solicitacao`, icon: Icons.plusCircle, label: 'Nova OS' },
-    { href: `${basePath}/maquinas`, icon: Icons.gear, label: 'Maquinas' },
-    { href: `${basePath}/config`, icon: Icons.wrench, label: 'Config' },
-  ];
+  const navStructure = useMemo<NavEntry[]>(() => [
+    { type: 'item', href: basePath, icon: Icons.home, label: 'Inicio' },
+    {
+      type: 'section', key: 'manutencao', icon: Icons.clipboard, label: 'Manutenção',
+      children: [
+        { href: `${basePath}/minhas-os`, label: 'Minhas OS' },
+        { href: `${basePath}/nova-solicitacao`, label: 'Nova Solicitação' },
+      ],
+    },
+    {
+      type: 'section', key: 'equipamentos', icon: Icons.gear, label: 'Equipamentos',
+      children: [
+        { href: `${basePath}/maquinas`, label: 'Máquinas' },
+      ],
+    },
+    {
+      type: 'section', key: 'meus-dados', icon: Icons.user, label: 'Meus Dados',
+      children: [
+        { href: `${basePath}/config`, label: 'Configurações' },
+      ],
+    },
+  ], [basePath]);
+
+  // Auto-expand section containing the active route
+  useEffect(() => {
+    for (const entry of navStructure) {
+      if (entry.type === 'section') {
+        const hasActiveChild = entry.children.some(
+          (child) => pathname === child.href || pathname.startsWith(child.href + '/')
+        );
+        if (hasActiveChild) {
+          setExpandedSections((prev) => {
+            if (prev.has(entry.key)) return prev;
+            return new Set(prev).add(entry.key);
+          });
+          break;
+        }
+      }
+    }
+  }, [pathname, navStructure]);
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: '/login' });
@@ -107,6 +165,32 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
 
   const toggleSidebar = () => setSidebarExpanded((prev) => !prev);
   const closeMobile = () => setMobileOpen(false);
+
+  const toggleSection = (key: string) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const handleSectionClick = (key: string) => {
+    if (mobileOpen) {
+      // Mobile: just toggle section
+      toggleSection(key);
+    } else if (!sidebarExpanded) {
+      // Desktop collapsed: expand sidebar and open section
+      setSidebarExpanded(true);
+      setExpandedSections((prev) => new Set(prev).add(key));
+    } else {
+      // Desktop expanded: toggle section
+      toggleSection(key);
+    }
+  };
+
+  // True when sidebar shows full width (expanded desktop or mobile overlay)
+  const isFullWidth = sidebarExpanded || mobileOpen;
 
   const roleDisplayName = ROLE_DISPLAY_NAMES[userRole as UserRole] || userRole;
 
@@ -136,27 +220,74 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
             <button onClick={closeMobile} className={S.mobileCloseButton}>
               {Icons.chevronLeft}
             </button>
-            {/* Brand text — hidden by overflow when sidebar is collapsed */}
-            <div className={S.brandBlock}>
-              <p className={S.brandTitle}>manuRaj</p>
-              <p className={S.brandSubtitle}>{userName} &bull; {tenant.name}</p>
-            </div>
+            {/* Brand text — visible only when sidebar is expanded */}
+            {isFullWidth && (
+              <div className={S.brandBlock}>
+                <p className={S.brandTitle}>manuRaj</p>
+                <p className={S.brandSubtitle}>{userName} &bull; {tenant.name}</p>
+              </div>
+            )}
           </div>
 
           {/* Navigation items */}
           <nav className={S.sidebarNav}>
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
+            {navStructure.map((entry) => {
+              if (entry.type === 'item') {
+                const isActive = pathname === entry.href;
+                return (
+                  <Link
+                    key={entry.href}
+                    href={entry.href}
+                    className={S.sidebarItem(isActive)}
+                    onClick={closeMobile}
+                    title={!isFullWidth ? entry.label : undefined}
+                  >
+                    <span className={S.sidebarItemIcon}>{entry.icon}</span>
+                    {isFullWidth && <span className={S.sidebarItemLabel}>{entry.label}</span>}
+                  </Link>
+                );
+              }
+
+              const isSectionExpanded = expandedSections.has(entry.key);
+              const hasActiveChild = entry.children.some(
+                (child) => pathname === child.href || pathname.startsWith(child.href + '/')
+              );
+
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={S.sidebarItem(isActive)}
-                  onClick={closeMobile}
-                >
-                  <span className={S.sidebarItemIcon}>{item.icon}</span>
-                  <span className={S.sidebarItemLabel}>{item.label}</span>
-                </Link>
+                <div key={entry.key}>
+                  <button
+                    className={S.sectionHeader(hasActiveChild)}
+                    onClick={() => handleSectionClick(entry.key)}
+                    title={!isFullWidth ? entry.label : undefined}
+                  >
+                    <span className={S.sidebarItemIcon}>{entry.icon}</span>
+                    {isFullWidth && (
+                      <>
+                        <span className={S.sidebarItemLabel}>{entry.label}</span>
+                        <span className={S.sectionChevron(isSectionExpanded)}>
+                          {Icons.chevronRight}
+                        </span>
+                      </>
+                    )}
+                  </button>
+                  {isSectionExpanded && (sidebarExpanded || mobileOpen) && (
+                    <div className={S.sectionChildren}>
+                      {entry.children.map((child) => {
+                        const isActive = pathname === child.href || pathname.startsWith(child.href + '/');
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className={S.sectionChildItem(isActive)}
+                            onClick={closeMobile}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
@@ -167,20 +298,22 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
               <span className={S.userAvatar}>
                 {userName.charAt(0).toUpperCase()}
               </span>
-              <div className={S.userTextBlock}>
-                <p className={S.userName}>{userName}</p>
-                <p className={S.userRole}>{roleDisplayName}</p>
-              </div>
+              {isFullWidth && (
+                <div className={S.userTextBlock}>
+                  <p className={S.userName}>{userName}</p>
+                  <p className={S.userRole}>{roleDisplayName}</p>
+                </div>
+              )}
             </div>
-            <button onClick={handleLogout} className={S.logoutButton}>
+            <button onClick={handleLogout} className={S.logoutButton} title={!isFullWidth ? 'Sair' : undefined}>
               <span className={S.logoutIcon}>{Icons.logout}</span>
-              <span>Sair</span>
+              {isFullWidth && <span>Sair</span>}
             </button>
           </div>
         </aside>
 
         {/* Main content */}
-        <main className={S.mainContent(sidebarExpanded)}>
+        <main className={S.mainContent}>
           {tenant.adsEnabled && (
             <div className={S.adBannerWrap}>
               <AdBanner

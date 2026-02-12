@@ -51,6 +51,7 @@ export const backdrop = css({
 // ─── Sidebar ───────────────────────────────────────────────────────────────
 export const sidebar = (expanded: boolean, mobileOpen: boolean) =>
   css({
+    // Mobile: fixed overlay with slide
     position: 'fixed',
     top: 0,
     left: 0,
@@ -63,12 +64,15 @@ export const sidebar = (expanded: boolean, mobileOpen: boolean) =>
     flexDirection: 'column',
     overflowX: 'hidden',
     transition: 'width 0.2s ease, transform 0.2s ease',
-    // Mobile: always 240px, slide in/out
     width: '240px',
     transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
-    // Desktop: always visible, width controlled by expanded
+    // Desktop: sticky in flex flow — pushes content naturally
     md: {
-      transform: 'translateX(0)',
+      position: 'sticky',
+      height: '100vh',
+      zIndex: 1,
+      transform: 'none',
+      flexShrink: 0,
       width: expanded ? '240px' : '64px',
     },
   });
@@ -179,18 +183,87 @@ export const sidebarItemLabel = css({
   fontWeight: '500',
 });
 
+// ─── Section Header (expandable group) ──────────────────────────────────
+export const sectionHeader = (hasActiveChild: boolean) =>
+  css({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3',
+    paddingY: '3',
+    paddingLeft: '5',
+    paddingRight: '3',
+    whiteSpace: 'nowrap',
+    width: '100%',
+    background: 'none',
+    border: 'none',
+    color: hasActiveChild ? 'brand.600' : 'gray.600',
+    cursor: 'pointer',
+    fontSize: 'sm',
+    fontWeight: '500',
+    transition: 'background-color 0.15s, color 0.15s',
+    _hover: {
+      backgroundColor: 'gray.50',
+      color: hasActiveChild ? 'brand.600' : 'gray.900',
+    },
+  });
+
+export const sectionChevron = (expanded: boolean) =>
+  css({
+    marginLeft: 'auto',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    transition: 'transform 0.2s ease',
+    transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+    color: 'gray.400',
+    '& svg': {
+      width: '16px',
+      height: '16px',
+    },
+  });
+
+export const sectionChildren = css({
+  paddingBottom: '1',
+});
+
+export const sectionChildItem = (isActive: boolean) =>
+  css({
+    display: 'flex',
+    alignItems: 'center',
+    paddingY: '2',
+    paddingLeft: '14',
+    paddingRight: '3',
+    whiteSpace: 'nowrap',
+    textDecoration: 'none',
+    fontSize: 'sm',
+    color: isActive ? 'brand.600' : 'gray.500',
+    backgroundColor: isActive ? 'brand.50' : 'transparent',
+    borderRightWidth: '3px',
+    borderRightStyle: 'solid',
+    borderRightColor: isActive ? 'brand.600' : 'transparent',
+    transition: 'background-color 0.15s, color 0.15s',
+    cursor: 'pointer',
+    _hover: {
+      backgroundColor: isActive ? 'brand.50' : 'gray.50',
+      color: isActive ? 'brand.600' : 'gray.700',
+    },
+  });
+
 // ─── Sidebar Footer ───────────────────────────────────────────────────────
 export const sidebarFooter = css({
   borderTop: '1px solid',
   borderColor: 'gray.100',
-  padding: '4 5',
+  paddingY: '3',
 });
 
 export const userBlock = css({
   display: 'flex',
   alignItems: 'center',
   gap: '3',
-  marginBottom: '3',
+  marginBottom: '2',
+  paddingY: '1',
+  paddingLeft: '5',
+  paddingRight: '3',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
 });
@@ -235,7 +308,9 @@ export const logoutButton = css({
   display: 'flex',
   alignItems: 'center',
   gap: '3',
-  padding: '2',
+  paddingY: '2',
+  paddingLeft: '5',
+  paddingRight: '3',
   background: 'none',
   border: 'none',
   color: 'gray.500',
@@ -255,20 +330,17 @@ export const logoutIcon = css({
 });
 
 // ─── Main Content ──────────────────────────────────────────────────────────
-export const mainContent = (expanded: boolean) =>
-  css({
-    flex: 1,
-    minHeight: '100vh',
-    transition: 'margin-left 0.2s ease',
-    // Mobile: full width, top padding for mobile header
-    marginLeft: 0,
-    paddingTop: '56px',
-    // Desktop: offset by sidebar width, no top padding
-    md: {
-      marginLeft: expanded ? '240px' : '64px',
-      paddingTop: 0,
-    },
-  });
+export const mainContent = css({
+  flex: 1,
+  minHeight: '100vh',
+  minWidth: 0,
+  // Mobile: top padding for mobile header
+  paddingTop: '56px',
+  // Desktop: flex layout handles offset — no margin needed
+  md: {
+    paddingTop: 0,
+  },
+});
 
 // ─── Ad Banner (mobile only) ──────────────────────────────────────────────
 export const adBannerWrap = css({

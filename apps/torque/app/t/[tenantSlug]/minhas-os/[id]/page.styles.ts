@@ -105,6 +105,20 @@ export const overdueWarning = css({
   fontSize: 'xs',
 });
 
+// ─── Success Banner ───────────────────────────────────────────────────────
+export const successBanner = css({
+  backgroundColor: 'green.50',
+  color: 'green.800',
+  border: '1px solid',
+  borderColor: 'green.200',
+  borderRadius: 'md',
+  padding: '3',
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  textAlign: 'center',
+  marginBottom: '4',
+});
+
 // ─── Action Area ───────────────────────────────────────────────────────────
 export const actionArea = css({
   marginTop: 'section',

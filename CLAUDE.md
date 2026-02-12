@@ -289,7 +289,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 | App | Páginas | Completude |
 |-----|---------|------------|
 | **Pitlane** (admin) | 12 páginas + 17 API endpoints | ~85% |
-| **Torque** (campo) | 9 páginas (server actions, sem API routes) | ~95% |
+| **Torque** (campo) | 9 páginas (server actions, sem API routes) | ~100% |
 | **Showroom** (landing) | 1 página estática | ~30% |
 
 ### Torque — Páginas Implementadas
@@ -311,14 +311,17 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 - NextAuth + JWT funcionando
 - PitKit Card com variants (default/elevated/outlined/filled + colorScheme + interactive + borderPosition)
 - Torque: sidebar colapsável (64px/240px) + server actions para mutations
+- Torque: loading.tsx em todas as rotas, error.tsx + not-found.tsx no layout tenant, feedback visual em ações de OS
 
 ---
 
 ## 14. Roadmap
 
-### Torque (~95% → polimento)
+### Torque (~100% — polido)
 - [x] Todas as 9 páginas implementadas
-- [ ] Melhorias de UX pontuais (loading states, feedback visual)
+- [x] Loading skeletons em todas as rotas (PitKit Skeleton)
+- [x] Error boundary (error.tsx) + 404 (not-found.tsx)
+- [x] Feedback visual em ações de OS (banner de sucesso)
 
 ### Showroom (~30% → apresentável)
 - [ ] Formulário de contato/lead capture

@@ -325,6 +325,31 @@ Arquitetura:
 
 ---
 
+## Infraestrutura UX
+
+### Loading Skeletons (`loading.tsx`)
+Cada rota tem um `loading.tsx` que renderiza skeletons PitKit enquanto o server component carrega:
+- Usa `Skeleton`, `SkeletonCard` de `@pitkit`
+- Server components (sem `'use client'`)
+- Estilos inline via `css()` (exceção aceita — arquivos de infraestrutura sem `page.styles.ts`)
+- Layout do skeleton espelha a estrutura da página real (stats, tabs, cards, form fields)
+
+### Error Boundary (`error.tsx`)
+- `'use client'` (requisito Next.js)
+- Botão "Tentar novamente" via `reset()` + PitKit `Button`
+- Renderiza no layout do tenant (dentro da sidebar)
+
+### Not Found (`not-found.tsx`)
+- Usa PitKit `EmptyState` com ícone, título, descrição
+- Botão "Voltar ao inicio" com `href="."` (navegação relativa para dashboard do tenant)
+
+### Feedback Visual (OS Actions)
+- `WoDetailClient.tsx` exibe banner verde de sucesso após iniciar/finalizar OS
+- Banner desaparece automaticamente após 3 segundos (`setTimeout`)
+- Estilo `successBanner` em `page.styles.ts`
+
+---
+
 ## Navegação (Rotas)
 
 | Rota | Status | Descrição |
