@@ -14,7 +14,7 @@ export default function NotFound() {
       })}
     >
       <EmptyState
-        icon="🔍"
+        icon="search"
         title="Pagina nao encontrada"
         description="A pagina que voce procura nao existe ou foi movida."
         action={

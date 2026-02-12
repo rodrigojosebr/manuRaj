@@ -6,6 +6,7 @@ import {
   Heading,
   Text,
   Badge,
+  Icon,
   getPriorityBadgeVariant,
   EmptyState,
 } from '@pitkit';
@@ -51,7 +52,7 @@ function WorkOrderCard({ wo }: { wo: SerializedWorkOrder }) {
       {/* Machine info */}
       {wo.machine && (
         <div className={S.cardMachine}>
-          <span className={S.cardMachineIcon}>&#x1F527;</span>
+          <span className={S.cardMachineIcon}><Icon icon="wrench" size="sm" /></span>
           <span className={S.cardMachineText}>
             {wo.machine.name} ({wo.machine.code})
           </span>
@@ -138,7 +139,7 @@ export function MinhasOsClient({ workOrders, tenantSlug }: MinhasOsClientProps) 
         </div>
       ) : (
         <EmptyState
-          icon="📋"
+          icon="clipboard"
           title="Nenhuma OS encontrada"
           description={
             activeTab === 'all'

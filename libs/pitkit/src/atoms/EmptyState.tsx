@@ -2,6 +2,8 @@
 
 import { ReactNode } from 'react';
 import { cva } from '../../../../styled-system/css';
+import { SvgIcon } from './SvgIcon';
+import { isValidIconName } from './icon-registry';
 
 const containerStyles = cva({
   base: {
@@ -91,7 +93,11 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className={`${containerStyles({ size })} ${className || ''}`}>
-      {icon && <span className={iconStyles({ size })}>{icon}</span>}
+      {icon && (
+        isValidIconName(icon)
+          ? <SvgIcon icon={icon} size={size === 'sm' ? 'lg' : 'xl'} />
+          : <span className={iconStyles({ size })}>{icon}</span>
+      )}
       <p className={titleStyles({ size })}>{title}</p>
       {description && <p className={descriptionStyles({ size })}>{description}</p>}
       {action && <div>{action}</div>}

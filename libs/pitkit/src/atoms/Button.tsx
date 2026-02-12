@@ -2,6 +2,8 @@
 
 import { forwardRef, ButtonHTMLAttributes } from 'react';
 import { css, cva } from '../../../../styled-system/css';
+import { SvgIcon, type IconSize } from './SvgIcon';
+import type { IconName } from './icon-registry';
 
 const buttonStyles = cva({
   base: {
@@ -91,15 +93,25 @@ const buttonStyles = cva({
   },
 });
 
+const BUTTON_ICON_SIZE: Record<string, IconSize> = {
+  sm: 'sm',
+  md: 'sm',
+  lg: 'md',
+};
+
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'link';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   isLoading?: boolean;
+  leftIcon?: IconName;
+  rightIcon?: IconName;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant, size, fullWidth, isLoading, disabled, children, className, ...props }, ref) => {
+  ({ variant, size = 'md', fullWidth, isLoading, disabled, leftIcon, rightIcon, children, className, ...props }, ref) => {
+    const iconSize = BUTTON_ICON_SIZE[size] || 'sm';
+
     return (
       <button
         ref={ref}
@@ -129,8 +141,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               />
             </svg>
           </span>
+        ) : leftIcon ? (
+          <span className={css({ marginRight: '2', display: 'inline-flex' })}>
+            <SvgIcon icon={leftIcon} size={iconSize} />
+          </span>
         ) : null}
         {children}
+        {rightIcon && !isLoading && (
+          <span className={css({ marginLeft: '2', display: 'inline-flex' })}>
+            <SvgIcon icon={rightIcon} size={iconSize} />
+          </span>
+        )}
       </button>
     );
   }

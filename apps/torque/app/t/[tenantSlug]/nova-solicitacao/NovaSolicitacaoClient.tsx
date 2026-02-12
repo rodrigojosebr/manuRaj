@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Heading, Text, SelectField, TextareaField, Button } from '@pitkit';
+import { Heading, Text, Icon, SelectField, TextareaField, Button } from '@pitkit';
 import { WORK_ORDER_PRIORITY_DISPLAY } from '@manuraj/domain';
 import { createWorkOrderAction } from './actions';
 import * as S from './page.styles';
@@ -85,7 +85,7 @@ export function NovaSolicitacaoClient({ machines, tenantSlug }: NovaSolicitacaoC
     return (
       <div className={S.wrapper}>
         <div className={S.successCard}>
-          <span className={S.successIcon}>&#x2705;</span>
+          <span className={S.successIcon}><Icon icon="check-circle" size="xl" /></span>
           <Heading as="h2">Solicitacao Enviada</Heading>
           <Text size="sm" color="muted">
             Sua solicitacao foi registrada e sera analisada pela equipe de manutencao.

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Heading, Badge, getPriorityBadgeVariant, getStatusBadgeVariant } from '@pitkit';
+import { Heading, Badge, Icon, getPriorityBadgeVariant, getStatusBadgeVariant } from '@pitkit';
 import {
   ROLE_DISPLAY_NAMES,
   WORK_ORDER_STATUS_DISPLAY,
@@ -103,7 +103,7 @@ function PreventivePlanCard({ plan }: { plan: SerializedPreventivePlan }) {
 
   return (
     <div className={S.planCard}>
-      <span className={S.planIcon}>📅</span>
+      <span className={S.planIcon}><Icon icon="calendar" size="md" /></span>
       <div className={S.planInfo}>
         <p className={S.planName}>
           {plan.name}
@@ -196,21 +196,21 @@ export function TorqueDashboardClient({
       </div>
       <div className={S.actionsGrid}>
         <Link href={`${basePath}/nova-solicitacao`} className={S.actionCard}>
-          <span className={S.actionIcon}>➕</span>
+          <span className={S.actionIcon}><Icon icon="plus-circle" size="lg" /></span>
           <span className={S.actionTitle}>Nova Solicitacao</span>
         </Link>
         <Link href={`${basePath}/minhas-os`} className={S.actionCard}>
-          <span className={S.actionIcon}>📋</span>
+          <span className={S.actionIcon}><Icon icon="clipboard" size="lg" /></span>
           <span className={S.actionTitle}>Minhas OS</span>
           <span className={S.actionMeta}>{stats.assignedOpen + stats.inProgress} pendentes</span>
         </Link>
         <Link href={`${basePath}/maquinas`} className={S.actionCard}>
-          <span className={S.actionIcon}>⚙️</span>
+          <span className={S.actionIcon}><Icon icon="gear" size="lg" /></span>
           <span className={S.actionTitle}>Maquinas</span>
           <span className={S.actionMeta}>{stats.totalMachines} equipamentos</span>
         </Link>
         <Link href={`${basePath}/config`} className={S.actionCard}>
-          <span className={S.actionIcon}>🔧</span>
+          <span className={S.actionIcon}><Icon icon="wrench" size="lg" /></span>
           <span className={S.actionTitle}>Configuracoes</span>
         </Link>
       </div>

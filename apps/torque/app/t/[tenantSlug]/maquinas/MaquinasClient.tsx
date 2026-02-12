@@ -7,6 +7,7 @@ import {
   Text,
   Badge,
   Card,
+  Icon,
   getMachineStatusBadgeVariant,
   EmptyState,
 } from '@pitkit';
@@ -53,11 +54,11 @@ function MachineCard({ machine: m }: { machine: SerializedMachine }) {
   return (
     <Card variant="outlined" colorScheme={getMachineColorScheme(m.status)} borderPosition="left" padding="md">
       <div className={S.machineHeader}>
-        <span>&#x1F527;</span>
+        <Icon icon="wrench" size="md" />
         <span className={S.machineName}>{m.name}</span>
       </div>
       <p className={S.machineCode}>{m.code}</p>
-      {m.location && <p className={S.machineDetail}>&#x1F4CD; {m.location}</p>}
+      {m.location && <p className={S.machineDetail}><Icon icon="map-pin" size="xs" /> {m.location}</p>}
       {(m.manufacturer || m.model) && (
         <p className={S.machineDetail}>
           {[m.manufacturer, m.model].filter(Boolean).join(' \u2022 ')}
@@ -118,7 +119,7 @@ export function MaquinasClient({ machines, tenantSlug }: MaquinasClientProps) {
         </div>
       ) : (
         <EmptyState
-          icon="&#x2699;&#xFE0F;"
+          icon="gear"
           title="Nenhuma máquina encontrada"
           description={
             activeTab === 'all'

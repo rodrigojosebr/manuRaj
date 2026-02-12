@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import {
   Badge,
+  Icon,
   getMachineStatusBadgeVariant,
   getStatusBadgeVariant,
   getPriorityBadgeVariant,
@@ -71,7 +72,7 @@ export function MachineDetailClient({ machine, workOrders, tenantSlug }: Machine
     <div className={S.wrapper}>
       {/* Back link */}
       <Link href={`/t/${tenantSlug}/maquinas`} className={S.backLink}>
-        &#8592; Voltar
+        <Icon icon="arrow-left" size="sm" /> Voltar
       </Link>
 
       {/* Header */}
@@ -91,7 +92,7 @@ export function MachineDetailClient({ machine, workOrders, tenantSlug }: Machine
         <div className={S.infoGrid}>
           {machine.location && (
             <div className={S.infoRow}>
-              <span className={S.infoIcon}>&#x1F4CD;</span>
+              <span className={S.infoIcon}><Icon icon="map-pin" size="md" /></span>
               <div className={S.infoContent}>
                 <div className={S.infoLabel}>Localizacao</div>
                 <div className={S.infoValue}>{machine.location}</div>
@@ -100,7 +101,7 @@ export function MachineDetailClient({ machine, workOrders, tenantSlug }: Machine
           )}
           {machine.manufacturer && (
             <div className={S.infoRow}>
-              <span className={S.infoIcon}>&#x1F3ED;</span>
+              <span className={S.infoIcon}><Icon icon="factory" size="md" /></span>
               <div className={S.infoContent}>
                 <div className={S.infoLabel}>Fabricante</div>
                 <div className={S.infoValue}>{machine.manufacturer}</div>
@@ -109,7 +110,7 @@ export function MachineDetailClient({ machine, workOrders, tenantSlug }: Machine
           )}
           {machine.model && (
             <div className={S.infoRow}>
-              <span className={S.infoIcon}>&#x1F4D0;</span>
+              <span className={S.infoIcon}><Icon icon="ruler" size="md" /></span>
               <div className={S.infoContent}>
                 <div className={S.infoLabel}>Modelo</div>
                 <div className={S.infoValue}>{machine.model}</div>
@@ -118,7 +119,7 @@ export function MachineDetailClient({ machine, workOrders, tenantSlug }: Machine
           )}
           {machine.serial && (
             <div className={S.infoRow}>
-              <span className={S.infoIcon}>&#x1F522;</span>
+              <span className={S.infoIcon}><Icon icon="hash" size="md" /></span>
               <div className={S.infoContent}>
                 <div className={S.infoLabel}>Serial</div>
                 <div className={S.infoValue}>{machine.serial}</div>

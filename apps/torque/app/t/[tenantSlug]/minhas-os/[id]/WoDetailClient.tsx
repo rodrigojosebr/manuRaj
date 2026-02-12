@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {
   Badge,
   Button,
+  Icon,
   TextField,
   TextareaField,
   getStatusBadgeVariant,
@@ -97,7 +98,7 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
     <div className={S.wrapper}>
       {/* Back link */}
       <Link href={`/t/${tenantSlug}/minhas-os`} className={S.backLink}>
-        &#8592; Voltar
+        <Icon icon="arrow-left" size="sm" /> Voltar
       </Link>
 
       {/* Header: machine + badges */}
@@ -133,7 +134,7 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
         <div className={S.infoGrid}>
           {wo.machine?.location && (
             <div className={S.infoRow}>
-              <span className={S.infoIcon}>&#x1F4CD;</span>
+              <span className={S.infoIcon}><Icon icon="map-pin" size="md" /></span>
               <div className={S.infoContent}>
                 <div className={S.infoLabel}>Localizacao</div>
                 <div className={S.infoValue}>{wo.machine.location}</div>
@@ -142,7 +143,7 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
           )}
 
           <div className={S.infoRow}>
-            <span className={S.infoIcon}>&#x1F4C5;</span>
+            <span className={S.infoIcon}><Icon icon="calendar" size="md" /></span>
             <div className={S.infoContent}>
               <div className={S.infoLabel}>Prazo</div>
               <div className={S.infoValue}>
@@ -166,7 +167,7 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
 
           {wo.assignedTo && (
             <div className={S.infoRow}>
-              <span className={S.infoIcon}>&#x1F464;</span>
+              <span className={S.infoIcon}><Icon icon="user" size="md" /></span>
               <div className={S.infoContent}>
                 <div className={S.infoLabel}>Atribuido a</div>
                 <div className={S.infoValue}>{wo.assignedTo.name}</div>
@@ -175,7 +176,7 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
           )}
 
           <div className={S.infoRow}>
-            <span className={S.infoIcon}>&#x1F4C6;</span>
+            <span className={S.infoIcon}><Icon icon="calendar" size="md" /></span>
             <div className={S.infoContent}>
               <div className={S.infoLabel}>Criada em</div>
               <div className={S.infoValue}>{formatDate(wo.createdAt)}</div>
@@ -184,7 +185,7 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
 
           {wo.startedAt && (
             <div className={S.infoRow}>
-              <span className={S.infoIcon}>&#x25B6;</span>
+              <span className={S.infoIcon}><Icon icon="play" size="md" /></span>
               <div className={S.infoContent}>
                 <div className={S.infoLabel}>Iniciada em</div>
                 <div className={S.infoValue}>{formatDate(wo.startedAt)}</div>
@@ -201,21 +202,21 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
           <div className={S.resultGrid}>
             {wo.finishedAt && (
               <div className={S.resultRow}>
-                <span className={S.resultIcon}>&#x2705;</span>
+                <span className={S.resultIcon}><Icon icon="check-circle" size="md" /></span>
                 <span className={S.resultLabel}>Concluida em</span>
                 <span className={S.resultValue}>{formatDate(wo.finishedAt)}</span>
               </div>
             )}
             {wo.timeSpentMin != null && wo.timeSpentMin > 0 && (
               <div className={S.resultRow}>
-                <span className={S.resultIcon}>&#x23F1;</span>
+                <span className={S.resultIcon}><Icon icon="clock" size="md" /></span>
                 <span className={S.resultLabel}>Tempo:</span>
                 <span className={S.resultValue}>{formatMinutes(wo.timeSpentMin)}</span>
               </div>
             )}
             {wo.notes && (
               <div className={S.resultRow}>
-                <span className={S.resultIcon}>&#x1F4DD;</span>
+                <span className={S.resultIcon}><Icon icon="file-text" size="md" /></span>
                 <span className={S.resultLabel}>Notas:</span>
                 <span className={S.resultValue}>{wo.notes}</span>
               </div>
