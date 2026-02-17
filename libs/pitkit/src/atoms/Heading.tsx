@@ -1,16 +1,17 @@
 'use client';
 
 import { forwardRef, HTMLAttributes } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 
-const headingStyles = cva({
+const headingCva = cva({
   base: {
     fontWeight: '700',
     letterSpacing: '-0.02em',
     lineHeight: '1.15',
   },
   variants: {
-    as: {
+    level: {
       h1: { fontSize: { base: '36px', md: '52px', lg: '60px' } },
       h2: { fontSize: { base: '28px', md: '40px' } },
       h3: { fontSize: '17px', letterSpacing: '-0.01em' },
@@ -26,10 +27,22 @@ const headingStyles = cva({
     },
   },
   defaultVariants: {
-    as: 'h2',
+    level: 'h2',
     color: 'default',
   },
 });
+
+const StyledH1 = styled('h1', headingCva);
+const StyledH2 = styled('h2', headingCva);
+const StyledH3 = styled('h3', headingCva);
+const StyledH4 = styled('h4', headingCva);
+const StyledH5 = styled('h5', headingCva);
+const StyledH6 = styled('h6', headingCva);
+
+const tagMap = {
+  h1: StyledH1, h2: StyledH2, h3: StyledH3,
+  h4: StyledH4, h5: StyledH5, h6: StyledH6,
+} as const;
 
 export interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -37,15 +50,12 @@ export interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
 }
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ as: Tag = 'h2', color, className, children, ...props }, ref) => {
+  ({ as: Tag = 'h2', color, children, ...props }, ref) => {
+    const StyledTag = tagMap[Tag];
     return (
-      <Tag
-        ref={ref}
-        className={`${headingStyles({ as: Tag, color })} ${className || ''}`}
-        {...props}
-      >
+      <StyledTag ref={ref} level={Tag} color={color} {...props}>
         {children}
-      </Tag>
+      </StyledTag>
     );
   }
 );

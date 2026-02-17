@@ -1,18 +1,20 @@
 import Link from 'next/link';
 import { EmptyState, Button } from '@pitkit';
-import { css } from '../../../../../styled-system/css';
+import { styled } from '../../../../../styled-system/jsx';
+
+const NotFoundPage = styled('div', {
+  base: {
+    padding: 'page',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '60vh',
+  },
+});
 
 export default function NotFound() {
   return (
-    <div
-      className={css({
-        padding: 'page',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '60vh',
-      })}
-    >
+    <NotFoundPage>
       <EmptyState
         icon="search"
         title="Pagina nao encontrada"
@@ -23,6 +25,6 @@ export default function NotFound() {
           </Link>
         }
       />
-    </div>
+    </NotFoundPage>
   );
 }

@@ -1,26 +1,32 @@
 import { Skeleton, SkeletonCard } from '@pitkit';
-import { css } from '../../../../../../styled-system/css';
+import { styled } from '../../../../../../styled-system/jsx';
+
+const Page = styled('div', { base: { padding: 'page' } });
+const SkeletonMt1 = styled(Skeleton, { base: { marginTop: '1' } });
+const TabStrip = styled('div', {
+  base: { display: 'flex', gap: '2', marginTop: 'section', marginBottom: 'section' },
+});
+const CardList = styled('div', {
+  base: { display: 'flex', flexDirection: 'column', gap: 'card-gap' },
+});
 
 export default function Loading() {
   return (
-    <div className={css({ padding: 'page' })}>
-      {/* Heading + subtitle */}
+    <Page>
       <Skeleton height="28px" width="180px" />
-      <Skeleton height="14px" width="140px" className={css({ marginTop: '1' })} />
+      <SkeletonMt1 height="14px" width="140px" />
 
-      {/* Tab strip */}
-      <div className={css({ display: 'flex', gap: '2', marginTop: 'section', marginBottom: 'section' })}>
+      <TabStrip>
         {[1, 2, 3, 4].map((i) => (
           <Skeleton key={i} height="36px" width="90px" rounded />
         ))}
-      </div>
+      </TabStrip>
 
-      {/* Cards */}
-      <div className={css({ display: 'flex', flexDirection: 'column', gap: 'card-gap' })}>
+      <CardList>
         <SkeletonCard />
         <SkeletonCard />
         <SkeletonCard />
-      </div>
-    </div>
+      </CardList>
+    </Page>
   );
 }

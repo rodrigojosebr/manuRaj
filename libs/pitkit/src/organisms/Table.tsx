@@ -1,7 +1,27 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { css } from '../../../../styled-system/css';
+import { styled } from '../../../../styled-system/jsx';
+import { cva } from '../../../../styled-system/css';
+
+// ─── Table ───────────────────────────────────────────────────────────────────
+const TableWrapper = styled('div', {
+  base: {
+    width: '100%',
+    overflowX: 'auto',
+    border: '1px solid',
+    borderColor: 'gray.200',
+    borderRadius: 'lg',
+  },
+});
+
+const StyledTable = styled('table', {
+  base: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: 'sm',
+  },
+});
 
 interface TableProps {
   children: ReactNode;
@@ -10,46 +30,30 @@ interface TableProps {
 
 export function Table({ children, className }: TableProps) {
   return (
-    <div
-      className={css({
-        width: '100%',
-        overflowX: 'auto',
-        border: '1px solid',
-        borderColor: 'gray.200',
-        borderRadius: 'lg',
-      })}
-    >
-      <table
-        className={`${css({
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontSize: 'sm',
-        })} ${className || ''}`}
-      >
-        {children}
-      </table>
-    </div>
+    <TableWrapper>
+      <StyledTable className={className}>{children}</StyledTable>
+    </TableWrapper>
   );
 }
+
+// ─── TableHeader ─────────────────────────────────────────────────────────────
+const StyledThead = styled('thead', {
+  base: {
+    backgroundColor: 'gray.50',
+    borderBottom: '1px solid',
+    borderColor: 'gray.200',
+  },
+});
 
 interface TableHeaderProps {
   children: ReactNode;
 }
 
 export function TableHeader({ children }: TableHeaderProps) {
-  return (
-    <thead
-      className={css({
-        backgroundColor: 'gray.50',
-        borderBottom: '1px solid',
-        borderColor: 'gray.200',
-      })}
-    >
-      {children}
-    </thead>
-  );
+  return <StyledThead>{children}</StyledThead>;
 }
 
+// ─── TableBody ───────────────────────────────────────────────────────────────
 interface TableBodyProps {
   children: ReactNode;
 }
@@ -57,6 +61,26 @@ interface TableBodyProps {
 export function TableBody({ children }: TableBodyProps) {
   return <tbody>{children}</tbody>;
 }
+
+// ─── TableRow ────────────────────────────────────────────────────────────────
+const StyledTr = styled('tr', cva({
+  base: {
+    borderBottom: '1px solid',
+    borderColor: 'gray.200',
+    _last: { borderBottom: 'none' },
+  },
+  variants: {
+    clickable: {
+      true: {
+        cursor: 'pointer',
+        _hover: { backgroundColor: 'gray.50' },
+      },
+    },
+  },
+  defaultVariants: {
+    clickable: false,
+  },
+}));
 
 interface TableRowProps {
   children: ReactNode;
@@ -66,26 +90,23 @@ interface TableRowProps {
 
 export function TableRow({ children, onClick, className }: TableRowProps) {
   return (
-    <tr
-      onClick={onClick}
-      className={`${css({
-        borderBottom: '1px solid',
-        borderColor: 'gray.200',
-        _hover: onClick
-          ? {
-              backgroundColor: 'gray.50',
-              cursor: 'pointer',
-            }
-          : {},
-        _last: {
-          borderBottom: 'none',
-        },
-      })} ${className || ''}`}
-    >
+    <StyledTr clickable={!!onClick} onClick={onClick} className={className}>
       {children}
-    </tr>
+    </StyledTr>
   );
 }
+
+// ─── TableHead ───────────────────────────────────────────────────────────────
+const StyledTh = styled('th', {
+  base: {
+    paddingX: '4',
+    paddingY: '3',
+    textAlign: 'left',
+    fontWeight: 'medium',
+    color: 'gray.700',
+    whiteSpace: 'nowrap',
+  },
+});
 
 interface TableHeadProps {
   children: ReactNode;
@@ -93,21 +114,17 @@ interface TableHeadProps {
 }
 
 export function TableHead({ children, className }: TableHeadProps) {
-  return (
-    <th
-      className={`${css({
-        paddingX: '4',
-        paddingY: '3',
-        textAlign: 'left',
-        fontWeight: 'medium',
-        color: 'gray.700',
-        whiteSpace: 'nowrap',
-      })} ${className || ''}`}
-    >
-      {children}
-    </th>
-  );
+  return <StyledTh className={className}>{children}</StyledTh>;
 }
+
+// ─── TableCell ───────────────────────────────────────────────────────────────
+const StyledTd = styled('td', {
+  base: {
+    paddingX: '4',
+    paddingY: '3',
+    color: 'gray.900',
+  },
+});
 
 interface TableCellProps {
   children: ReactNode;
@@ -115,18 +132,17 @@ interface TableCellProps {
 }
 
 export function TableCell({ children, className }: TableCellProps) {
-  return (
-    <td
-      className={`${css({
-        paddingX: '4',
-        paddingY: '3',
-        color: 'gray.900',
-      })} ${className || ''}`}
-    >
-      {children}
-    </td>
-  );
+  return <StyledTd className={className}>{children}</StyledTd>;
 }
+
+// ─── TableEmpty ──────────────────────────────────────────────────────────────
+const EmptyTd = styled('td', {
+  base: {
+    padding: '8',
+    textAlign: 'center',
+    color: 'gray.500',
+  },
+});
 
 interface TableEmptyProps {
   message?: string;
@@ -136,16 +152,7 @@ interface TableEmptyProps {
 export function TableEmpty({ message = 'Nenhum registro encontrado', colSpan }: TableEmptyProps) {
   return (
     <tr>
-      <td
-        colSpan={colSpan}
-        className={css({
-          padding: '8',
-          textAlign: 'center',
-          color: 'gray.500',
-        })}
-      >
-        {message}
-      </td>
+      <EmptyTd colSpan={colSpan}>{message}</EmptyTd>
     </tr>
   );
 }

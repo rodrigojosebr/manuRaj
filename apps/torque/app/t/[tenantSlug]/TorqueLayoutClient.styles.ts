@@ -1,57 +1,62 @@
-import { css } from '../../../../../styled-system/css';
+import Link from 'next/link';
+import { styled } from '../../../../../styled-system/jsx';
+import { cva } from '../../../../../styled-system/css';
 
 // ─── Layout Container ──────────────────────────────────────────────────────
-export const layoutContainer = css({
-  display: 'flex',
-  minHeight: '100vh',
+export const LayoutContainer = styled('div', {
+  base: { display: 'flex', minHeight: '100vh' },
 });
 
 // ─── Mobile Header (visible < md) ──────────────────────────────────────────
-export const mobileHeader = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-  padding: '3 4',
-  backgroundColor: 'brand.600',
-  color: 'white',
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  zIndex: 30,
-  height: '56px',
-  md: { display: 'none' },
+export const MobileHeader = styled('div', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3',
+    padding: '3 4',
+    backgroundColor: 'brand.600',
+    color: 'white',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 30,
+    height: '56px',
+    md: { display: 'none' },
+  },
 });
 
-export const mobileMenuButton = css({
-  background: 'none',
-  border: 'none',
-  color: 'white',
-  cursor: 'pointer',
-  padding: '1',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+export const MobileMenuButton = styled('button', {
+  base: {
+    background: 'none',
+    border: 'none',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '1',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
-export const mobileTitle = css({
-  fontSize: 'md',
-  fontWeight: 'bold',
+export const MobileTitle = styled('span', {
+  base: { fontSize: 'md', fontWeight: 'bold' },
 });
 
 // ─── Backdrop (mobile overlay) ─────────────────────────────────────────────
-export const backdrop = css({
-  position: 'fixed',
-  inset: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  zIndex: 40,
-  md: { display: 'none' },
+export const Backdrop = styled('div', {
+  base: {
+    position: 'fixed',
+    inset: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    zIndex: 40,
+    md: { display: 'none' },
+  },
 });
 
 // ─── Sidebar ───────────────────────────────────────────────────────────────
-export const sidebar = (expanded: boolean, mobileOpen: boolean) =>
-  css({
-    // Mobile: fixed overlay with slide
+export const Sidebar = styled('aside', cva({
+  base: {
     position: 'fixed',
     top: 0,
     left: 0,
@@ -65,32 +70,63 @@ export const sidebar = (expanded: boolean, mobileOpen: boolean) =>
     overflowX: 'hidden',
     transition: 'width 0.2s ease, transform 0.2s ease',
     width: '240px',
-    transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
-    // Desktop: sticky in flex flow — pushes content naturally
     md: {
       position: 'sticky',
       height: '100vh',
       zIndex: 1,
-      transform: 'none',
       flexShrink: 0,
-      width: expanded ? '240px' : '64px',
     },
-  });
+  },
+  variants: {
+    mobileOpen: {
+      true: { transform: { base: 'translateX(0)', md: 'none' } },
+      false: { transform: { base: 'translateX(-100%)', md: 'none' } },
+    },
+    expanded: {
+      true: { md: { width: '240px' } },
+      false: { md: { width: '64px' } },
+    },
+  },
+  defaultVariants: {
+    mobileOpen: false,
+    expanded: false,
+  },
+}));
 
 // ─── Sidebar Header ────────────────────────────────────────────────────────
-export const sidebarHeader = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-  padding: '4 5',
-  borderBottom: '1px solid',
-  borderColor: 'gray.100',
-  minHeight: '56px',
+export const SidebarHeader = styled('div', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3',
+    padding: '4 5',
+    borderBottom: '1px solid',
+    borderColor: 'gray.100',
+    minHeight: '56px',
+  },
 });
 
-export const desktopToggle = css({
-  display: 'none',
-  md: {
+export const DesktopToggle = styled('button', {
+  base: {
+    display: 'none',
+    md: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'none',
+      border: 'none',
+      color: 'gray.500',
+      cursor: 'pointer',
+      padding: '1',
+      borderRadius: 'md',
+      flexShrink: 0,
+      _hover: { backgroundColor: 'gray.100', color: 'gray.700' },
+    },
+  },
+});
+
+export const MobileCloseButton = styled('button', {
+  base: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -102,52 +138,29 @@ export const desktopToggle = css({
     borderRadius: 'md',
     flexShrink: 0,
     _hover: { backgroundColor: 'gray.100', color: 'gray.700' },
+    md: { display: 'none' },
   },
 });
 
-export const mobileCloseButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: 'none',
-  border: 'none',
-  color: 'gray.500',
-  cursor: 'pointer',
-  padding: '1',
-  borderRadius: 'md',
-  flexShrink: 0,
-  _hover: { backgroundColor: 'gray.100', color: 'gray.700' },
-  md: { display: 'none' },
+export const BrandBlock = styled('div', {
+  base: { overflow: 'hidden', flex: 1, minWidth: 0, whiteSpace: 'nowrap' },
 });
 
-export const brandBlock = css({
-  overflow: 'hidden',
-  flex: 1,
-  minWidth: 0,
-  whiteSpace: 'nowrap',
+export const BrandTitle = styled('span', {
+  base: { fontSize: 'md', fontWeight: 'bold', color: 'gray.900' },
 });
 
-export const brandTitle = css({
-  fontSize: 'md',
-  fontWeight: 'bold',
-  color: 'gray.900',
-});
-
-export const brandSubtitle = css({
-  fontSize: 'xs',
-  color: 'gray.500',
-  marginTop: '0.5',
+export const BrandSubtitle = styled('span', {
+  base: { fontSize: 'xs', color: 'gray.500', marginTop: '0.5', display: 'block' },
 });
 
 // ─── Sidebar Navigation ───────────────────────────────────────────────────
-export const sidebarNav = css({
-  flex: 1,
-  overflowY: 'auto',
-  paddingY: '2',
+export const SidebarNav = styled('nav', {
+  base: { flex: 1, overflowY: 'auto', paddingY: '2' },
 });
 
-export const sidebarItem = (isActive: boolean) =>
-  css({
+export const SidebarItem = styled(Link, cva({
+  base: {
     display: 'flex',
     alignItems: 'center',
     gap: '3',
@@ -156,36 +169,50 @@ export const sidebarItem = (isActive: boolean) =>
     paddingRight: '3',
     whiteSpace: 'nowrap',
     textDecoration: 'none',
-    color: isActive ? 'brand.600' : 'gray.600',
-    backgroundColor: isActive ? 'brand.50' : 'transparent',
-    borderRightWidth: '3px',
-    borderRightStyle: 'solid',
-    borderRightColor: isActive ? 'brand.600' : 'transparent',
     transition: 'background-color 0.15s, color 0.15s',
     cursor: 'pointer',
-    _hover: {
-      backgroundColor: isActive ? 'brand.50' : 'gray.50',
-      color: isActive ? 'brand.600' : 'gray.900',
+  },
+  variants: {
+    active: {
+      true: {
+        color: 'brand.600',
+        backgroundColor: 'brand.50',
+        borderRightWidth: '3px',
+        borderRightStyle: 'solid',
+        borderRightColor: 'brand.600',
+        _hover: { backgroundColor: 'brand.50', color: 'brand.600' },
+      },
+      false: {
+        color: 'gray.600',
+        backgroundColor: 'transparent',
+        borderRightWidth: '3px',
+        borderRightStyle: 'solid',
+        borderRightColor: 'transparent',
+        _hover: { backgroundColor: 'gray.50', color: 'gray.900' },
+      },
     },
-  });
+  },
+  defaultVariants: { active: false },
+}));
 
-export const sidebarItemIcon = css({
-  flexShrink: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '6',
-  height: '6',
+export const SidebarItemIcon = styled('span', {
+  base: {
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '6',
+    height: '6',
+  },
 });
 
-export const sidebarItemLabel = css({
-  fontSize: 'sm',
-  fontWeight: '500',
+export const SidebarItemLabel = styled('span', {
+  base: { fontSize: 'sm', fontWeight: '500' },
 });
 
 // ─── Section Header (expandable group) ──────────────────────────────────
-export const sectionHeader = (hasActiveChild: boolean) =>
-  css({
+export const SectionHeaderButton = styled('button', cva({
+  base: {
     display: 'flex',
     alignItems: 'center',
     gap: '3',
@@ -196,38 +223,52 @@ export const sectionHeader = (hasActiveChild: boolean) =>
     width: '100%',
     background: 'none',
     border: 'none',
-    color: hasActiveChild ? 'brand.600' : 'gray.600',
     cursor: 'pointer',
     fontSize: 'sm',
     fontWeight: '500',
     transition: 'background-color 0.15s, color 0.15s',
-    _hover: {
-      backgroundColor: 'gray.50',
-      color: hasActiveChild ? 'brand.600' : 'gray.900',
+    _hover: { backgroundColor: 'gray.50' },
+  },
+  variants: {
+    hasActiveChild: {
+      true: {
+        color: 'brand.600',
+        _hover: { color: 'brand.600' },
+      },
+      false: {
+        color: 'gray.600',
+        _hover: { color: 'gray.900' },
+      },
     },
-  });
+  },
+  defaultVariants: { hasActiveChild: false },
+}));
 
-export const sectionChevron = (expanded: boolean) =>
-  css({
+export const SectionChevron = styled('span', cva({
+  base: {
     marginLeft: 'auto',
     flexShrink: 0,
     display: 'flex',
     alignItems: 'center',
     transition: 'transform 0.2s ease',
-    transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
     color: 'gray.400',
-    '& svg': {
-      width: '16px',
-      height: '16px',
+    '& svg': { width: '16px', height: '16px' },
+  },
+  variants: {
+    open: {
+      true: { transform: 'rotate(90deg)' },
+      false: { transform: 'rotate(0deg)' },
     },
-  });
+  },
+  defaultVariants: { open: false },
+}));
 
-export const sectionChildren = css({
-  paddingBottom: '1',
+export const SectionChildren = styled('div', {
+  base: { paddingBottom: '1' },
 });
 
-export const sectionChildItem = (isActive: boolean) =>
-  css({
+export const SectionChildItem = styled(Link, cva({
+  base: {
     display: 'flex',
     alignItems: 'center',
     paddingY: '2',
@@ -236,115 +277,133 @@ export const sectionChildItem = (isActive: boolean) =>
     whiteSpace: 'nowrap',
     textDecoration: 'none',
     fontSize: 'sm',
-    color: isActive ? 'brand.600' : 'gray.500',
-    backgroundColor: isActive ? 'brand.50' : 'transparent',
-    borderRightWidth: '3px',
-    borderRightStyle: 'solid',
-    borderRightColor: isActive ? 'brand.600' : 'transparent',
     transition: 'background-color 0.15s, color 0.15s',
     cursor: 'pointer',
-    _hover: {
-      backgroundColor: isActive ? 'brand.50' : 'gray.50',
-      color: isActive ? 'brand.600' : 'gray.700',
+  },
+  variants: {
+    active: {
+      true: {
+        color: 'brand.600',
+        backgroundColor: 'brand.50',
+        borderRightWidth: '3px',
+        borderRightStyle: 'solid',
+        borderRightColor: 'brand.600',
+        _hover: { backgroundColor: 'brand.50', color: 'brand.600' },
+      },
+      false: {
+        color: 'gray.500',
+        backgroundColor: 'transparent',
+        borderRightWidth: '3px',
+        borderRightStyle: 'solid',
+        borderRightColor: 'transparent',
+        _hover: { backgroundColor: 'gray.50', color: 'gray.700' },
+      },
     },
-  });
+  },
+  defaultVariants: { active: false },
+}));
 
 // ─── Sidebar Footer ───────────────────────────────────────────────────────
-export const sidebarFooter = css({
-  borderTop: '1px solid',
-  borderColor: 'gray.100',
-  paddingY: '3',
+export const SidebarFooter = styled('div', {
+  base: { borderTop: '1px solid', borderColor: 'gray.100', paddingY: '3' },
 });
 
-export const userBlock = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-  marginBottom: '2',
-  paddingY: '1',
-  paddingLeft: '5',
-  paddingRight: '3',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
+export const UserBlock = styled('div', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3',
+    marginBottom: '2',
+    paddingY: '1',
+    paddingLeft: '5',
+    paddingRight: '3',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+  },
 });
 
-export const userAvatar = css({
-  flexShrink: 0,
-  width: '8',
-  height: '8',
-  borderRadius: 'full',
-  backgroundColor: 'brand.100',
-  color: 'brand.700',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: 'sm',
-  fontWeight: 'bold',
+export const UserAvatar = styled('div', {
+  base: {
+    flexShrink: 0,
+    width: '8',
+    height: '8',
+    borderRadius: 'full',
+    backgroundColor: 'brand.100',
+    color: 'brand.700',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 'sm',
+    fontWeight: 'bold',
+  },
 });
 
-export const userTextBlock = css({
-  overflow: 'hidden',
-  minWidth: 0,
+export const UserTextBlock = styled('div', {
+  base: { overflow: 'hidden', minWidth: 0 },
 });
 
-export const userName = css({
-  fontSize: 'sm',
-  fontWeight: '600',
-  color: 'gray.900',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
+export const UserName = styled('p', {
+  base: {
+    fontSize: 'sm',
+    fontWeight: '600',
+    color: 'gray.900',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
 });
 
-export const userRole = css({
-  fontSize: 'xs',
-  color: 'gray.500',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
+export const UserRole = styled('p', {
+  base: {
+    fontSize: 'xs',
+    color: 'gray.500',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
 });
 
-export const logoutButton = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '3',
-  paddingY: '2',
-  paddingLeft: '5',
-  paddingRight: '3',
-  background: 'none',
-  border: 'none',
-  color: 'gray.500',
-  cursor: 'pointer',
-  fontSize: 'sm',
-  whiteSpace: 'nowrap',
-  borderRadius: 'md',
-  width: '100%',
-  _hover: { color: 'red.600', backgroundColor: 'red.50' },
+export const LogoutButton = styled('button', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3',
+    paddingY: '2',
+    paddingLeft: '5',
+    paddingRight: '3',
+    background: 'none',
+    border: 'none',
+    color: 'gray.500',
+    cursor: 'pointer',
+    fontSize: 'sm',
+    whiteSpace: 'nowrap',
+    borderRadius: 'md',
+    width: '100%',
+    _hover: { color: 'red.600', backgroundColor: 'red.50' },
+  },
 });
 
-export const logoutIcon = css({
-  flexShrink: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+export const LogoutIcon = styled('span', {
+  base: {
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 // ─── Main Content ──────────────────────────────────────────────────────────
-export const mainContent = css({
-  flex: 1,
-  minHeight: '100vh',
-  minWidth: 0,
-  // Mobile: top padding for mobile header
-  paddingTop: '56px',
-  // Desktop: flex layout handles offset — no margin needed
-  md: {
-    paddingTop: 0,
+export const MainContent = styled('main', {
+  base: {
+    flex: 1,
+    minHeight: '100vh',
+    minWidth: 0,
+    paddingTop: '56px',
+    md: { paddingTop: 0 },
   },
 });
 
 // ─── Ad Banner (mobile only) ──────────────────────────────────────────────
-export const adBannerWrap = css({
-  padding: '3',
-  backgroundColor: 'gray.50',
-  md: { display: 'none' },
+export const AdBannerWrap = styled('div', {
+  base: { padding: '3', backgroundColor: 'gray.50', md: { display: 'none' } },
 });

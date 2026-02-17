@@ -1,9 +1,10 @@
 'use client';
 
 import { forwardRef, TextareaHTMLAttributes } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 
-const textareaStyles = cva({
+const StyledTextarea = styled('textarea', cva({
   base: {
     width: '100%',
     fontSize: 'sm',
@@ -22,19 +23,10 @@ const textareaStyles = cva({
     },
   },
   variants: {
-    size: {
-      sm: {
-        padding: '2',
-        fontSize: 'xs',
-      },
-      md: {
-        padding: '3',
-        fontSize: 'sm',
-      },
-      lg: {
-        padding: '4',
-        fontSize: 'md',
-      },
+    textareaSize: {
+      sm: { padding: '2', fontSize: 'xs' },
+      md: { padding: '3', fontSize: 'sm' },
+      lg: { padding: '4', fontSize: 'md' },
     },
     state: {
       default: {
@@ -64,10 +56,10 @@ const textareaStyles = cva({
     },
   },
   defaultVariants: {
-    size: 'md',
+    textareaSize: 'md',
     state: 'default',
   },
-});
+}));
 
 export interface TextareaBaseProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
   /** Size variant for the textarea */
@@ -77,13 +69,9 @@ export interface TextareaBaseProps extends Omit<TextareaHTMLAttributes<HTMLTextA
 }
 
 export const TextareaBase = forwardRef<HTMLTextAreaElement, TextareaBaseProps>(
-  ({ size, state, className, ...props }, ref) => {
+  ({ size = 'md', state, ...props }, ref) => {
     return (
-      <textarea
-        ref={ref}
-        className={`${textareaStyles({ size, state })} ${className || ''}`}
-        {...props}
-      />
+      <StyledTextarea ref={ref} textareaSize={size} state={state} {...props} />
     );
   }
 );

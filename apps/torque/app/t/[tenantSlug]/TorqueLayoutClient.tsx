@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { Icon } from '@pitkit';
 import type { IconName } from '@pitkit';
@@ -115,14 +114,11 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
 
   const handleSectionClick = (key: string) => {
     if (mobileOpen) {
-      // Mobile: just toggle section
       toggleSection(key);
     } else if (!sidebarExpanded) {
-      // Desktop collapsed: expand sidebar and open section
       setSidebarExpanded(true);
       setExpandedSections((prev) => new Set(prev).add(key));
     } else {
-      // Desktop expanded: toggle section
       toggleSection(key);
     }
   };
@@ -134,55 +130,52 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
 
   return (
     <AdProvider config={adConfig}>
-      <div className={S.layoutContainer}>
+      <S.LayoutContainer>
         {/* Mobile header */}
-        <header className={S.mobileHeader}>
-          <button onClick={() => setMobileOpen(true)} className={S.mobileMenuButton}>
+        <S.MobileHeader>
+          <S.MobileMenuButton onClick={() => setMobileOpen(true)}>
             <Icon icon="menu" size="lg" />
-          </button>
-          <span className={S.mobileTitle}>manuRaj</span>
-        </header>
+          </S.MobileMenuButton>
+          <S.MobileTitle>manuRaj</S.MobileTitle>
+        </S.MobileHeader>
 
         {/* Backdrop (mobile overlay) */}
-        {mobileOpen && <div className={S.backdrop} onClick={closeMobile} />}
+        {mobileOpen && <S.Backdrop onClick={closeMobile} />}
 
         {/* Sidebar */}
-        <aside className={S.sidebar(sidebarExpanded, mobileOpen)}>
+        <S.Sidebar mobileOpen={mobileOpen} expanded={sidebarExpanded}>
           {/* Sidebar header */}
-          <div className={S.sidebarHeader}>
-            {/* Desktop toggle: menu when collapsed, chevron when expanded */}
-            <button onClick={toggleSidebar} className={S.desktopToggle}>
+          <S.SidebarHeader>
+            <S.DesktopToggle onClick={toggleSidebar}>
               <Icon icon={sidebarExpanded ? 'chevron-left' : 'menu'} size="lg" />
-            </button>
-            {/* Mobile close */}
-            <button onClick={closeMobile} className={S.mobileCloseButton}>
+            </S.DesktopToggle>
+            <S.MobileCloseButton onClick={closeMobile}>
               <Icon icon="chevron-left" size="lg" />
-            </button>
-            {/* Brand text — visible only when sidebar is expanded */}
+            </S.MobileCloseButton>
             {isFullWidth && (
-              <div className={S.brandBlock}>
-                <p className={S.brandTitle}>manuRaj</p>
-                <p className={S.brandSubtitle}>{userName} &bull; {tenant.name}</p>
-              </div>
+              <S.BrandBlock>
+                <S.BrandTitle>manuRaj</S.BrandTitle>
+                <S.BrandSubtitle>{userName} &bull; {tenant.name}</S.BrandSubtitle>
+              </S.BrandBlock>
             )}
-          </div>
+          </S.SidebarHeader>
 
           {/* Navigation items */}
-          <nav className={S.sidebarNav}>
+          <S.SidebarNav>
             {navStructure.map((entry) => {
               if (entry.type === 'item') {
                 const isActive = pathname === entry.href;
                 return (
-                  <Link
+                  <S.SidebarItem
                     key={entry.href}
                     href={entry.href}
-                    className={S.sidebarItem(isActive)}
+                    active={isActive}
                     onClick={closeMobile}
                     title={!isFullWidth ? entry.label : undefined}
                   >
-                    <span className={S.sidebarItemIcon}><Icon icon={entry.icon} size="lg" /></span>
-                    {isFullWidth && <span className={S.sidebarItemLabel}>{entry.label}</span>}
-                  </Link>
+                    <S.SidebarItemIcon><Icon icon={entry.icon} size="lg" /></S.SidebarItemIcon>
+                    {isFullWidth && <S.SidebarItemLabel>{entry.label}</S.SidebarItemLabel>}
+                  </S.SidebarItem>
                 );
               }
 
@@ -193,77 +186,77 @@ export function TorqueLayoutClient({ children, tenant, userName, userRole }: Tor
 
               return (
                 <div key={entry.key}>
-                  <button
-                    className={S.sectionHeader(hasActiveChild)}
+                  <S.SectionHeaderButton
+                    hasActiveChild={hasActiveChild}
                     onClick={() => handleSectionClick(entry.key)}
                     title={!isFullWidth ? entry.label : undefined}
                   >
-                    <span className={S.sidebarItemIcon}><Icon icon={entry.icon} size="lg" /></span>
+                    <S.SidebarItemIcon><Icon icon={entry.icon} size="lg" /></S.SidebarItemIcon>
                     {isFullWidth && (
                       <>
-                        <span className={S.sidebarItemLabel}>{entry.label}</span>
-                        <span className={S.sectionChevron(isSectionExpanded)}>
+                        <S.SidebarItemLabel>{entry.label}</S.SidebarItemLabel>
+                        <S.SectionChevron open={isSectionExpanded}>
                           <Icon icon="chevron-right" size="sm" />
-                        </span>
+                        </S.SectionChevron>
                       </>
                     )}
-                  </button>
+                  </S.SectionHeaderButton>
                   {isSectionExpanded && (sidebarExpanded || mobileOpen) && (
-                    <div className={S.sectionChildren}>
+                    <S.SectionChildren>
                       {entry.children.map((child) => {
                         const isActive = pathname === child.href || pathname.startsWith(child.href + '/');
                         return (
-                          <Link
+                          <S.SectionChildItem
                             key={child.href}
                             href={child.href}
-                            className={S.sectionChildItem(isActive)}
+                            active={isActive}
                             onClick={closeMobile}
                           >
                             {child.label}
-                          </Link>
+                          </S.SectionChildItem>
                         );
                       })}
-                    </div>
+                    </S.SectionChildren>
                   )}
                 </div>
               );
             })}
-          </nav>
+          </S.SidebarNav>
 
           {/* Sidebar footer — user info + logout */}
-          <div className={S.sidebarFooter}>
-            <div className={S.userBlock}>
-              <span className={S.userAvatar}>
+          <S.SidebarFooter>
+            <S.UserBlock>
+              <S.UserAvatar>
                 {userName.charAt(0).toUpperCase()}
-              </span>
+              </S.UserAvatar>
               {isFullWidth && (
-                <div className={S.userTextBlock}>
-                  <p className={S.userName}>{userName}</p>
-                  <p className={S.userRole}>{roleDisplayName}</p>
-                </div>
+                <S.UserTextBlock>
+                  <S.UserName>{userName}</S.UserName>
+                  <S.UserRole>{roleDisplayName}</S.UserRole>
+                </S.UserTextBlock>
               )}
-            </div>
-            <button onClick={handleLogout} className={S.logoutButton} title={!isFullWidth ? 'Sair' : undefined}>
-              <span className={S.logoutIcon}><Icon icon="logout" size="lg" /></span>
+            </S.UserBlock>
+            <S.LogoutButton onClick={handleLogout} title={!isFullWidth ? 'Sair' : undefined}>
+              <S.LogoutIcon><Icon icon="logout" size="lg" /></S.LogoutIcon>
               {isFullWidth && <span>Sair</span>}
-            </button>
-          </div>
-        </aside>
+            </S.LogoutButton>
+          </S.SidebarFooter>
+        </S.Sidebar>
 
         {/* Main content */}
-        <main className={S.mainContent}>
+        <S.MainContent>
           {tenant.adsEnabled && (
-            <div className={S.adBannerWrap}>
+            <S.AdBannerWrap>
               <AdBanner
                 adSlot={tenant.adUnitIds?.[0]}
                 format="auto"
                 testMode={!process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
               />
-            </div>
+            </S.AdBannerWrap>
           )}
           {children}
-        </main>
-      </div>
+        </S.MainContent>
+      </S.LayoutContainer>
     </AdProvider>
   );
 }

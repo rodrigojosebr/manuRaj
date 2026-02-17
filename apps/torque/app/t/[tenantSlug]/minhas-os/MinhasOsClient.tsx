@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import {
   Heading,
-  Text,
   Badge,
   Icon,
   getPriorityBadgeVariant,
@@ -36,6 +34,7 @@ interface MinhasOsClientProps {
 }
 
 type TabFilter = 'all' | 'assigned' | 'in_progress' | 'completed';
+type WoStatus = 'open' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
 
 const TABS: { key: TabFilter; label: string }[] = [
   { key: 'all', label: 'Todas' },
@@ -48,24 +47,24 @@ function WorkOrderCard({ wo }: { wo: SerializedWorkOrder }) {
   const overdue = wo.status !== 'completed' && wo.status !== 'cancelled' && isOverdue(wo.dueDate);
 
   return (
-    <div className={`${S.card(wo.status)} ${overdue ? S.cardOverdue : ''}`}>
+    <S.Card woStatus={wo.status as WoStatus} overdue={overdue}>
       {/* Machine info */}
       {wo.machine && (
-        <div className={S.cardMachine}>
-          <span className={S.cardMachineIcon}><Icon icon="wrench" size="sm" /></span>
-          <span className={S.cardMachineText}>
+        <S.CardMachine>
+          <S.CardMachineIcon><Icon icon="wrench" size="sm" /></S.CardMachineIcon>
+          <S.CardMachineText>
             {wo.machine.name} ({wo.machine.code})
-          </span>
-        </div>
+          </S.CardMachineText>
+        </S.CardMachine>
       )}
 
       {/* Description */}
-      <p className={S.cardDescription}>
+      <S.CardDescription>
         {truncate(wo.description, 80)}
-      </p>
+      </S.CardDescription>
 
       {/* Badges: type + priority */}
-      <div className={S.cardBadges}>
+      <S.CardBadges>
         <Badge variant={wo.type === 'corrective' ? 'danger' : wo.type === 'preventive' ? 'info' : 'default'}>
           {WORK_ORDER_TYPE_DISPLAY[wo.type] || wo.type}
         </Badge>
@@ -73,23 +72,29 @@ function WorkOrderCard({ wo }: { wo: SerializedWorkOrder }) {
           {WORK_ORDER_PRIORITY_DISPLAY[wo.priority] || wo.priority}
         </Badge>
         {overdue && <Badge variant="danger">Vencida</Badge>}
-      </div>
+      </S.CardBadges>
 
       {/* Meta: due date + time spent */}
-      <div className={S.cardMeta}>
-        <span className={overdue ? S.overdueIndicator : ''}>
-          {wo.dueDate ? `Prazo: ${formatDate(wo.dueDate)}` : 'Sem prazo'}
-        </span>
+      <S.CardMeta>
+        {overdue ? (
+          <S.OverdueIndicator>
+            {wo.dueDate ? `Prazo: ${formatDate(wo.dueDate)}` : 'Sem prazo'}
+          </S.OverdueIndicator>
+        ) : (
+          <span>
+            {wo.dueDate ? `Prazo: ${formatDate(wo.dueDate)}` : 'Sem prazo'}
+          </span>
+        )}
         <span>
           {wo.timeSpentMin ? `${formatMinutes(wo.timeSpentMin)}` : ''}
         </span>
-      </div>
+      </S.CardMeta>
 
       {/* Status bar */}
-      <div className={S.statusBar(wo.status)}>
+      <S.StatusBar woStatus={wo.status as WoStatus}>
         {WORK_ORDER_STATUS_DISPLAY[wo.status] || wo.status}
-      </div>
-    </div>
+      </S.StatusBar>
+    </S.Card>
   );
 }
 
@@ -102,41 +107,40 @@ export function MinhasOsClient({ workOrders, tenantSlug }: MinhasOsClientProps) 
   });
 
   return (
-    <div className={S.wrapper}>
+    <S.Wrapper>
       {/* Page header */}
-      <div className={S.pageHeader}>
+      <S.PageHeader>
         <Heading as="h1">Minhas OS</Heading>
-        <Text size="sm" className={S.subtitle}>
+        <S.Subtitle>
           {workOrders.length} {workOrders.length === 1 ? 'ordem de servico' : 'ordens de servico'}
-        </Text>
-      </div>
+        </S.Subtitle>
+      </S.PageHeader>
 
       {/* Filter tabs */}
-      <div className={S.tabsContainer}>
+      <S.TabsContainer>
         {TABS.map((t) => (
-          <button
+          <S.Tab
             key={t.key}
-            className={S.tab(activeTab === t.key)}
+            active={activeTab === t.key}
             onClick={() => setActiveTab(t.key)}
           >
             {t.label}
-          </button>
+          </S.Tab>
         ))}
-      </div>
+      </S.TabsContainer>
 
       {/* Card list */}
       {filtered.length > 0 ? (
-        <div className={S.cardList}>
+        <S.CardList>
           {filtered.map((wo) => (
-            <Link
+            <S.CardLink
               key={wo._id}
               href={`/t/${tenantSlug}/minhas-os/${wo._id}`}
-              className={S.cardLink}
             >
               <WorkOrderCard wo={wo} />
-            </Link>
+            </S.CardLink>
           ))}
-        </div>
+        </S.CardList>
       ) : (
         <EmptyState
           icon="clipboard"
@@ -149,6 +153,6 @@ export function MinhasOsClient({ workOrders, tenantSlug }: MinhasOsClientProps) 
           size="md"
         />
       )}
-    </div>
+    </S.Wrapper>
   );
 }

@@ -1,9 +1,14 @@
 'use client';
 
 import { forwardRef, HTMLAttributes } from 'react';
-import { css, cva } from '../../../../styled-system/css';
+import { styled } from '../../../../styled-system/jsx';
+import { cva } from '../../../../styled-system/css';
 
-const spinnerStyles = cva({
+const SpinnerWrapper = styled('span', {
+  base: { display: 'inline-flex' },
+});
+
+const SpinnerSvg = styled('svg', cva({
   base: {
     animation: 'spin 1s linear infinite',
   },
@@ -19,40 +24,21 @@ const spinnerStyles = cva({
   defaultVariants: {
     size: 'sm',
   },
-});
+}));
 
 export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(
-  ({ size, className, ...props }, ref) => {
+  ({ size, ...props }, ref) => {
     return (
-      <span
-        ref={ref}
-        className={`${css({ display: 'inline-flex' })} ${className || ''}`}
-        {...props}
-      >
-        <svg
-          className={spinnerStyles({ size })}
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className={css({ opacity: 0.25 })}
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className={css({ opacity: 0.75 })}
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          />
-        </svg>
-      </span>
+      <SpinnerWrapper ref={ref} {...props}>
+        <SpinnerSvg size={size} fill="none" viewBox="0 0 24 24">
+          <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </SpinnerSvg>
+      </SpinnerWrapper>
     );
   }
 );

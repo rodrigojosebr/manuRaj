@@ -1,9 +1,10 @@
 'use client';
 
 import { forwardRef, LabelHTMLAttributes } from 'react';
-import { css, cva } from '../../../../styled-system/css';
+import { styled } from '../../../../styled-system/jsx';
+import { cva } from '../../../../styled-system/css';
 
-const labelStyles = cva({
+const StyledLabel = styled('label', cva({
   base: {
     display: 'block',
     fontWeight: 'medium',
@@ -11,28 +12,18 @@ const labelStyles = cva({
   },
   variants: {
     size: {
-      sm: {
-        fontSize: 'xs',
-        marginBottom: '0.5',
-      },
-      md: {
-        fontSize: 'sm',
-        marginBottom: '1',
-      },
-      lg: {
-        fontSize: 'md',
-        marginBottom: '1.5',
-      },
+      sm: { fontSize: 'xs', marginBottom: '0.5' },
+      md: { fontSize: 'sm', marginBottom: '1' },
+      lg: { fontSize: 'md', marginBottom: '1.5' },
     },
   },
   defaultVariants: {
     size: 'md',
   },
-});
+}));
 
-const requiredIndicator = css({
-  color: 'danger.500',
-  marginLeft: '0.5',
+const RequiredIndicator = styled('span', {
+  base: { color: 'danger.500', marginLeft: '0.5' },
 });
 
 export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
@@ -41,16 +32,12 @@ export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 }
 
 export const Label = forwardRef<HTMLLabelElement, LabelProps>(
-  ({ size, required, className, children, ...props }, ref) => {
+  ({ size, required, children, ...props }, ref) => {
     return (
-      <label
-        ref={ref}
-        className={`${labelStyles({ size })} ${className || ''}`}
-        {...props}
-      >
+      <StyledLabel ref={ref} size={size} {...props}>
         {children}
-        {required && <span className={requiredIndicator}>*</span>}
-      </label>
+        {required && <RequiredIndicator>*</RequiredIndicator>}
+      </StyledLabel>
     );
   }
 );

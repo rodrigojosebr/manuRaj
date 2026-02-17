@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   Badge,
   Button,
@@ -95,20 +94,20 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
   }
 
   return (
-    <div className={S.wrapper}>
+    <S.Wrapper>
       {/* Back link */}
-      <Link href={`/t/${tenantSlug}/minhas-os`} className={S.backLink}>
+      <S.BackLink href={`/t/${tenantSlug}/minhas-os`}>
         <Icon icon="arrow-left" size="sm" /> Voltar
-      </Link>
+      </S.BackLink>
 
       {/* Header: machine + badges */}
-      <div className={S.header}>
+      <S.Header>
         {wo.machine && (
-          <div className={S.machineTitle}>
+          <S.MachineTitle>
             {wo.machine.name} ({wo.machine.code})
-          </div>
+          </S.MachineTitle>
         )}
-        <div className={S.badges}>
+        <S.Badges>
           <Badge variant={getStatusBadgeVariant(wo.status)}>
             {WORK_ORDER_STATUS_DISPLAY[wo.status] || wo.status}
           </Badge>
@@ -119,40 +118,40 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
             {WORK_ORDER_PRIORITY_DISPLAY[wo.priority] || wo.priority}
           </Badge>
           {overdue && <Badge variant="danger">Vencida</Badge>}
-        </div>
-      </div>
+        </S.Badges>
+      </S.Header>
 
       {/* Description */}
-      <div className={S.section}>
-        <div className={S.sectionTitle}>Descricao</div>
-        <p className={S.descriptionText}>{wo.description}</p>
-      </div>
+      <S.Section>
+        <S.SectionTitle>Descricao</S.SectionTitle>
+        <S.DescriptionText>{wo.description}</S.DescriptionText>
+      </S.Section>
 
       {/* Info */}
-      <div className={S.section}>
-        <div className={S.sectionTitle}>Informacoes</div>
-        <div className={S.infoGrid}>
+      <S.Section>
+        <S.SectionTitle>Informacoes</S.SectionTitle>
+        <S.InfoGrid>
           {wo.machine?.location && (
-            <div className={S.infoRow}>
-              <span className={S.infoIcon}><Icon icon="map-pin" size="md" /></span>
-              <div className={S.infoContent}>
-                <div className={S.infoLabel}>Localizacao</div>
-                <div className={S.infoValue}>{wo.machine.location}</div>
-              </div>
-            </div>
+            <S.InfoRow>
+              <S.InfoIcon icon="map-pin" size="md" />
+              <S.InfoContent>
+                <S.InfoLabel>Localizacao</S.InfoLabel>
+                <S.InfoValue>{wo.machine.location}</S.InfoValue>
+              </S.InfoContent>
+            </S.InfoRow>
           )}
 
-          <div className={S.infoRow}>
-            <span className={S.infoIcon}><Icon icon="calendar" size="md" /></span>
-            <div className={S.infoContent}>
-              <div className={S.infoLabel}>Prazo</div>
-              <div className={S.infoValue}>
+          <S.InfoRow>
+            <S.InfoIcon icon="calendar" size="md" />
+            <S.InfoContent>
+              <S.InfoLabel>Prazo</S.InfoLabel>
+              <S.InfoValue>
                 {wo.dueDate ? (
                   <>
                     {formatDate(wo.dueDate)}
                     {wo.status !== 'completed' && wo.status !== 'cancelled' && (
                       overdue ? (
-                        <span className={S.overdueWarning}> (vencida)</span>
+                        <S.OverdueWarning> (vencida)</S.OverdueWarning>
                       ) : (
                         <span> ({daysUntil(wo.dueDate)} dias)</span>
                       )
@@ -161,79 +160,79 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
                 ) : (
                   'Sem prazo'
                 )}
-              </div>
-            </div>
-          </div>
+              </S.InfoValue>
+            </S.InfoContent>
+          </S.InfoRow>
 
           {wo.assignedTo && (
-            <div className={S.infoRow}>
-              <span className={S.infoIcon}><Icon icon="user" size="md" /></span>
-              <div className={S.infoContent}>
-                <div className={S.infoLabel}>Atribuido a</div>
-                <div className={S.infoValue}>{wo.assignedTo.name}</div>
-              </div>
-            </div>
+            <S.InfoRow>
+              <S.InfoIcon icon="user" size="md" />
+              <S.InfoContent>
+                <S.InfoLabel>Atribuido a</S.InfoLabel>
+                <S.InfoValue>{wo.assignedTo.name}</S.InfoValue>
+              </S.InfoContent>
+            </S.InfoRow>
           )}
 
-          <div className={S.infoRow}>
-            <span className={S.infoIcon}><Icon icon="calendar" size="md" /></span>
-            <div className={S.infoContent}>
-              <div className={S.infoLabel}>Criada em</div>
-              <div className={S.infoValue}>{formatDate(wo.createdAt)}</div>
-            </div>
-          </div>
+          <S.InfoRow>
+            <S.InfoIcon icon="calendar" size="md" />
+            <S.InfoContent>
+              <S.InfoLabel>Criada em</S.InfoLabel>
+              <S.InfoValue>{formatDate(wo.createdAt)}</S.InfoValue>
+            </S.InfoContent>
+          </S.InfoRow>
 
           {wo.startedAt && (
-            <div className={S.infoRow}>
-              <span className={S.infoIcon}><Icon icon="play" size="md" /></span>
-              <div className={S.infoContent}>
-                <div className={S.infoLabel}>Iniciada em</div>
-                <div className={S.infoValue}>{formatDate(wo.startedAt)}</div>
-              </div>
-            </div>
+            <S.InfoRow>
+              <S.InfoIcon icon="play" size="md" />
+              <S.InfoContent>
+                <S.InfoLabel>Iniciada em</S.InfoLabel>
+                <S.InfoValue>{formatDate(wo.startedAt)}</S.InfoValue>
+              </S.InfoContent>
+            </S.InfoRow>
           )}
-        </div>
-      </div>
+        </S.InfoGrid>
+      </S.Section>
 
       {/* Completed result */}
       {wo.status === 'completed' && (
-        <div className={S.section}>
-          <div className={S.sectionTitle}>Resultado</div>
-          <div className={S.resultGrid}>
+        <S.Section>
+          <S.SectionTitle>Resultado</S.SectionTitle>
+          <S.ResultGrid>
             {wo.finishedAt && (
-              <div className={S.resultRow}>
-                <span className={S.resultIcon}><Icon icon="check-circle" size="md" /></span>
-                <span className={S.resultLabel}>Concluida em</span>
-                <span className={S.resultValue}>{formatDate(wo.finishedAt)}</span>
-              </div>
+              <S.ResultRow>
+                <S.ResultIcon icon="check-circle" size="md" />
+                <S.ResultLabel>Concluida em</S.ResultLabel>
+                <S.ResultValue>{formatDate(wo.finishedAt)}</S.ResultValue>
+              </S.ResultRow>
             )}
             {wo.timeSpentMin != null && wo.timeSpentMin > 0 && (
-              <div className={S.resultRow}>
-                <span className={S.resultIcon}><Icon icon="clock" size="md" /></span>
-                <span className={S.resultLabel}>Tempo:</span>
-                <span className={S.resultValue}>{formatMinutes(wo.timeSpentMin)}</span>
-              </div>
+              <S.ResultRow>
+                <S.ResultIcon icon="clock" size="md" />
+                <S.ResultLabel>Tempo:</S.ResultLabel>
+                <S.ResultValue>{formatMinutes(wo.timeSpentMin)}</S.ResultValue>
+              </S.ResultRow>
             )}
             {wo.notes && (
-              <div className={S.resultRow}>
-                <span className={S.resultIcon}><Icon icon="file-text" size="md" /></span>
-                <span className={S.resultLabel}>Notas:</span>
-                <span className={S.resultValue}>{wo.notes}</span>
-              </div>
+              <S.ResultRow>
+                <S.ResultIcon icon="file-text" size="md" />
+                <S.ResultLabel>Notas:</S.ResultLabel>
+                <S.ResultValue>{wo.notes}</S.ResultValue>
+              </S.ResultRow>
             )}
-          </div>
-        </div>
+          </S.ResultGrid>
+        </S.Section>
       )}
 
       {/* Success banner */}
       {successMessage && (
-        <div className={S.successBanner}>{successMessage}</div>
+        <S.SuccessBanner>{successMessage}</S.SuccessBanner>
       )}
 
       {/* Action area */}
       {wo.status !== 'completed' && wo.status !== 'cancelled' && (
-        <div className={S.actionArea}>
-          {actionError && <div className={S.actionError}>{actionError}</div>}
+        <S.ActionArea>
+          {actionError && <S.ActionError>{actionError}</S.ActionError>}
 
           {/* Start button: show when assigned/open and user can start */}
           {(wo.status === 'assigned' || wo.status === 'open') && canStart && (
@@ -261,9 +260,9 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
                   Finalizar OS
                 </Button>
               ) : (
-                <div className={S.section}>
-                  <div className={S.sectionTitle}>Finalizar OS</div>
-                  <div className={S.finishForm}>
+                <S.Section>
+                  <S.SectionTitle>Finalizar OS</S.SectionTitle>
+                  <S.FinishForm>
                     <TextField
                       label="Tempo gasto (minutos)"
                       type="number"
@@ -287,13 +286,13 @@ export function WoDetailClient({ workOrder: wo, tenantSlug, userRole }: WoDetail
                     >
                       Confirmar Finalizacao
                     </Button>
-                  </div>
-                </div>
+                  </S.FinishForm>
+                </S.Section>
               )}
             </>
           )}
-        </div>
+        </S.ActionArea>
       )}
-    </div>
+    </S.Wrapper>
   );
 }

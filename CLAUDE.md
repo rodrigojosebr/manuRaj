@@ -35,7 +35,7 @@
 |--------|------------|--------|
 | Monorepo | NX Workspaces | 22.x |
 | Frontend | Next.js (App Router, Turbopack) | 16.x |
-| Estilização | PandaCSS (css, cva, design tokens) | 1.8.x |
+| Estilização | PandaCSS (styled, cva, design tokens) | 1.8.x |
 | Autenticação | NextAuth.js v5 (Credentials + JWT) | 5.0-beta |
 | Validação | Zod | 4.x |
 | Database | MongoDB Atlas + Mongoose | 9.x |
@@ -96,12 +96,14 @@ manuRaj/
 - Catálogo completo em `PITKIT.md`
 
 ### Estilização
-- **Toda** estilização via `css()` e `cva()` do PandaCSS
+- **Toda** estilização via `styled()` do PandaCSS — **nunca `className` no JSX**
 - **NUNCA** CSS modules, inline styles, Tailwind classes
-- Todos os `css()` vão em `page.styles.ts` — **nunca inline no JSX**
+- Todos os estilos em `page.styles.ts` como `styled()` components
 - Import padrão: `import * as S from './page.styles'`
-- Estilos dinâmicos: exportar como função `export const card = (status: string) => css({...})`
-- Componentes PitKit com variants usam `cva()` em `libs/pitkit/src/`
+- Uso no JSX: `<S.Wrapper>`, `<S.InfoRow>`, `<S.InfoIcon icon="map-pin" />`
+- `styled()` aceita tags HTML e componentes PitKit: `styled('div', {...})`, `styled(Icon, {...})`, `styled(Link, {...})`
+- Estilos dinâmicos: usar `cva()` variants dentro do `styled()` — ex: `styled('div', cva({ variants: { status: {...} } }))`
+- Componentes PitKit internos usam `cva()` em `libs/pitkit/src/`
 - Detalhes em `STYLES.md`
 
 ### Multi-tenant
@@ -134,18 +136,29 @@ manuRaj/
 ```ts
 // 1. React/Next
 // 2. Libs internas (@manuraj/*, @pitkit)
-// 3. Styled-system (apenas em page.styles.ts)
-// 4. Estilos da página (import * as S from './page.styles')
-// 5. Relativos locais
+// 3. Estilos da página (import * as S from './page.styles')
+// 4. Relativos locais
 ```
 
 ### Padrão de Arquivos por Página (Torque)
 ```
 pagina/
 ├── page.tsx           # Server: auth + data fetch + serialize
-├── PaginaClient.tsx   # Client: render + interação
-├── page.styles.ts     # Todos os css() da página
+├── PaginaClient.tsx   # Client: render + interação (usa <S.Wrapper>, <S.InfoRow>...)
+├── page.styles.ts     # styled() components (importa styled-system/jsx + PitKit)
 └── actions.ts         # Server Actions (se tiver mutations)
+```
+
+### Padrão de page.styles.ts
+```ts
+// page.styles.ts
+import Link from 'next/link';
+import { styled } from '../../../../styled-system/jsx';
+import { Icon } from '@pitkit';
+
+export const Wrapper = styled('div', { base: { padding: 'page' } });
+export const BackLink = styled(Link, { base: { color: 'brand.600' } });
+export const InfoIcon = styled(Icon, { base: { color: 'gray.400' } });
 ```
 
 ---

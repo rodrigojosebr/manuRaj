@@ -1,18 +1,22 @@
 import { Skeleton, SkeletonCard } from '@pitkit';
-import { css } from '../../../../../../styled-system/css';
+import { styled } from '../../../../../../styled-system/jsx';
+
+const Page = styled('div', { base: { padding: 'page' } });
+const SkeletonMt1 = styled(Skeleton, { base: { marginTop: '1' } });
+const FormSections = styled('div', {
+  base: { marginTop: 'section', display: 'flex', flexDirection: 'column', gap: 'section' },
+});
 
 export default function Loading() {
   return (
-    <div className={css({ padding: 'page' })}>
-      {/* Heading + subtitle */}
+    <Page>
       <Skeleton height="28px" width="160px" />
-      <Skeleton height="14px" width="220px" className={css({ marginTop: '1' })} />
+      <SkeletonMt1 height="14px" width="220px" />
 
-      {/* Form sections */}
-      <div className={css({ marginTop: 'section', display: 'flex', flexDirection: 'column', gap: 'section' })}>
+      <FormSections>
         <SkeletonCard />
         <SkeletonCard />
-      </div>
-    </div>
+      </FormSections>
+    </Page>
   );
 }

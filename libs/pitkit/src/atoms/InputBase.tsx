@@ -1,9 +1,10 @@
 'use client';
 
 import { forwardRef, InputHTMLAttributes } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 
-const inputStyles = cva({
+const StyledInput = styled('input', cva({
   base: {
     width: '100%',
     fontSize: 'sm',
@@ -20,22 +21,10 @@ const inputStyles = cva({
     },
   },
   variants: {
-    size: {
-      sm: {
-        height: '8',
-        paddingX: '2.5',
-        fontSize: 'xs',
-      },
-      md: {
-        height: '10',
-        paddingX: '3',
-        fontSize: 'sm',
-      },
-      lg: {
-        height: '12',
-        paddingX: '4',
-        fontSize: 'md',
-      },
+    inputSize: {
+      sm: { height: '8', paddingX: '2.5', fontSize: 'xs' },
+      md: { height: '10', paddingX: '3', fontSize: 'sm' },
+      lg: { height: '12', paddingX: '4', fontSize: 'md' },
     },
     state: {
       default: {
@@ -65,10 +54,10 @@ const inputStyles = cva({
     },
   },
   defaultVariants: {
-    size: 'md',
+    inputSize: 'md',
     state: 'default',
   },
-});
+}));
 
 export interface InputBaseProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /** Size variant for the input */
@@ -78,13 +67,9 @@ export interface InputBaseProps extends Omit<InputHTMLAttributes<HTMLInputElemen
 }
 
 export const InputBase = forwardRef<HTMLInputElement, InputBaseProps>(
-  ({ size, state, className, ...props }, ref) => {
+  ({ size = 'md', state, ...props }, ref) => {
     return (
-      <input
-        ref={ref}
-        className={`${inputStyles({ size, state })} ${className || ''}`}
-        {...props}
-      />
+      <StyledInput ref={ref} inputSize={size} state={state} {...props} />
     );
   }
 );

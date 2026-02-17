@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Heading, Badge, Icon, getPriorityBadgeVariant, getStatusBadgeVariant } from '@pitkit';
 import {
   ROLE_DISPLAY_NAMES,
@@ -49,6 +48,8 @@ interface TorqueDashboardClientProps {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+type WoStatus = 'open' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
+
 function getFormattedDate(): string {
   return new Date().toLocaleDateString('pt-BR', {
     weekday: 'long',
@@ -69,31 +70,31 @@ function StatCard({
   color: 'brand' | 'success' | 'warning' | 'danger';
 }) {
   return (
-    <div className={S.statCard(color)}>
-      <p className={S.statValue(color)}>{value}</p>
-      <p className={S.statLabel}>{label}</p>
-    </div>
+    <S.StatCard colorScheme={color}>
+      <S.StatValue colorScheme={color}>{value}</S.StatValue>
+      <S.StatLabel>{label}</S.StatLabel>
+    </S.StatCard>
   );
 }
 
 function RecentWOCard({ wo }: { wo: SerializedWorkOrder }) {
   return (
-    <div className={S.woCard(wo.status)}>
+    <S.WoCard woStatus={wo.status as WoStatus}>
       {wo.machine && (
-        <p className={S.woMachine}>
+        <S.WoMachine>
           {wo.machine.name} ({wo.machine.code})
-        </p>
+        </S.WoMachine>
       )}
-      <p className={S.woDescription}>{truncate(wo.description, 80)}</p>
-      <div className={S.woBadges}>
+      <S.WoDescription>{truncate(wo.description, 80)}</S.WoDescription>
+      <S.WoBadges>
         <Badge variant={getStatusBadgeVariant(wo.status)}>
           {WORK_ORDER_STATUS_DISPLAY[wo.status] || wo.status}
         </Badge>
         <Badge variant={getPriorityBadgeVariant(wo.priority)}>
           {WORK_ORDER_PRIORITY_DISPLAY[wo.priority] || wo.priority}
         </Badge>
-      </div>
-    </div>
+      </S.WoBadges>
+    </S.WoCard>
   );
 }
 
@@ -102,18 +103,24 @@ function PreventivePlanCard({ plan }: { plan: SerializedPreventivePlan }) {
   const isUrgent = days <= 2;
 
   return (
-    <div className={S.planCard}>
-      <span className={S.planIcon}><Icon icon="calendar" size="md" /></span>
-      <div className={S.planInfo}>
-        <p className={S.planName}>
+    <S.PlanCard>
+      <S.PlanIcon><Icon icon="calendar" size="md" /></S.PlanIcon>
+      <S.PlanInfo>
+        <S.PlanName>
           {plan.name}
           {plan.machine && ` - ${plan.machine.name}`}
-        </p>
-        <p className={isUrgent ? S.planUrgent : S.planMeta}>
-          Vence em: {formatDate(plan.nextDueDate)} ({days} {days === 1 ? 'dia' : 'dias'})
-        </p>
-      </div>
-    </div>
+        </S.PlanName>
+        {isUrgent ? (
+          <S.PlanUrgent>
+            Vence em: {formatDate(plan.nextDueDate)} ({days} {days === 1 ? 'dia' : 'dias'})
+          </S.PlanUrgent>
+        ) : (
+          <S.PlanMeta>
+            Vence em: {formatDate(plan.nextDueDate)} ({days} {days === 1 ? 'dia' : 'dias'})
+          </S.PlanMeta>
+        )}
+      </S.PlanInfo>
+    </S.PlanCard>
   );
 }
 
@@ -131,89 +138,85 @@ export function TorqueDashboardClient({
   const basePath = `/t/${tenantSlug}`;
 
   return (
-    <div className={S.wrapper}>
+    <S.Wrapper>
       {/* Section 1: Greeting */}
-      <div className={S.greetingSection}>
-        <div className={S.greetingLeft}>
+      <S.GreetingSection>
+        <S.GreetingLeft>
           <Heading as="h1">Ola, {userName}</Heading>
           <Badge variant="default">{roleDisplayName}</Badge>
-        </div>
-        <p className={S.greetingDate}>{getFormattedDate()}</p>
-      </div>
+        </S.GreetingLeft>
+        <S.GreetingDate>{getFormattedDate()}</S.GreetingDate>
+      </S.GreetingSection>
 
       {/* Section 2: Stats */}
-      <div className={S.statsGrid}>
+      <S.StatsGrid>
         <StatCard label="OS Abertas" value={stats.assignedOpen} color="brand" />
         <StatCard label="Em Andamento" value={stats.inProgress} color="warning" />
         <StatCard label="Vencidas" value={stats.overdue} color="danger" />
         <StatCard label="Concluidas no mes" value={stats.completedThisMonth} color="success" />
-      </div>
+      </S.StatsGrid>
 
       {/* Section 3: Recent Work Orders */}
-      <div className={S.recentSection}>
-        <div className={S.sectionHeader}>
-          <h2 className={S.sectionTitle}>OS Recentes</h2>
-          <Link href={`${basePath}/minhas-os`} className={S.sectionLink}>
+      <S.RecentSection>
+        <S.SectionHeader>
+          <S.SectionTitle>OS Recentes</S.SectionTitle>
+          <S.SectionLink href={`${basePath}/minhas-os`}>
             Ver todas
-          </Link>
-        </div>
+          </S.SectionLink>
+        </S.SectionHeader>
         {recentWorkOrders.length > 0 ? (
-          <div className={S.woList}>
+          <S.WoList>
             {recentWorkOrders.map((wo) => (
-              <Link
-                key={wo._id}
-                href={`${basePath}/minhas-os/${wo._id}`}
-                className={S.woCardLink}
-              >
+              <S.WoCardLink key={wo._id} href={`${basePath}/minhas-os/${wo._id}`}>
                 <RecentWOCard wo={wo} />
-              </Link>
+              </S.WoCardLink>
             ))}
-          </div>
+          </S.WoList>
         ) : (
-          <p className={S.emptyMessage}>Nenhuma OS atribuida a voce</p>
+          <S.EmptyMessage>Nenhuma OS atribuida a voce</S.EmptyMessage>
         )}
-      </div>
+      </S.RecentSection>
 
       {/* Section 4: Preventive Plans */}
-      <div className={S.plansSection}>
-        <div className={S.sectionHeader}>
-          <h2 className={S.sectionTitle}>Manutencoes Programadas</h2>
-        </div>
+      <S.PlansSection>
+        <S.SectionHeader>
+          <S.SectionTitle>Manutencoes Programadas</S.SectionTitle>
+        </S.SectionHeader>
         {dueSoonPlans.length > 0 ? (
-          <div className={S.plansList}>
+          <S.PlansList>
             {dueSoonPlans.map((plan) => (
               <PreventivePlanCard key={plan._id} plan={plan} />
             ))}
-          </div>
+          </S.PlansList>
         ) : (
-          <p className={S.emptyMessage}>Nenhuma manutencao programada nos proximos 7 dias</p>
+          <S.EmptyMessage>Nenhuma manutencao programada nos proximos 7 dias</S.EmptyMessage>
         )}
-      </div>
+      </S.PlansSection>
 
       {/* Section 5: Quick Actions */}
-      <div className={S.sectionHeader}>
-        <h2 className={S.sectionTitle}>Acoes Rapidas</h2>
-      </div>
-      <div className={S.actionsGrid}>
-        <Link href={`${basePath}/nova-solicitacao`} className={S.actionCard}>
-          <span className={S.actionIcon}><Icon icon="plus-circle" size="lg" /></span>
-          <span className={S.actionTitle}>Nova Solicitacao</span>
-        </Link>
-        <Link href={`${basePath}/minhas-os`} className={S.actionCard}>
-          <span className={S.actionIcon}><Icon icon="clipboard" size="lg" /></span>
-          <span className={S.actionTitle}>Minhas OS</span>
-          <span className={S.actionMeta}>{stats.assignedOpen + stats.inProgress} pendentes</span>
-        </Link>
-        <Link href={`${basePath}/maquinas`} className={S.actionCard}>
-          <span className={S.actionIcon}><Icon icon="gear" size="lg" /></span>
-          <span className={S.actionTitle}>Maquinas</span>
-          <span className={S.actionMeta}>{stats.totalMachines} equipamentos</span>
-        </Link>
-        <Link href={`${basePath}/config`} className={S.actionCard}>
-          <span className={S.actionIcon}><Icon icon="wrench" size="lg" /></span>
-          <span className={S.actionTitle}>Configuracoes</span>
-        </Link>
-      </div>
-    </div>
+      <S.SectionHeader>
+        <S.SectionTitle>Acoes Rapidas</S.SectionTitle>
+      </S.SectionHeader>
+      <S.ActionsGrid>
+        <S.ActionCard href={`${basePath}/nova-solicitacao`}>
+          <S.ActionIcon><Icon icon="plus-circle" size="lg" /></S.ActionIcon>
+          <S.ActionTitle>Nova Solicitacao</S.ActionTitle>
+        </S.ActionCard>
+        <S.ActionCard href={`${basePath}/minhas-os`}>
+          <S.ActionIcon><Icon icon="clipboard" size="lg" /></S.ActionIcon>
+          <S.ActionTitle>Minhas OS</S.ActionTitle>
+          <S.ActionMeta>{stats.assignedOpen + stats.inProgress} pendentes</S.ActionMeta>
+        </S.ActionCard>
+        <S.ActionCard href={`${basePath}/maquinas`}>
+          <S.ActionIcon><Icon icon="gear" size="lg" /></S.ActionIcon>
+          <S.ActionTitle>Maquinas</S.ActionTitle>
+          <S.ActionMeta>{stats.totalMachines} equipamentos</S.ActionMeta>
+        </S.ActionCard>
+        <S.ActionCard href={`${basePath}/config`}>
+          <S.ActionIcon><Icon icon="wrench" size="lg" /></S.ActionIcon>
+          <S.ActionTitle>Configuracoes</S.ActionTitle>
+        </S.ActionCard>
+      </S.ActionsGrid>
+    </S.Wrapper>
   );
 }

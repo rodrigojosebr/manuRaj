@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Button, Input, Heading, Text } from '@pitkit';
+import { Button, Input } from '@pitkit';
 import * as S from './page.styles';
 
 export default function LoginPage() {
@@ -61,48 +61,48 @@ function LoginForm() {
   ];
 
   return (
-    <div className={S.container}>
+    <S.Container>
       {/* Branding panel */}
-      <div className={S.brandingPanel}>
-        <div className={S.decorCircleTop} />
-        <div className={S.decorCircleBottom} />
+      <S.BrandingPanel>
+        <S.DecorCircleTop />
+        <S.DecorCircleBottom />
 
-        <div className={S.brandingContent}>
-          <h1 className={S.brandingTitle}>manuRaj</h1>
-          <p className={S.brandingSubtitle}>
+        <S.BrandingContent>
+          <S.BrandingTitle>manuRaj</S.BrandingTitle>
+          <S.BrandingSubtitle>
             App operacional para manutentores e operadores.
             Gerencie suas ordens de servico em campo.
-          </p>
+          </S.BrandingSubtitle>
 
-          <div className={S.featureList}>
+          <S.FeatureList>
             {features.map((item) => (
-              <div key={item.text} className={S.featureItem}>
-                <span className={S.featureIcon}>{item.icon}</span>
+              <S.FeatureItem key={item.text}>
+                <S.FeatureIcon>{item.icon}</S.FeatureIcon>
                 <span>{item.text}</span>
-              </div>
+              </S.FeatureItem>
             ))}
-          </div>
-        </div>
-      </div>
+          </S.FeatureList>
+        </S.BrandingContent>
+      </S.BrandingPanel>
 
       {/* Form panel */}
-      <div className={S.formPanel}>
-        <div className={S.formContainer}>
-          <div className={S.titleDesktopWrap}>
-            <Heading as="h2" className={S.titleDesktopH2}>Acesse sua conta</Heading>
-            <Text size="sm" color="muted" className={S.titleDesktopSub}>
+      <S.FormPanel>
+        <S.FormContainer>
+          <S.TitleDesktopWrap>
+            <S.TitleDesktopH2>Acesse sua conta</S.TitleDesktopH2>
+            <S.TitleDesktopSub>
               Insira seus dados para entrar no sistema
-            </Text>
-          </div>
+            </S.TitleDesktopSub>
+          </S.TitleDesktopWrap>
 
-          <div className={S.titleMobileWrap}>
-            <Heading as="h2" className={S.titleMobileH2}>Entrar</Heading>
-            <Text size="sm" color="muted" className={S.titleMobileSub}>
+          <S.TitleMobileWrap>
+            <S.TitleMobileH2>Entrar</S.TitleMobileH2>
+            <S.TitleMobileSub>
               Insira seus dados para acessar o sistema
-            </Text>
-          </div>
+            </S.TitleMobileSub>
+          </S.TitleMobileWrap>
 
-          <form onSubmit={handleSubmit} className={S.form}>
+          <S.Form onSubmit={handleSubmit}>
             <Input
               label="Empresa"
               placeholder="Codigo da empresa"
@@ -128,17 +128,17 @@ function LoginForm() {
             />
 
             {error && (
-              <div className={S.errorBox}>
-                <p className={S.errorText}>{error}</p>
-              </div>
+              <S.ErrorBox>
+                <S.ErrorText>{error}</S.ErrorText>
+              </S.ErrorBox>
             )}
 
             <Button type="submit" size="lg" fullWidth isLoading={loading}>
               Entrar
             </Button>
-          </form>
-        </div>
-      </div>
-    </div>
+          </S.Form>
+        </S.FormContainer>
+      </S.FormPanel>
+    </S.Container>
   );
 }

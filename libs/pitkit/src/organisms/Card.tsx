@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { css, cx } from '../../../../styled-system/css';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -9,8 +9,8 @@ export type CardVariant = 'default' | 'elevated' | 'outlined' | 'filled';
 export type CardColorScheme = 'brand' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 export type CardBorderPosition = 'none' | 'left' | 'top';
 
-// ─── Card styles (cva) ──────────────────────────────────────────────────────
-const cardStyles = cva({
+// ─── Card styles (cva + compound variants) ──────────────────────────────────
+const StyledCard = styled('div', cva({
   base: {
     backgroundColor: 'white',
     borderRadius: 'lg',
@@ -18,21 +18,10 @@ const cardStyles = cva({
   },
   variants: {
     variant: {
-      default: {
-        border: '1px solid',
-        borderColor: 'gray.200',
-        boxShadow: 'sm',
-      },
-      elevated: {
-        boxShadow: 'md',
-      },
-      outlined: {
-        border: '1px solid',
-        borderColor: 'gray.200',
-      },
-      filled: {
-        // bg set dynamically via colorScheme
-      },
+      default: { border: '1px solid', borderColor: 'gray.200', boxShadow: 'sm' },
+      elevated: { boxShadow: 'md' },
+      outlined: { border: '1px solid', borderColor: 'gray.200' },
+      filled: {},
     },
     padding: {
       none: { padding: '0' },
@@ -48,56 +37,43 @@ const cardStyles = cva({
         _active: { transform: 'scale(0.98)' },
       },
     },
+    colorScheme: {
+      brand: {}, success: {}, warning: {}, danger: {}, info: {}, neutral: {},
+    },
+    borderPosition: {
+      none: {}, left: {}, top: {},
+    },
   },
+  compoundVariants: [
+    // filled + colorScheme → colored background
+    { variant: 'filled', colorScheme: 'brand', css: { backgroundColor: 'brand.50' } },
+    { variant: 'filled', colorScheme: 'success', css: { backgroundColor: 'green.50' } },
+    { variant: 'filled', colorScheme: 'warning', css: { backgroundColor: 'orange.50' } },
+    { variant: 'filled', colorScheme: 'danger', css: { backgroundColor: 'red.50' } },
+    { variant: 'filled', colorScheme: 'info', css: { backgroundColor: 'blue.50' } },
+    { variant: 'filled', colorScheme: 'neutral', css: { backgroundColor: 'gray.50' } },
+    // borderPosition left + colorScheme
+    { borderPosition: 'left', colorScheme: 'brand', css: { borderLeft: '4px solid', borderLeftColor: 'brand.500' } },
+    { borderPosition: 'left', colorScheme: 'success', css: { borderLeft: '4px solid', borderLeftColor: 'green.500' } },
+    { borderPosition: 'left', colorScheme: 'warning', css: { borderLeft: '4px solid', borderLeftColor: 'orange.500' } },
+    { borderPosition: 'left', colorScheme: 'danger', css: { borderLeft: '4px solid', borderLeftColor: 'red.500' } },
+    { borderPosition: 'left', colorScheme: 'info', css: { borderLeft: '4px solid', borderLeftColor: 'blue.500' } },
+    { borderPosition: 'left', colorScheme: 'neutral', css: { borderLeft: '4px solid', borderLeftColor: 'gray.400' } },
+    // borderPosition top + colorScheme
+    { borderPosition: 'top', colorScheme: 'brand', css: { borderTop: '4px solid', borderTopColor: 'brand.500' } },
+    { borderPosition: 'top', colorScheme: 'success', css: { borderTop: '4px solid', borderTopColor: 'green.500' } },
+    { borderPosition: 'top', colorScheme: 'warning', css: { borderTop: '4px solid', borderTopColor: 'orange.500' } },
+    { borderPosition: 'top', colorScheme: 'danger', css: { borderTop: '4px solid', borderTopColor: 'red.500' } },
+    { borderPosition: 'top', colorScheme: 'info', css: { borderTop: '4px solid', borderTopColor: 'blue.500' } },
+    { borderPosition: 'top', colorScheme: 'neutral', css: { borderTop: '4px solid', borderTopColor: 'gray.400' } },
+  ],
   defaultVariants: {
     variant: 'default',
     padding: 'md',
     interactive: false,
+    borderPosition: 'none',
   },
-});
-
-// ─── Color scheme helpers ────────────────────────────────────────────────────
-const filledBgMap: Record<CardColorScheme, string> = {
-  brand: 'brand.50',
-  success: 'green.50',
-  warning: 'orange.50',
-  danger: 'red.50',
-  info: 'blue.50',
-  neutral: 'gray.50',
-};
-
-const borderColorMap: Record<CardColorScheme, string> = {
-  brand: 'brand.500',
-  success: 'green.500',
-  warning: 'orange.500',
-  danger: 'red.500',
-  info: 'blue.500',
-  neutral: 'gray.400',
-};
-
-function getColorSchemeClass(
-  variant: CardVariant | undefined,
-  colorScheme: CardColorScheme | undefined,
-  borderPosition: CardBorderPosition | undefined
-): string {
-  if (!colorScheme) return '';
-
-  const classes: string[] = [];
-
-  // Filled variant → colored background
-  if (variant === 'filled') {
-    classes.push(css({ backgroundColor: filledBgMap[colorScheme] }));
-  }
-
-  // Border accent
-  if (borderPosition === 'left') {
-    classes.push(css({ borderLeft: '4px solid', borderLeftColor: borderColorMap[colorScheme] }));
-  } else if (borderPosition === 'top') {
-    classes.push(css({ borderTop: '4px solid', borderTopColor: borderColorMap[colorScheme] }));
-  }
-
-  return classes.join(' ');
-}
+}));
 
 // ─── Card ────────────────────────────────────────────────────────────────────
 interface CardProps {
@@ -119,60 +95,55 @@ export function Card({
   interactive = false,
   borderPosition = 'none',
 }: CardProps) {
-  const colorClass = getColorSchemeClass(variant, colorScheme, borderPosition);
-
   return (
-    <div className={cx(cardStyles({ variant, padding, interactive }), colorClass, className)}>
+    <StyledCard
+      variant={variant}
+      padding={padding}
+      interactive={interactive}
+      colorScheme={colorScheme}
+      borderPosition={borderPosition}
+      className={className}
+    >
       {children}
-    </div>
+    </StyledCard>
   );
 }
 
 // ─── CardHeader ──────────────────────────────────────────────────────────────
+const StyledCardHeader = styled('div', {
+  base: {
+    paddingBottom: '4',
+    borderBottom: '1px solid',
+    borderColor: 'gray.200',
+    marginBottom: '4',
+  },
+});
+
 interface CardHeaderProps {
   children: ReactNode;
   className?: string;
 }
 
 export function CardHeader({ children, className }: CardHeaderProps) {
-  return (
-    <div
-      className={cx(
-        css({
-          paddingBottom: '4',
-          borderBottom: '1px solid',
-          borderColor: 'gray.200',
-          marginBottom: '4',
-        }),
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
+  return <StyledCardHeader className={className}>{children}</StyledCardHeader>;
 }
 
 // ─── CardTitle ───────────────────────────────────────────────────────────────
+const StyledCardTitle = styled('h3', {
+  base: {
+    fontSize: 'lg',
+    fontWeight: 'semibold',
+    color: 'gray.900',
+  },
+});
+
 interface CardTitleProps {
   children: ReactNode;
   className?: string;
 }
 
 export function CardTitle({ children, className }: CardTitleProps) {
-  return (
-    <h3
-      className={cx(
-        css({
-          fontSize: 'lg',
-          fontWeight: 'semibold',
-          color: 'gray.900',
-        }),
-        className
-      )}
-    >
-      {children}
-    </h3>
-  );
+  return <StyledCardTitle className={className}>{children}</StyledCardTitle>;
 }
 
 // ─── CardContent ─────────────────────────────────────────────────────────────
@@ -186,29 +157,24 @@ export function CardContent({ children, className }: CardContentProps) {
 }
 
 // ─── CardFooter ──────────────────────────────────────────────────────────────
+const StyledCardFooter = styled('div', {
+  base: {
+    paddingTop: '4',
+    borderTop: '1px solid',
+    borderColor: 'gray.200',
+    marginTop: '4',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: '2',
+  },
+});
+
 interface CardFooterProps {
   children: ReactNode;
   className?: string;
 }
 
 export function CardFooter({ children, className }: CardFooterProps) {
-  return (
-    <div
-      className={cx(
-        css({
-          paddingTop: '4',
-          borderTop: '1px solid',
-          borderColor: 'gray.200',
-          marginTop: '4',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          gap: '2',
-        }),
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
+  return <StyledCardFooter className={className}>{children}</StyledCardFooter>;
 }

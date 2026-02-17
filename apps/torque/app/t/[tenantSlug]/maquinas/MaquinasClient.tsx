@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import {
   Heading,
-  Text,
   Badge,
   Card,
   Icon,
@@ -53,22 +51,22 @@ function getMachineColorScheme(status: string): CardColorScheme {
 function MachineCard({ machine: m }: { machine: SerializedMachine }) {
   return (
     <Card variant="outlined" colorScheme={getMachineColorScheme(m.status)} borderPosition="left" padding="md">
-      <div className={S.machineHeader}>
+      <S.MachineHeader>
         <Icon icon="wrench" size="md" />
-        <span className={S.machineName}>{m.name}</span>
-      </div>
-      <p className={S.machineCode}>{m.code}</p>
-      {m.location && <p className={S.machineDetail}><Icon icon="map-pin" size="xs" /> {m.location}</p>}
+        <S.MachineName>{m.name}</S.MachineName>
+      </S.MachineHeader>
+      <S.MachineCode>{m.code}</S.MachineCode>
+      {m.location && <S.MachineDetail><Icon icon="map-pin" size="xs" /> {m.location}</S.MachineDetail>}
       {(m.manufacturer || m.model) && (
-        <p className={S.machineDetail}>
+        <S.MachineDetail>
           {[m.manufacturer, m.model].filter(Boolean).join(' \u2022 ')}
-        </p>
+        </S.MachineDetail>
       )}
-      <div className={S.machineBadgeRow}>
+      <S.MachineBadgeRow>
         <Badge variant={getMachineStatusBadgeVariant(m.status)}>
           {MACHINE_STATUS_DISPLAY[m.status] || m.status}
         </Badge>
-      </div>
+      </S.MachineBadgeRow>
     </Card>
   );
 }
@@ -82,41 +80,40 @@ export function MaquinasClient({ machines, tenantSlug }: MaquinasClientProps) {
   });
 
   return (
-    <div className={S.wrapper}>
+    <S.Wrapper>
       {/* Page header */}
-      <div className={S.pageHeader}>
+      <S.PageHeader>
         <Heading as="h1">Máquinas</Heading>
-        <Text size="sm" className={S.subtitle}>
+        <S.Subtitle>
           {machines.length} {machines.length === 1 ? 'equipamento' : 'equipamentos'}
-        </Text>
-      </div>
+        </S.Subtitle>
+      </S.PageHeader>
 
       {/* Filter tabs */}
-      <div className={S.tabsContainer}>
+      <S.TabsContainer>
         {TABS.map((t) => (
-          <button
+          <S.Tab
             key={t.key}
-            className={S.tab(activeTab === t.key)}
+            active={activeTab === t.key}
             onClick={() => setActiveTab(t.key)}
           >
             {t.label}
-          </button>
+          </S.Tab>
         ))}
-      </div>
+      </S.TabsContainer>
 
       {/* Card list */}
       {filtered.length > 0 ? (
-        <div className={S.cardList}>
+        <S.CardList>
           {filtered.map((m) => (
-            <Link
+            <S.CardLink
               key={m._id}
               href={`/t/${tenantSlug}/maquinas/${m._id}`}
-              className={S.cardLink}
             >
               <MachineCard machine={m} />
-            </Link>
+            </S.CardLink>
           ))}
-        </div>
+        </S.CardList>
       ) : (
         <EmptyState
           icon="gear"
@@ -129,6 +126,6 @@ export function MaquinasClient({ machines, tenantSlug }: MaquinasClientProps) {
           size="md"
         />
       )}
-    </div>
+    </S.Wrapper>
   );
 }

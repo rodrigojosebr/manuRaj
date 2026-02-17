@@ -1,29 +1,33 @@
 import { Skeleton } from '@pitkit';
-import { css } from '../../../../../../styled-system/css';
+import { styled } from '../../../../../../styled-system/jsx';
+
+const Page = styled('div', { base: { padding: 'page' } });
+const SkeletonMt1 = styled(Skeleton, { base: { marginTop: '1' } });
+const FormFields = styled('div', {
+  base: { marginTop: 'section', display: 'flex', flexDirection: 'column', gap: 'field-gap' },
+});
 
 export default function Loading() {
   return (
-    <div className={css({ padding: 'page' })}>
-      {/* Heading + subtitle */}
+    <Page>
       <Skeleton height="28px" width="200px" />
-      <Skeleton height="14px" width="280px" className={css({ marginTop: '1' })} />
+      <SkeletonMt1 height="14px" width="280px" />
 
-      {/* Form fields */}
-      <div className={css({ marginTop: 'section', display: 'flex', flexDirection: 'column', gap: 'field-gap' })}>
+      <FormFields>
         <div>
           <Skeleton height="14px" width="80px" />
-          <Skeleton height="40px" className={css({ marginTop: '1' })} />
+          <SkeletonMt1 height="40px" />
         </div>
         <div>
           <Skeleton height="14px" width="80px" />
-          <Skeleton height="40px" className={css({ marginTop: '1' })} />
+          <SkeletonMt1 height="40px" />
         </div>
         <div>
           <Skeleton height="14px" width="140px" />
-          <Skeleton height="100px" className={css({ marginTop: '1' })} />
+          <SkeletonMt1 height="100px" />
         </div>
         <Skeleton height="44px" />
-      </div>
-    </div>
+      </FormFields>
+    </Page>
   );
 }

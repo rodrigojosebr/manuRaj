@@ -1,9 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import {
   Badge,
-  Icon,
   getMachineStatusBadgeVariant,
   getStatusBadgeVariant,
   getPriorityBadgeVariant,
@@ -45,105 +43,102 @@ interface MachineDetailClientProps {
 
 function WOCard({ wo, tenantSlug }: { wo: SerializedMachineWO; tenantSlug: string }) {
   return (
-    <Link
-      href={`/t/${tenantSlug}/minhas-os/${wo._id}`}
-      className={S.woCardLink}
-    >
-      <div className={S.woCard(wo.status)}>
-        <p className={S.woDescription}>{truncate(wo.description, 80)}</p>
-        <div className={S.woBadges}>
+    <S.WoCardLink href={`/t/${tenantSlug}/minhas-os/${wo._id}`}>
+      <S.WoCard woStatus={wo.status as 'open' | 'assigned' | 'in_progress' | 'completed' | 'cancelled'}>
+        <S.WoDescription>{truncate(wo.description, 80)}</S.WoDescription>
+        <S.WoBadges>
           <Badge variant={getStatusBadgeVariant(wo.status)}>
             {WORK_ORDER_STATUS_DISPLAY[wo.status] || wo.status}
           </Badge>
           <Badge variant={getPriorityBadgeVariant(wo.priority)}>
             {WORK_ORDER_PRIORITY_DISPLAY[wo.priority] || wo.priority}
           </Badge>
-        </div>
+        </S.WoBadges>
         {wo.dueDate && (
-          <p className={S.woMeta}>Prazo: {formatDate(wo.dueDate)}</p>
+          <S.WoMeta>Prazo: {formatDate(wo.dueDate)}</S.WoMeta>
         )}
-      </div>
-    </Link>
+      </S.WoCard>
+    </S.WoCardLink>
   );
 }
 
 export function MachineDetailClient({ machine, workOrders, tenantSlug }: MachineDetailClientProps) {
   return (
-    <div className={S.wrapper}>
+    <S.Wrapper>
       {/* Back link */}
-      <Link href={`/t/${tenantSlug}/maquinas`} className={S.backLink}>
-        <Icon icon="arrow-left" size="sm" /> Voltar
-      </Link>
+      <S.BackLink href={`/t/${tenantSlug}/maquinas`}>
+        <S.InfoIcon icon="arrow-left" size="sm" /> Voltar
+      </S.BackLink>
 
       {/* Header */}
-      <div className={S.header}>
-        <div className={S.machineTitle}>{machine.name}</div>
-        <div className={S.badges}>
+      <S.Header>
+        <S.MachineTitle>{machine.name}</S.MachineTitle>
+        <S.Badges>
           <Badge variant="default">{machine.code}</Badge>
           <Badge variant={getMachineStatusBadgeVariant(machine.status)}>
             {MACHINE_STATUS_DISPLAY[machine.status] || machine.status}
           </Badge>
-        </div>
-      </div>
+        </S.Badges>
+      </S.Header>
 
       {/* Info section */}
-      <div className={S.section}>
-        <div className={S.sectionTitle}>Informacoes</div>
-        <div className={S.infoGrid}>
+      <S.Section>
+        <S.SectionTitle>Informacoes</S.SectionTitle>
+        <S.InfoGrid>
           {machine.location && (
-            <div className={S.infoRow}>
-              <span className={S.infoIcon}><Icon icon="map-pin" size="md" /></span>
-              <div className={S.infoContent}>
-                <div className={S.infoLabel}>Localizacao</div>
-                <div className={S.infoValue}>{machine.location}</div>
-              </div>
-            </div>
+            <S.InfoRow>
+              <S.InfoIcon icon="map-pin" size="md" />
+              <S.InfoContent>
+                <S.InfoLabel>Localizacao</S.InfoLabel>
+                <S.InfoValue>{machine.location}</S.InfoValue>
+              </S.InfoContent>
+            </S.InfoRow>
           )}
           {machine.manufacturer && (
-            <div className={S.infoRow}>
-              <span className={S.infoIcon}><Icon icon="factory" size="md" /></span>
-              <div className={S.infoContent}>
-                <div className={S.infoLabel}>Fabricante</div>
-                <div className={S.infoValue}>{machine.manufacturer}</div>
-              </div>
-            </div>
+            <S.InfoRow>
+              <S.InfoIcon icon="factory" size="md" />
+              <S.InfoContent>
+                <S.InfoLabel>Fabricante</S.InfoLabel>
+                <S.InfoValue>{machine.manufacturer}</S.InfoValue>
+              </S.InfoContent>
+            </S.InfoRow>
           )}
           {machine.model && (
-            <div className={S.infoRow}>
-              <span className={S.infoIcon}><Icon icon="ruler" size="md" /></span>
-              <div className={S.infoContent}>
-                <div className={S.infoLabel}>Modelo</div>
-                <div className={S.infoValue}>{machine.model}</div>
-              </div>
-            </div>
+            <S.InfoRow>
+              <S.InfoIcon icon="ruler" size="md" />
+              <S.InfoContent>
+                <S.InfoLabel>Modelo</S.InfoLabel>
+                <S.InfoValue>{machine.model}</S.InfoValue>
+              </S.InfoContent>
+            </S.InfoRow>
           )}
           {machine.serial && (
-            <div className={S.infoRow}>
-              <span className={S.infoIcon}><Icon icon="hash" size="md" /></span>
-              <div className={S.infoContent}>
-                <div className={S.infoLabel}>Serial</div>
-                <div className={S.infoValue}>{machine.serial}</div>
-              </div>
-            </div>
+            <S.InfoRow>
+              <S.InfoIcon icon="hash" size="md" />
+              <S.InfoContent>
+                <S.InfoLabel>Serial</S.InfoLabel>
+                <S.InfoValue>{machine.serial}</S.InfoValue>
+              </S.InfoContent>
+            </S.InfoRow>
           )}
-        </div>
-      </div>
+        </S.InfoGrid>
+      </S.Section>
 
       {/* Recent WOs */}
-      <div className={S.section}>
-        <div className={S.sectionTitle}>
+      <S.Section>
+        <S.SectionTitle>
           OS Recentes ({workOrders.length})
-        </div>
+        </S.SectionTitle>
         {workOrders.length > 0 ? (
-          <div className={S.woList}>
+          <S.WoList>
             {workOrders.map((wo) => (
               <WOCard key={wo._id} wo={wo} tenantSlug={tenantSlug} />
             ))}
-          </div>
+          </S.WoList>
         ) : (
-          <p className={S.emptyMessage}>Nenhuma OS para esta maquina</p>
+          <S.EmptyMessage>Nenhuma OS para esta maquina</S.EmptyMessage>
         )}
-      </div>
-    </div>
+      </S.Section>
+    </S.Wrapper>
   );
 }

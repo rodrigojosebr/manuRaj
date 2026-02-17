@@ -1,9 +1,10 @@
 'use client';
 
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 import { ICON_REGISTRY, type IconName } from './icon-registry';
 
-const svgIconStyles = cva({
+const IconWrapper = styled('span', cva({
   base: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -22,7 +23,7 @@ const svgIconStyles = cva({
   defaultVariants: {
     size: 'md',
   },
-});
+}));
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -38,8 +39,9 @@ export function SvgIcon({ icon, size = 'md', alt, className }: SvgIconProps) {
   if (!children) return null;
 
   return (
-    <span
-      className={`${svgIconStyles({ size })} ${className || ''}`}
+    <IconWrapper
+      size={size}
+      className={className}
       role={alt ? 'img' : 'presentation'}
       aria-label={alt}
       aria-hidden={!alt}
@@ -56,7 +58,7 @@ export function SvgIcon({ icon, size = 'md', alt, className }: SvgIconProps) {
       >
         {children}
       </svg>
-    </span>
+    </IconWrapper>
   );
 }
 
