@@ -2,10 +2,13 @@ import NextAuth from 'next-auth';
 import { authConfig } from '@manuraj/auth/auth.config';
 
 /**
- * Middleware using edge-safe auth configuration.
- * This does NOT import MongoDB or any Node.js-only modules.
+ * Proxy using edge-safe auth configuration.
+ * Replaces middleware.ts (deprecated in Next.js 16).
+ * Runs on Node.js runtime.
  */
-export default NextAuth(authConfig).auth;
+const { auth } = NextAuth(authConfig);
+
+export const proxy = auth;
 
 export const config = {
   matcher: [

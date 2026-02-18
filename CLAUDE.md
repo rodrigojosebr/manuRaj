@@ -54,7 +54,7 @@ manuRaj/
 │   │   │   ├── api/                # 17 API routes (garage-pitlane)
 │   │   │   ├── login/, signup/
 │   │   │   └── t/[tenantSlug]/(dashboard)/   # 12 páginas
-│   │   ├── middleware.ts, panda.config.ts
+│   │   ├── proxy.ts, panda.config.ts
 │   │   └── next.config.js
 │   │
 │   ├── torque/                     # App operacional (mobile-first)
@@ -81,7 +81,7 @@ manuRaj/
 │   ├── ads/            # Google AdSense components
 │   └── config/         # Variáveis de ambiente tipadas
 │
-├── tests/              # 175 testes unitários + 7 integração
+├── tests/              # 241 testes unitários + 7 integração
 └── scripts/            # seed.ts, check-db.ts
 ```
 
@@ -169,7 +169,7 @@ export const InfoIcon = styled(Icon, { base: { color: 'gray.400' } });
 Login → NextAuth Credentials → JWT com: `id, tenantId, tenantSlug, name, email, role`
 
 ### Edge Runtime
-- `middleware.ts` → importar apenas `@manuraj/auth/auth.config` (Edge-safe)
+- `proxy.ts` → importar apenas `@manuraj/auth/auth.config` (Node.js runtime)
 - API routes / server components → importar `@manuraj/auth` (Node.js)
 
 ### Roles (5 níveis hierárquicos)
@@ -257,7 +257,7 @@ npm run build:pitlane    # Build pitlane
 npm run build:all        # Build todos
 
 # Testes
-npx vitest run           # 175 testes unitários (~1s)
+npx vitest run           # 241 testes unitários (~1s)
 npm run test             # Watch mode
 
 # PandaCSS
@@ -281,7 +281,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 
 | Erro | Causa | Solução |
 |------|-------|---------|
-| Edge runtime `crypto` | MongoDB importado no middleware | Middleware importar apenas `@manuraj/auth/auth.config` |
+| Edge runtime `crypto` | MongoDB importado no proxy | Proxy importar apenas `@manuraj/auth/auth.config` |
 | `/_global-error` prerendering | Bug NX plugin Next.js 16 | Usar `node_modules/.bin/next build apps/X` |
 | Estilos não aplicam | PandaCSS desatualizado | `npm run panda:codegen` |
 | "Credenciais inválidas" | Banco vazio ou senha errada | `npm run db:seed` (senha: `demo1234`) |
@@ -290,7 +290,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 
 ## 12. Testes Automatizados
 
-- **175 testes unitários** passando (~1s): schemas Zod (65), RBAC (33), constants (16), formatadores (44), API client (17)
+- **241 testes unitários** passando (~1s): schemas Zod (65), RBAC (33), constants (16), formatadores (44), API client (17), auth guards (46), auth config (20)
 - **7 testes integração** (tenant isolation, precisa MongoDB)
 - Estrutura: `tests/domain/`, `tests/shared-utils/`
 
@@ -319,7 +319,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 
 ### Infraestrutura
 - 3 builds passando — 0 erros TypeScript
-- 175 testes unitários passando
+- 241 testes unitários passando
 - MongoDB Atlas conectado (seed: 6 users, 7 machines, 7 WOs, 5 plans)
 - NextAuth + JWT funcionando
 - PitKit Card com variants (default/elevated/outlined/filled + colorScheme + interactive + borderPosition)
@@ -346,8 +346,8 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 - [ ] Exportação de relatórios (PDF/Excel)
 
 ### Técnico
-- [ ] Testes de auth guards (com mocks)
-- [ ] Migrar middleware para proxy (Next.js 16 deprecou middleware)
+- [x] Testes de auth guards (66 testes: guards + auth-config)
+- [x] Migrar middleware para proxy (Next.js 16 deprecou middleware)
 
 ---
 

@@ -156,7 +156,7 @@ export async function validateTenantFromPath(pathname: string): Promise<SessionU
 }
 
 /**
- * Middleware helper to check if path requires authentication
+ * Proxy helper to check if path requires authentication
  */
 export function isProtectedPath(pathname: string): boolean {
   // Public paths that don't require auth
@@ -173,7 +173,7 @@ export function isProtectedPath(pathname: string): boolean {
 }
 
 /**
- * Middleware helper to check if path is a tenant-scoped path
+ * Proxy helper to check if path is a tenant-scoped path
  */
 export function isTenantPath(pathname: string): boolean {
   return pathname.startsWith('/t/');

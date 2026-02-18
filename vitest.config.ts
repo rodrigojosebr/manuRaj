@@ -6,6 +6,7 @@ export default defineConfig({
     alias: {
       '@manuraj/domain': path.resolve(__dirname, 'libs/domain/src/index.ts'),
       '@manuraj/data-access': path.resolve(__dirname, 'libs/data-access/src/index.ts'),
+      '@manuraj/auth/auth.config': path.resolve(__dirname, 'libs/auth/src/auth.config.ts'),
       '@manuraj/auth': path.resolve(__dirname, 'libs/auth/src/index.ts'),
       '@manuraj/config': path.resolve(__dirname, 'libs/config/src/index.ts'),
       '@pitkit': path.resolve(__dirname, 'libs/pitkit/src/index.ts'),

@@ -16,7 +16,7 @@ declare module '@auth/core/jwt' {
 /**
  * Base auth configuration that is safe for edge runtime.
  * This config does NOT include providers that require Node.js APIs.
- * Used by middleware for session validation.
+ * Used by proxy for session validation.
  */
 export const authConfig: NextAuthConfig = {
   providers: [], // Providers are added in auth.ts (Node.js only)
