@@ -77,6 +77,7 @@ interface ModalProps {
   children: ReactNode;
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  className?: string;
 }
 
 const sizeMap = {
@@ -86,7 +87,7 @@ const sizeMap = {
   xl: '800px',
 };
 
-export function Modal({ isOpen, onClose, children, title, size = 'md' }: ModalProps) {
+export function Modal({ isOpen, onClose, children, title, size = 'md', className }: ModalProps) {
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -111,7 +112,7 @@ export function Modal({ isOpen, onClose, children, title, size = 'md' }: ModalPr
   const modalContent = (
     <Overlay>
       <Backdrop onClick={onClose} />
-      <ModalPanel style={{ maxWidth: sizeMap[size] }}>
+      <ModalPanel style={{ maxWidth: sizeMap[size] }} className={className}>
         {title && (
           <ModalHeaderWrapper>
             <ModalTitle>{title}</ModalTitle>

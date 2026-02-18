@@ -147,13 +147,15 @@ export function CardTitle({ children, className }: CardTitleProps) {
 }
 
 // ─── CardContent ─────────────────────────────────────────────────────────────
+const StyledCardContent = styled('div', {});
+
 interface CardContentProps {
   children: ReactNode;
   className?: string;
 }
 
 export function CardContent({ children, className }: CardContentProps) {
-  return <div className={className}>{children}</div>;
+  return <StyledCardContent className={className}>{children}</StyledCardContent>;
 }
 
 // ─── CardFooter ──────────────────────────────────────────────────────────────

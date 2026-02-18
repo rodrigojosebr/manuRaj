@@ -54,12 +54,15 @@ export function TableHeader({ children }: TableHeaderProps) {
 }
 
 // ─── TableBody ───────────────────────────────────────────────────────────────
+const StyledTbody = styled('tbody', {});
+
 interface TableBodyProps {
   children: ReactNode;
+  className?: string;
 }
 
-export function TableBody({ children }: TableBodyProps) {
-  return <tbody>{children}</tbody>;
+export function TableBody({ children, className }: TableBodyProps) {
+  return <StyledTbody className={className}>{children}</StyledTbody>;
 }
 
 // ─── TableRow ────────────────────────────────────────────────────────────────
@@ -149,10 +152,12 @@ interface TableEmptyProps {
   colSpan: number;
 }
 
+const StyledEmptyTr = styled('tr', {});
+
 export function TableEmpty({ message = 'Nenhum registro encontrado', colSpan }: TableEmptyProps) {
   return (
-    <tr>
+    <StyledEmptyTr>
       <EmptyTd colSpan={colSpan}>{message}</EmptyTd>
-    </tr>
+    </StyledEmptyTr>
   );
 }
