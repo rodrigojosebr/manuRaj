@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@manuraj/data-access';
-import { workOrderRepository, userRepository } from '@manuraj/data-access';
+import { workOrderRepository, userRepository, auditLogRepository } from '@manuraj/data-access';
 import { assignWorkOrderSchema, PERMISSIONS } from '@manuraj/domain';
 import {
   requirePermission,
@@ -41,6 +41,12 @@ export const POST = withErrorHandler(async (req: NextRequest, context?: RouteCon
   if (!workOrder) {
     return notFoundResponse('Ordem de serviço não encontrada ou não pode ser atribuída');
   }
+
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'assign', entity: 'work_order', entityId: id,
+    metadata: { assignedTo: parsed.data.assignedTo, assigneeName: assignee.name },
+  });
 
   return successResponse(workOrder);
 });

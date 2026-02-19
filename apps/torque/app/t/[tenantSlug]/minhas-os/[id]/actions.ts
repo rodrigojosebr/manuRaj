@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@manuraj/auth';
-import { connectDB, workOrderRepository } from '@manuraj/data-access';
+import { connectDB, workOrderRepository, auditLogRepository } from '@manuraj/data-access';
 import { finishWorkOrderSchema, hasPermission, PERMISSIONS, type UserRole } from '@manuraj/domain';
 
 interface ActionResult {
@@ -29,6 +29,11 @@ export async function startWorkOrderAction(workOrderId: string): Promise<ActionR
   if (!result) {
     return { success: false, error: 'Nao foi possivel iniciar a OS. Verifique se ela esta atribuida a voce.' };
   }
+
+  void auditLogRepository.log({
+    tenantId, userId, userName: session.user.name,
+    action: 'start', entity: 'work_order', entityId: workOrderId,
+  });
 
   return { success: true };
 }
@@ -63,6 +68,12 @@ export async function finishWorkOrderAction(
   if (!result) {
     return { success: false, error: 'Nao foi possivel finalizar a OS. Verifique se ela esta em andamento.' };
   }
+
+  void auditLogRepository.log({
+    tenantId, userId, userName: session.user.name,
+    action: 'finish', entity: 'work_order', entityId: workOrderId,
+    metadata: { timeSpentMin: parsed.data.timeSpentMin },
+  });
 
   return { success: true };
 }

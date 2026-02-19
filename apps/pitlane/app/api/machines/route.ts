@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@manuraj/data-access';
-import { machineRepository } from '@manuraj/data-access';
+import { machineRepository, auditLogRepository } from '@manuraj/data-access';
 import { createMachineSchema, paginationSchema, machineStatusSchema, PERMISSIONS } from '@manuraj/domain';
 import {
   requireAuth,
@@ -63,6 +63,11 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   }
 
   const machine = await machineRepository.create(user.tenantId, parsed.data);
+
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'create', entity: 'machine', entityId: String(machine._id),
+  });
 
   return successResponse(machine, 201);
 });

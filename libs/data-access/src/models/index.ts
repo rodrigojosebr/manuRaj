@@ -4,3 +4,4 @@ export * from './machine.model';
 export * from './machine-document.model';
 export * from './work-order.model';
 export * from './preventive-plan.model';
+export * from './audit-log.model';

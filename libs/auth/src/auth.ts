@@ -5,13 +5,14 @@ import { connectDB } from '@manuraj/data-access';
 import { UserModel } from '@manuraj/data-access';
 import { TenantModel } from '@manuraj/data-access';
 import { loginSchema } from '@manuraj/domain';
+import { logger } from '@manuraj/shared-utils';
 import { authConfig } from './auth.config';
 
 /**
  * Full NextAuth configuration with providers.
  * This runs in Node.js runtime only (not edge).
  */
-console.log('[Auth] Initializing NextAuth...');
+logger.info('NextAuth initialized');
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -79,7 +80,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: user.role,
           };
         } catch (error) {
-          console.error('[Auth] Authorization error:', error);
+          logger.error({ error }, 'Authorization failed');
           return null;
         }
       },

@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import { auth } from './auth';
 import type { SessionUser, UserRole, Permission } from '@manuraj/domain';
 import { hasPermission, hasAnyPermission } from '@manuraj/domain';
+import { logger } from '@manuraj/shared-utils';
 
 /**
  * API Response helpers
@@ -203,8 +204,11 @@ export function withErrorHandler(handler: RouteHandler): RouteHandler {
         return error;
       }
 
-      // Log unexpected errors
-      console.error('[API Error]', error);
+      // Log unexpected errors with request context
+      logger.error(
+        { error, url: req.url, method: req.method },
+        'Unhandled API error'
+      );
 
       // Return generic error for unexpected errors
       return serverErrorResponse();

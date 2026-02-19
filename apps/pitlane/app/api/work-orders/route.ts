@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@manuraj/data-access';
-import { workOrderRepository, machineRepository } from '@manuraj/data-access';
+import { workOrderRepository, machineRepository, auditLogRepository } from '@manuraj/data-access';
 import { createWorkOrderSchema, workOrderQuerySchema, PERMISSIONS } from '@manuraj/domain';
 import {
   requireAuth,
@@ -90,6 +90,11 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   }
 
   const workOrder = await workOrderRepository.create(user.tenantId, user.id, parsed.data);
+
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'create', entity: 'work_order', entityId: String(workOrder._id),
+  });
 
   return successResponse(workOrder, 201);
 });

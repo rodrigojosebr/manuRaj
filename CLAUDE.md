@@ -8,6 +8,7 @@
 > - `STYLES.md` — Paletas de cores, layouts, tipografia, padrões visuais
 > - `TORQUE.md` — Padrões mobile-first do app operacional (sidebar, páginas, PWA)
 > - `UNIVERSE.md` — Narrativa de produto e nomenclatura (metáfora F1)
+> - `INFRA.md` — Plano de hardening, segurança, observabilidade e automação
 
 ---
 
@@ -81,7 +82,7 @@ manuRaj/
 │   ├── ads/            # Google AdSense components
 │   └── config/         # Variáveis de ambiente tipadas
 │
-├── tests/              # 241 testes unitários + 7 integração
+├── tests/              # 265 testes unitários + 7 integração
 └── scripts/            # seed.ts, check-db.ts
 ```
 
@@ -257,7 +258,7 @@ npm run build:pitlane    # Build pitlane
 npm run build:all        # Build todos
 
 # Testes
-npx vitest run           # 241 testes unitários (~1s)
+npx vitest run           # 265 testes unitários (~1s)
 npm run test             # Watch mode
 
 # PandaCSS
@@ -290,7 +291,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 
 ## 12. Testes Automatizados
 
-- **241 testes unitários** passando (~1s): schemas Zod (65), RBAC (33), constants (16), formatadores (44), API client (17), auth guards (46), auth config (20)
+- **265 testes unitários** passando (~1s): schemas Zod (65), RBAC (33), constants (16), formatadores (44), API client (17), auth guards (46), auth config (20), sanitize (24)
 - **7 testes integração** (tenant isolation, precisa MongoDB)
 - Estrutura: `tests/domain/`, `tests/shared-utils/`
 
@@ -319,7 +320,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 
 ### Infraestrutura
 - 3 builds passando — 0 erros TypeScript
-- 241 testes unitários passando
+- 265 testes unitários passando
 - MongoDB Atlas conectado (seed: 6 users, 7 machines, 7 WOs, 5 plans)
 - NextAuth + JWT funcionando
 - PitKit Card com variants (default/elevated/outlined/filled + colorScheme + interactive + borderPosition)

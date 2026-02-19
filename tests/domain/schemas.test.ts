@@ -77,25 +77,25 @@ describe('Zod Schemas', () => {
 
   describe('loginSchema', () => {
     it('should accept valid login data', () => {
-      const data = { email: 'user@example.com', password: '123456' };
+      const data = { email: 'user@example.com', password: '12345678' };
       expect(loginSchema.safeParse(data).success).toBe(true);
     });
 
     it('should reject invalid email', () => {
-      const data = { email: 'not-an-email', password: '123456' };
+      const data = { email: 'not-an-email', password: '12345678' };
       const result = loginSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
 
     it('should reject short password', () => {
-      const data = { email: 'user@example.com', password: '12345' };
+      const data = { email: 'user@example.com', password: '1234567' };
       const result = loginSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
 
     it('should reject missing fields', () => {
       expect(loginSchema.safeParse({ email: 'user@example.com' }).success).toBe(false);
-      expect(loginSchema.safeParse({ password: '123456' }).success).toBe(false);
+      expect(loginSchema.safeParse({ password: '12345678' }).success).toBe(false);
       expect(loginSchema.safeParse({}).success).toBe(false);
     });
   });
