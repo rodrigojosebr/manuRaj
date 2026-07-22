@@ -100,39 +100,39 @@ export function ConfigClient({ user, tenantSlug }: ConfigClientProps) {
   }
 
   return (
-    <div className={S.wrapper}>
+    <S.Wrapper>
       {/* Page header */}
-      <div className={S.pageHeader}>
+      <S.PageHeader>
         <Heading as="h1">Configuracoes</Heading>
-      </div>
+      </S.PageHeader>
 
       {/* Profile card */}
-      <div className={S.section}>
+      <S.Section>
         <Card variant="filled" colorScheme="brand" padding="md">
           <CardContent>
-            <div className={S.profileInfo}>
-              <span className={S.profileName}>{user.name}</span>
-              <span className={S.profileEmail}>{user.email}</span>
+            <S.ProfileInfo>
+              <S.ProfileName>{user.name}</S.ProfileName>
+              <S.ProfileEmail>{user.email}</S.ProfileEmail>
               <Badge variant="default">
                 {ROLE_DISPLAY_NAMES[user.role as UserRole] || user.role}
               </Badge>
               {user.createdAt && (
-                <span className={S.profileMeta}>
+                <S.ProfileMeta>
                   Membro desde {formatDate(user.createdAt)}
-                </span>
+                </S.ProfileMeta>
               )}
-            </div>
+            </S.ProfileInfo>
           </CardContent>
         </Card>
-      </div>
+      </S.Section>
 
       {/* Edit profile form */}
-      <div className={S.section}>
-        <p className={S.sectionTitle}>Editar Perfil</p>
+      <S.Section>
+        <S.SectionTitle>Editar Perfil</S.SectionTitle>
         <Card padding="md">
           <CardContent>
             <form onSubmit={handleProfileSubmit}>
-              <div className={S.formFields}>
+              <S.FormFields>
                 <TextField
                   label="Nome"
                   required
@@ -148,30 +148,30 @@ export function ConfigClient({ user, tenantSlug }: ConfigClientProps) {
                 />
 
                 {profileSuccess && (
-                  <div className={S.successMessage}>{profileSuccess}</div>
+                  <S.SuccessMessage>{profileSuccess}</S.SuccessMessage>
                 )}
                 {profileError && (
-                  <div className={S.errorMessage}>{profileError}</div>
+                  <S.ErrorMessage>{profileError}</S.ErrorMessage>
                 )}
 
-                <div className={S.submitArea}>
+                <S.SubmitArea>
                   <Button type="submit" fullWidth isLoading={isSubmittingProfile}>
                     Salvar Alteracoes
                   </Button>
-                </div>
-              </div>
+                </S.SubmitArea>
+              </S.FormFields>
             </form>
           </CardContent>
         </Card>
-      </div>
+      </S.Section>
 
       {/* Change password form */}
-      <div className={S.section}>
-        <p className={S.sectionTitle}>Alterar Senha</p>
+      <S.Section>
+        <S.SectionTitle>Alterar Senha</S.SectionTitle>
         <Card padding="md">
           <CardContent>
             <form onSubmit={handlePasswordSubmit}>
-              <div className={S.formFields}>
+              <S.FormFields>
                 <TextField
                   label="Senha Atual"
                   required
@@ -196,29 +196,29 @@ export function ConfigClient({ user, tenantSlug }: ConfigClientProps) {
                 />
 
                 {passwordSuccess && (
-                  <div className={S.successMessage}>{passwordSuccess}</div>
+                  <S.SuccessMessage>{passwordSuccess}</S.SuccessMessage>
                 )}
                 {passwordError && (
-                  <div className={S.errorMessage}>{passwordError}</div>
+                  <S.ErrorMessage>{passwordError}</S.ErrorMessage>
                 )}
 
-                <div className={S.submitArea}>
+                <S.SubmitArea>
                   <Button type="submit" fullWidth isLoading={isSubmittingPassword}>
                     Alterar Senha
                   </Button>
-                </div>
-              </div>
+                </S.SubmitArea>
+              </S.FormFields>
             </form>
           </CardContent>
         </Card>
-      </div>
+      </S.Section>
 
       {/* Logout */}
-      <div className={S.logoutSection}>
+      <S.LogoutSection>
         <Button variant="danger" fullWidth onClick={handleLogout}>
           Sair da Conta
         </Button>
-      </div>
-    </div>
+      </S.LogoutSection>
+    </S.Wrapper>
   );
 }

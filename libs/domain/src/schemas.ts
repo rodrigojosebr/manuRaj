@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { sanitize, stripTags } from './sanitize';
 
 // Reusable schemas
 export const objectIdSchema = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid ObjectId');
@@ -15,24 +16,24 @@ export const userRoleSchema = z.enum([
 // --- Auth Schemas ---
 export const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export const signupSchema = z.object({
-  tenantName: z.string().min(2, 'Company name must be at least 2 characters').max(100),
+  tenantName: z.string().min(2, 'Company name must be at least 2 characters').max(100).transform(stripTags),
   tenantSlug: z
     .string()
     .min(2)
     .max(50)
     .regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens'),
-  userName: z.string().min(2, 'Name must be at least 2 characters').max(100),
+  userName: z.string().min(2, 'Name must be at least 2 characters').max(100).transform(stripTags),
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 // --- Tenant Schemas ---
 export const createTenantSchema = z.object({
-  name: z.string().min(2).max(100),
+  name: z.string().min(2).max(100).transform(stripTags),
   slug: z.string().min(2).max(50).regex(/^[a-z0-9-]+$/),
   plan: z.enum(['free', 'pro', 'enterprise']).default('free'),
   adsEnabled: z.boolean().default(true),
@@ -43,14 +44,14 @@ export const updateTenantSchema = createTenantSchema.partial();
 
 // --- User Schemas ---
 export const createUserSchema = z.object({
-  name: z.string().min(2).max(100),
+  name: z.string().min(2).max(100).transform(stripTags),
   email: z.string().email(),
   password: z.string().min(8),
   role: userRoleSchema,
 });
 
 export const updateUserSchema = z.object({
-  name: z.string().min(2).max(100).optional(),
+  name: z.string().min(2).max(100).transform(stripTags).optional(),
   email: z.string().email().optional(),
   password: z.string().min(8).optional(),
   role: userRoleSchema.optional(),
@@ -61,12 +62,12 @@ export const updateUserSchema = z.object({
 export const machineStatusSchema = z.enum(['operational', 'maintenance', 'stopped', 'decommissioned']);
 
 export const createMachineSchema = z.object({
-  name: z.string().min(1).max(200),
-  code: z.string().min(1).max(50),
-  location: z.string().max(200).optional(),
-  manufacturer: z.string().max(200).optional(),
-  model: z.string().max(200).optional(),
-  serial: z.string().max(100).optional(),
+  name: z.string().min(1).max(200).transform(stripTags),
+  code: z.string().min(1).max(50).transform(stripTags),
+  location: z.string().max(200).transform(stripTags).optional(),
+  manufacturer: z.string().max(200).transform(stripTags).optional(),
+  model: z.string().max(200).transform(stripTags).optional(),
+  serial: z.string().max(100).transform(stripTags).optional(),
   status: machineStatusSchema.default('operational'),
 });
 
@@ -80,7 +81,7 @@ export const prepareUploadSchema = z.object({
   contentType: z.string().min(1).max(100),
   size: z.number().int().positive().max(50 * 1024 * 1024), // Max 50MB
   type: documentTypeSchema,
-  title: z.string().min(1).max(200),
+  title: z.string().min(1).max(200).transform(stripTags),
 });
 
 export const confirmUploadSchema = z.object({
@@ -89,7 +90,7 @@ export const confirmUploadSchema = z.object({
   contentType: z.string().min(1).max(100),
   size: z.number().int().positive(),
   type: documentTypeSchema,
-  title: z.string().min(1).max(200),
+  title: z.string().min(1).max(200).transform(stripTags),
 });
 
 // --- Work Order Schemas ---
@@ -98,7 +99,7 @@ export const workOrderStatusSchema = z.enum(['open', 'assigned', 'in_progress', 
 export const workOrderPrioritySchema = z.enum(['low', 'medium', 'high', 'critical']);
 
 export const partUsedSchema = z.object({
-  name: z.string().min(1).max(200),
+  name: z.string().min(1).max(200).transform(stripTags),
   qty: z.number().positive(),
   unit: z.string().max(50).optional(),
 });
@@ -107,16 +108,16 @@ export const createWorkOrderSchema = z.object({
   machineId: objectIdSchema,
   type: workOrderTypeSchema,
   priority: workOrderPrioritySchema.default('medium'),
-  description: z.string().min(1).max(2000),
+  description: z.string().min(1).max(2000).transform(sanitize),
   assignedTo: objectIdSchema.optional(),
   dueDate: z.string().datetime().optional(),
 });
 
 export const updateWorkOrderSchema = z.object({
   priority: workOrderPrioritySchema.optional(),
-  description: z.string().min(1).max(2000).optional(),
+  description: z.string().min(1).max(2000).transform(sanitize).optional(),
   dueDate: z.string().datetime().optional().nullable(),
-  notes: z.string().max(5000).optional(),
+  notes: z.string().max(5000).transform(sanitize).optional(),
 });
 
 export const assignWorkOrderSchema = z.object({
@@ -126,18 +127,18 @@ export const assignWorkOrderSchema = z.object({
 export const finishWorkOrderSchema = z.object({
   timeSpentMin: z.number().int().nonnegative().optional(),
   partsUsed: z.array(partUsedSchema).optional(),
-  notes: z.string().max(5000).optional(),
+  notes: z.string().max(5000).transform(sanitize).optional(),
 });
 
 // --- Preventive Plan Schemas ---
 export const checklistItemSchema = z.object({
-  label: z.string().min(1).max(500),
+  label: z.string().min(1).max(500).transform(stripTags),
   required: z.boolean(),
 });
 
 export const createPreventivePlanSchema = z.object({
   machineId: objectIdSchema,
-  name: z.string().min(1).max(200),
+  name: z.string().min(1).max(200).transform(stripTags),
   periodicityDays: z.number().int().positive().max(365 * 5),
   checklistItems: z.array(checklistItemSchema).min(1).max(50),
   nextDueDate: z.string().datetime(),
@@ -145,7 +146,7 @@ export const createPreventivePlanSchema = z.object({
 });
 
 export const updatePreventivePlanSchema = z.object({
-  name: z.string().min(1).max(200).optional(),
+  name: z.string().min(1).max(200).transform(stripTags).optional(),
   periodicityDays: z.number().int().positive().max(365 * 5).optional(),
   checklistItems: z.array(checklistItemSchema).min(1).max(50).optional(),
   nextDueDate: z.string().datetime().optional(),
@@ -154,7 +155,7 @@ export const updatePreventivePlanSchema = z.object({
 
 // --- Profile Self-Service Schemas (Torque /config) ---
 export const updateProfileSchema = z.object({
-  name: z.string().min(2).max(100),
+  name: z.string().min(2).max(100).transform(stripTags),
   email: z.string().email(),
 });
 

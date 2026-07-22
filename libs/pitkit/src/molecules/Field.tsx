@@ -1,12 +1,12 @@
 'use client';
 
 import { ReactNode, cloneElement, isValidElement } from 'react';
-import { css } from '../../../../styled-system/css';
+import { styled } from '../../../../styled-system/jsx';
 import { Label } from '../atoms/Label';
 import { HelperText } from '../atoms/HelperText';
 
-const fieldWrapper = css({
-  width: '100%',
+const FieldWrapper = styled('div', {
+  base: { width: '100%' },
 });
 
 /** Props that can be injected into form control children */
@@ -59,7 +59,7 @@ export function Field({
   }
 
   return (
-    <div className={`${fieldWrapper} ${className || ''}`}>
+    <FieldWrapper className={className}>
       {label && (
         <Label htmlFor={fieldId} size={size} required={required}>
           {label}
@@ -68,6 +68,6 @@ export function Field({
       {enhancedChildren}
       {error && <HelperText variant="error">{error}</HelperText>}
       {helperText && !error && <HelperText>{helperText}</HelperText>}
-    </div>
+    </FieldWrapper>
   );
 }

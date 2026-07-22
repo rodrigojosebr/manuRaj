@@ -1,9 +1,10 @@
 'use client';
 
 import { forwardRef, HTMLAttributes } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 
-const helperTextStyles = cva({
+const StyledHelperText = styled('p', cva({
   base: {
     fontSize: 'sm',
     marginTop: '1',
@@ -11,38 +12,28 @@ const helperTextStyles = cva({
   },
   variants: {
     variant: {
-      default: {
-        color: 'gray.500',
-      },
-      error: {
-        color: 'danger.500',
-      },
-      success: {
-        color: 'success.600',
-      },
+      default: { color: 'gray.500' },
+      error: { color: 'danger.500' },
+      success: { color: 'success.600' },
     },
   },
   defaultVariants: {
     variant: 'default',
   },
-});
+}));
 
 export interface HelperTextProps extends HTMLAttributes<HTMLParagraphElement> {
   variant?: 'default' | 'error' | 'success';
 }
 
 export const HelperText = forwardRef<HTMLParagraphElement, HelperTextProps>(
-  ({ variant, className, children, ...props }, ref) => {
+  ({ variant, children, ...props }, ref) => {
     if (!children) return null;
 
     return (
-      <p
-        ref={ref}
-        className={`${helperTextStyles({ variant })} ${className || ''}`}
-        {...props}
-      >
+      <StyledHelperText ref={ref} variant={variant} {...props}>
         {children}
-      </p>
+      </StyledHelperText>
     );
   }
 );

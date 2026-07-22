@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@manuraj/data-access';
-import { workOrderRepository } from '@manuraj/data-access';
+import { workOrderRepository, auditLogRepository } from '@manuraj/data-access';
 import { updateWorkOrderSchema, PERMISSIONS } from '@manuraj/domain';
 import {
   requireAuth,
@@ -47,6 +47,11 @@ export const PUT = withErrorHandler(async (req: NextRequest, context?: RouteCont
     return notFoundResponse('Ordem de serviço não encontrada');
   }
 
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'update', entity: 'work_order', entityId: id,
+  });
+
   return successResponse(workOrder);
 });
 
@@ -61,6 +66,11 @@ export const DELETE = withErrorHandler(async (req: NextRequest, context?: RouteC
   if (!deleted) {
     return notFoundResponse('Ordem de serviço não encontrada');
   }
+
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'delete', entity: 'work_order', entityId: id,
+  });
 
   return successResponse({ deleted: true });
 });

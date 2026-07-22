@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { logger } from '@manuraj/shared-utils';
 
 function getMongoURI(): string {
   const uri = process.env.MONGODB_URI;
@@ -47,7 +48,7 @@ export async function connectDB(): Promise<typeof mongoose> {
     };
 
     cached.promise = mongoose.connect(getMongoURI(), opts).then((mongooseInstance) => {
-      console.log('[MongoDB] Connected successfully');
+      logger.info('MongoDB connected');
       return mongooseInstance;
     });
   }
@@ -71,7 +72,7 @@ export async function disconnectDB(): Promise<void> {
     await mongoose.disconnect();
     cached.conn = null;
     cached.promise = null;
-    console.log('[MongoDB] Disconnected');
+    logger.info('MongoDB disconnected');
   }
 }
 

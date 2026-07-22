@@ -1,9 +1,10 @@
 'use client';
 
 import { forwardRef, SelectHTMLAttributes, ReactNode } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 
-const selectStyles = cva({
+const StyledSelect = styled('select', cva({
   base: {
     width: '100%',
     fontSize: 'sm',
@@ -23,25 +24,10 @@ const selectStyles = cva({
     },
   },
   variants: {
-    size: {
-      sm: {
-        height: '8',
-        paddingX: '2.5',
-        paddingRight: '8',
-        fontSize: 'xs',
-      },
-      md: {
-        height: '10',
-        paddingX: '3',
-        paddingRight: '10',
-        fontSize: 'sm',
-      },
-      lg: {
-        height: '12',
-        paddingX: '4',
-        paddingRight: '12',
-        fontSize: 'md',
-      },
+    selectSize: {
+      sm: { height: '8', paddingX: '2.5', paddingRight: '8', fontSize: 'xs' },
+      md: { height: '10', paddingX: '3', paddingRight: '10', fontSize: 'sm' },
+      lg: { height: '12', paddingX: '4', paddingRight: '12', fontSize: 'md' },
     },
     state: {
       default: {
@@ -71,10 +57,10 @@ const selectStyles = cva({
     },
   },
   defaultVariants: {
-    size: 'md',
+    selectSize: 'md',
     state: 'default',
   },
-});
+}));
 
 export interface SelectBaseProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   /** Size variant for the select */
@@ -86,15 +72,11 @@ export interface SelectBaseProps extends Omit<SelectHTMLAttributes<HTMLSelectEle
 }
 
 export const SelectBase = forwardRef<HTMLSelectElement, SelectBaseProps>(
-  ({ size, state, className, children, ...props }, ref) => {
+  ({ size = 'md', state, children, ...props }, ref) => {
     return (
-      <select
-        ref={ref}
-        className={`${selectStyles({ size, state })} ${className || ''}`}
-        {...props}
-      >
+      <StyledSelect ref={ref} selectSize={size} state={state} {...props}>
         {children}
-      </select>
+      </StyledSelect>
     );
   }
 );

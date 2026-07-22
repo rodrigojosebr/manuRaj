@@ -1,35 +1,36 @@
-import { css } from '../../../../../../styled-system/css';
+import Link from 'next/link';
+import { styled } from '../../../../../../styled-system/jsx';
+import { cva } from '../../../../../../styled-system/css';
 
 // ─── Page Wrapper ──────────────────────────────────────────────────────────
-export const wrapper = css({
-  padding: 'page',
+export const Wrapper = styled('div', {
+  base: { padding: 'page' },
 });
 
 // ─── Page Header ───────────────────────────────────────────────────────────
-export const pageHeader = css({
-  marginBottom: 'section',
+export const PageHeader = styled('div', {
+  base: { marginBottom: 'section' },
 });
 
-export const subtitle = css({
-  color: 'gray.500',
-  fontSize: 'sm',
-  marginTop: '1',
+export const Subtitle = styled('p', {
+  base: { color: 'gray.500', fontSize: 'sm', marginTop: '1' },
 });
 
 // ─── Tabs ──────────────────────────────────────────────────────────────────
-export const tabsContainer = css({
-  display: 'flex',
-  gap: '2',
-  overflowX: 'auto',
-  marginBottom: 'section',
-  paddingBottom: '2',
-  /* Hide scrollbar on mobile but keep scrollable */
-  scrollbarWidth: 'none',
-  '&::-webkit-scrollbar': { display: 'none' },
+export const TabsContainer = styled('div', {
+  base: {
+    display: 'flex',
+    gap: '2',
+    overflowX: 'auto',
+    marginBottom: 'section',
+    paddingBottom: '2',
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': { display: 'none' },
+  },
 });
 
-export const tab = (isActive: boolean) =>
-  css({
+export const Tab = styled('button', cva({
+  base: {
     flexShrink: 0,
     padding: '2',
     paddingX: '4',
@@ -39,112 +40,99 @@ export const tab = (isActive: boolean) =>
     cursor: 'pointer',
     border: 'none',
     transition: 'all 0.2s',
-    backgroundColor: isActive ? 'brand.600' : 'gray.100',
-    color: isActive ? 'white' : 'gray.600',
-  });
+  },
+  variants: {
+    active: {
+      true: { backgroundColor: 'brand.600', color: 'white' },
+      false: { backgroundColor: 'gray.100', color: 'gray.600' },
+    },
+  },
+  defaultVariants: { active: false },
+}));
 
 // ─── Card List ─────────────────────────────────────────────────────────────
-export const cardList = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'card-gap',
+export const CardList = styled('div', {
+  base: { display: 'flex', flexDirection: 'column', gap: 'card-gap' },
+});
+
+export const CardLink = styled(Link, {
+  base: { textDecoration: 'none', color: 'inherit', display: 'block' },
 });
 
 // ─── Work Order Card ───────────────────────────────────────────────────────
-const borderColorMap: Record<string, string> = {
-  open: '#3b82f6',       // blue-500
-  assigned: '#059669',   // brand.600 (green)
-  in_progress: '#f59e0b', // warning
-  completed: '#22c55e',   // success
-  cancelled: '#9ca3af',   // gray-400
-};
-
-export const card = (status: string) =>
-  css({
+export const Card = styled('div', cva({
+  base: {
     backgroundColor: 'white',
     borderRadius: 'xl',
     padding: 'card-padding',
     boxShadow: 'sm',
     position: 'relative',
     borderLeft: '4px solid',
-    borderLeftColor: borderColorMap[status] || '#e5e7eb',
+    borderLeftColor: 'gray.200',
     transition: 'box-shadow 0.2s, transform 0.1s',
     _hover: { boxShadow: 'md' },
     _active: { transform: 'scale(0.98)' },
-  });
+  },
+  variants: {
+    woStatus: {
+      open: { borderLeftColor: '#3b82f6' },
+      assigned: { borderLeftColor: '#059669' },
+      in_progress: { borderLeftColor: '#f59e0b' },
+      completed: { borderLeftColor: '#22c55e' },
+      cancelled: { borderLeftColor: '#9ca3af' },
+    },
+    overdue: {
+      true: { borderLeftColor: '#ef4444' },
+    },
+  },
+}));
 
-export const cardOverdue = css({
-  borderLeftColor: '#ef4444 !important',
+export const CardMachine = styled('div', {
+  base: { display: 'flex', gap: '2', alignItems: 'center', marginBottom: '2' },
 });
 
-export const cardMachine = css({
-  display: 'flex',
-  gap: '2',
-  alignItems: 'center',
-  marginBottom: '2',
+export const CardMachineIcon = styled('span', {
+  base: { fontSize: 'lg' },
 });
 
-export const cardMachineIcon = css({
-  fontSize: 'lg',
+export const CardMachineText = styled('span', {
+  base: { fontWeight: 'semibold', color: 'gray.700', fontSize: 'sm' },
 });
 
-export const cardMachineText = css({
-  fontWeight: 'semibold',
-  color: 'gray.700',
-  fontSize: 'sm',
+export const CardDescription = styled('p', {
+  base: { color: 'gray.600', fontSize: 'sm', marginBottom: '3', lineHeight: '1.5' },
 });
 
-export const cardDescription = css({
-  color: 'gray.600',
-  fontSize: 'sm',
-  marginBottom: '3',
-  lineHeight: '1.5',
+export const CardBadges = styled('div', {
+  base: { display: 'flex', gap: '2', flexWrap: 'wrap', marginBottom: '3' },
 });
 
-export const cardBadges = css({
-  display: 'flex',
-  gap: '2',
-  flexWrap: 'wrap',
-  marginBottom: '3',
+export const CardMeta = styled('div', {
+  base: { display: 'flex', justifyContent: 'space-between', fontSize: 'xs', color: 'gray.500', marginBottom: '3' },
 });
 
-export const cardMeta = css({
-  display: 'flex',
-  justifyContent: 'space-between',
-  fontSize: 'xs',
-  color: 'gray.500',
-  marginBottom: '3',
+export const OverdueIndicator = styled('span', {
+  base: { color: 'red.600', fontWeight: 'semibold' },
 });
 
-export const overdueIndicator = css({
-  color: 'red.600',
-  fontWeight: 'semibold',
-});
-
-export const statusBar = (status: string) => {
-  const bgMap: Record<string, string> = {
-    open: 'blue.50',
-    assigned: 'brand.50',
-    in_progress: 'orange.50',
-    completed: 'green.50',
-    cancelled: 'gray.100',
-  };
-
-  const textMap: Record<string, string> = {
-    open: 'blue.700',
-    assigned: 'brand.700',
-    in_progress: 'orange.700',
-    completed: 'green.700',
-    cancelled: 'gray.500',
-  };
-
-  return css({
+// ─── Status Bar ─────────────────────────────────────────────────────────────
+export const StatusBar = styled('div', cva({
+  base: {
     padding: '3',
     borderRadius: 'lg',
     textAlign: 'center',
     fontWeight: 'medium',
     fontSize: 'sm',
-    backgroundColor: bgMap[status] || 'gray.100',
-    color: textMap[status] || 'gray.500',
-  });
-};
+    backgroundColor: 'gray.100',
+    color: 'gray.500',
+  },
+  variants: {
+    woStatus: {
+      open: { backgroundColor: 'blue.50', color: 'blue.700' },
+      assigned: { backgroundColor: 'brand.50', color: 'brand.700' },
+      in_progress: { backgroundColor: 'orange.50', color: 'orange.700' },
+      completed: { backgroundColor: 'green.50', color: 'green.700' },
+      cancelled: { backgroundColor: 'gray.100', color: 'gray.500' },
+    },
+  },
+}));

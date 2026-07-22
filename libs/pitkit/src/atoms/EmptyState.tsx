@@ -1,9 +1,12 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
+import { SvgIcon } from './SvgIcon';
+import { isValidIconName } from './icon-registry';
 
-const containerStyles = cva({
+const Container = styled('div', cva({
   base: {
     display: 'flex',
     flexDirection: 'column',
@@ -21,9 +24,9 @@ const containerStyles = cva({
   defaultVariants: {
     size: 'md',
   },
-});
+}));
 
-const iconStyles = cva({
+const EmojiIcon = styled('span', cva({
   base: {
     lineHeight: 1,
   },
@@ -37,9 +40,9 @@ const iconStyles = cva({
   defaultVariants: {
     size: 'md',
   },
-});
+}));
 
-const titleStyles = cva({
+const Title = styled('p', cva({
   base: {
     fontWeight: '600',
     color: 'gray.900',
@@ -54,9 +57,9 @@ const titleStyles = cva({
   defaultVariants: {
     size: 'md',
   },
-});
+}));
 
-const descriptionStyles = cva({
+const Description = styled('p', cva({
   base: {
     color: 'gray.500',
   },
@@ -70,7 +73,7 @@ const descriptionStyles = cva({
   defaultVariants: {
     size: 'md',
   },
-});
+}));
 
 export interface EmptyStateProps {
   icon?: string;
@@ -90,11 +93,15 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={`${containerStyles({ size })} ${className || ''}`}>
-      {icon && <span className={iconStyles({ size })}>{icon}</span>}
-      <p className={titleStyles({ size })}>{title}</p>
-      {description && <p className={descriptionStyles({ size })}>{description}</p>}
+    <Container size={size} className={className}>
+      {icon && (
+        isValidIconName(icon)
+          ? <SvgIcon icon={icon} size={size === 'sm' ? 'lg' : 'xl'} />
+          : <EmojiIcon size={size}>{icon}</EmojiIcon>
+      )}
+      <Title size={size}>{title}</Title>
+      {description && <Description size={size}>{description}</Description>}
       {action && <div>{action}</div>}
-    </div>
+    </Container>
   );
 }

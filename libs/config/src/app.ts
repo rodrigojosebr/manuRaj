@@ -1,3 +1,5 @@
+import { logger } from '@manuraj/shared-utils';
+
 /**
  * Application configuration
  */
@@ -60,7 +62,7 @@ export function validateEnv(): void {
   }
 
   if (missing.length > 0) {
-    console.warn(`[Config] Warning: Missing environment variables: ${missing.join(', ')}`);
+    logger.warn({ missing }, 'Missing environment variables');
   }
 }
 

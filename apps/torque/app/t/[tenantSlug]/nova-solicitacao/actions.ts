@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@manuraj/auth';
-import { connectDB, workOrderRepository, machineRepository } from '@manuraj/data-access';
+import { connectDB, workOrderRepository, machineRepository, auditLogRepository } from '@manuraj/data-access';
 import { createWorkOrderSchema, hasPermission, PERMISSIONS, type UserRole } from '@manuraj/domain';
 
 interface ActionResult {
@@ -53,7 +53,12 @@ export async function createWorkOrderAction(data: {
   }
 
   // Create work order
-  await workOrderRepository.create(tenantId, userId, parsed.data);
+  const workOrder = await workOrderRepository.create(tenantId, userId, parsed.data);
+
+  void auditLogRepository.log({
+    tenantId, userId, userName: session.user.name,
+    action: 'create', entity: 'work_order', entityId: String(workOrder._id),
+  });
 
   return { success: true };
 }

@@ -11,6 +11,11 @@ export * from './Button';
 export * from './Badge';
 export * from './Heading';
 export * from './Text';
-export * from './Icon';
 export * from './Skeleton';
 export * from './EmptyState';
+
+// Icon system
+export { SvgIcon as Icon } from './SvgIcon';
+export type { SvgIconProps as IconProps, IconSize } from './SvgIcon';
+export type { IconName } from './icon-registry';
+export { isValidIconName } from './icon-registry';

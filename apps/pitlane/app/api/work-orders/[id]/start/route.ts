@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@manuraj/data-access';
-import { workOrderRepository } from '@manuraj/data-access';
+import { workOrderRepository, auditLogRepository } from '@manuraj/data-access';
 import { PERMISSIONS } from '@manuraj/domain';
 import {
   requirePermission,
@@ -23,6 +23,11 @@ export const POST = withErrorHandler(async (req: NextRequest, context?: RouteCon
   if (!workOrder) {
     return notFoundResponse('Ordem de serviço não encontrada ou não pode ser iniciada');
   }
+
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'start', entity: 'work_order', entityId: id,
+  });
 
   return successResponse(workOrder);
 });

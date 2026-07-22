@@ -1,34 +1,40 @@
-import { css } from '../../../../../../styled-system/css';
+import Link from 'next/link';
+import { styled } from '../../../../../../styled-system/jsx';
+import { cva } from '../../../../../../styled-system/css';
 
 // ─── Page Wrapper ──────────────────────────────────────────────────────────
-export const wrapper = css({
-  padding: 'page',
+export const Wrapper = styled('div', {
+  base: { padding: 'page' },
 });
 
 // ─── Page Header ───────────────────────────────────────────────────────────
-export const pageHeader = css({
-  marginBottom: 'section',
+export const PageHeader = styled('div', {
+  base: { marginBottom: 'section' },
 });
 
-export const subtitle = css({
-  color: 'gray.500',
-  fontSize: 'sm',
-  marginTop: '1',
+export const Subtitle = styled('p', {
+  base: {
+    color: 'gray.500',
+    fontSize: 'sm',
+    marginTop: '1',
+  },
 });
 
 // ─── Tabs ──────────────────────────────────────────────────────────────────
-export const tabsContainer = css({
-  display: 'flex',
-  gap: '2',
-  overflowX: 'auto',
-  marginBottom: 'section',
-  paddingBottom: '2',
-  scrollbarWidth: 'none',
-  '&::-webkit-scrollbar': { display: 'none' },
+export const TabsContainer = styled('div', {
+  base: {
+    display: 'flex',
+    gap: '2',
+    overflowX: 'auto',
+    marginBottom: 'section',
+    paddingBottom: '2',
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': { display: 'none' },
+  },
 });
 
-export const tab = (isActive: boolean) =>
-  css({
+export const Tab = styled('button', cva({
+  base: {
     flexShrink: 0,
     padding: '2',
     paddingX: '4',
@@ -38,42 +44,66 @@ export const tab = (isActive: boolean) =>
     cursor: 'pointer',
     border: 'none',
     transition: 'all 0.2s',
-    backgroundColor: isActive ? 'brand.600' : 'gray.100',
-    color: isActive ? 'white' : 'gray.600',
-  });
+  },
+  variants: {
+    active: {
+      true: { backgroundColor: 'brand.600', color: 'white' },
+      false: { backgroundColor: 'gray.100', color: 'gray.600' },
+    },
+  },
+  defaultVariants: { active: false },
+}));
 
 // ─── Card List ─────────────────────────────────────────────────────────────
-export const cardList = css({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'card-gap',
+export const CardList = styled('div', {
+  base: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'card-gap',
+  },
+});
+
+export const CardLink = styled(Link, {
+  base: {
+    textDecoration: 'none',
+    color: 'inherit',
+    display: 'block',
+  },
 });
 
 // ─── Machine Card (internal styles) ────────────────────────────────────────
-export const machineHeader = css({
-  display: 'flex',
-  gap: '2',
-  alignItems: 'center',
-  marginBottom: '1',
+export const MachineHeader = styled('div', {
+  base: {
+    display: 'flex',
+    gap: '2',
+    alignItems: 'center',
+    marginBottom: '1',
+  },
 });
 
-export const machineName = css({
-  fontWeight: 'semibold',
-  color: 'gray.900',
+export const MachineName = styled('span', {
+  base: {
+    fontWeight: 'semibold',
+    color: 'gray.900',
+  },
 });
 
-export const machineCode = css({
-  fontSize: 'sm',
-  color: 'gray.500',
-  marginBottom: '2',
+export const MachineCode = styled('p', {
+  base: {
+    fontSize: 'sm',
+    color: 'gray.500',
+    marginBottom: '2',
+  },
 });
 
-export const machineDetail = css({
-  fontSize: 'sm',
-  color: 'gray.600',
-  marginBottom: '1',
+export const MachineDetail = styled('p', {
+  base: {
+    fontSize: 'sm',
+    color: 'gray.600',
+    marginBottom: '1',
+  },
 });
 
-export const machineBadgeRow = css({
-  marginTop: '2',
+export const MachineBadgeRow = styled('div', {
+  base: { marginTop: '2' },
 });

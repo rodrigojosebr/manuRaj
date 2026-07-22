@@ -134,6 +134,20 @@ export class PreventivePlanRepository {
     return result.deletedCount === 1;
   }
 
+  /**
+   * Find all due plans across all tenants (for cron jobs).
+   * Returns plans where nextDueDate <= now and active = true.
+   */
+  async findAllDue(): Promise<PreventivePlanDocument[]> {
+    return PreventivePlanModel.find({
+      active: true,
+      nextDueDate: { $lte: new Date() },
+    })
+      .sort({ tenantId: 1, nextDueDate: 1 })
+      .populate('machineId', 'name code')
+      .lean();
+  }
+
   async countDue(tenantId: string): Promise<number> {
     if (!Types.ObjectId.isValid(tenantId)) return 0;
     return PreventivePlanModel.countDocuments({

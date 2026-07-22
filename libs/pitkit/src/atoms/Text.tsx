@@ -1,9 +1,10 @@
 'use client';
 
 import { forwardRef, HTMLAttributes } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
 
-const textStyles = cva({
+const textCva = cva({
   base: {
     lineHeight: '1.6',
   },
@@ -35,6 +36,11 @@ const textStyles = cva({
   },
 });
 
+const StyledP = styled('p', textCva);
+const StyledSpan = styled('span', textCva);
+
+const tagMap = { p: StyledP, span: StyledSpan } as const;
+
 export interface TextProps extends HTMLAttributes<HTMLParagraphElement> {
   as?: 'p' | 'span';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -43,15 +49,12 @@ export interface TextProps extends HTMLAttributes<HTMLParagraphElement> {
 }
 
 export const Text = forwardRef<HTMLParagraphElement, TextProps>(
-  ({ as: Tag = 'p', size, color, weight, className, children, ...props }, ref) => {
+  ({ as: Tag = 'p', size, color, weight, children, ...props }, ref) => {
+    const StyledTag = tagMap[Tag];
     return (
-      <Tag
-        ref={ref as React.Ref<HTMLParagraphElement>}
-        className={`${textStyles({ size, color, weight })} ${className || ''}`}
-        {...props}
-      >
+      <StyledTag ref={ref} size={size} color={color} weight={weight} {...props}>
         {children}
-      </Tag>
+      </StyledTag>
     );
   }
 );

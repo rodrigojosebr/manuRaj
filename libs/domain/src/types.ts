@@ -135,6 +135,23 @@ export interface PreventivePlan {
   updatedAt: Date;
 }
 
+// Audit Log
+export type AuditAction = 'create' | 'update' | 'delete' | 'login' | 'start' | 'finish' | 'assign';
+export type AuditEntity = 'machine' | 'work_order' | 'user' | 'tenant' | 'preventive_plan' | 'document';
+
+export interface AuditLog {
+  _id: string;
+  tenantId: string;
+  userId: string;
+  userName: string;
+  action: AuditAction;
+  entity: AuditEntity;
+  entityId: string;
+  changes?: Record<string, { from: unknown; to: unknown }>;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+}
+
 // Session User (used in auth)
 export interface SessionUser {
   id: string;

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@manuraj/data-access';
-import { machineRepository } from '@manuraj/data-access';
+import { machineRepository, auditLogRepository } from '@manuraj/data-access';
 import { updateMachineSchema, PERMISSIONS } from '@manuraj/domain';
 import {
   requireAuth,
@@ -58,6 +58,11 @@ export const PUT = withErrorHandler(async (req: NextRequest, context?: RouteCont
     return notFoundResponse('Máquina não encontrada');
   }
 
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'update', entity: 'machine', entityId: id,
+  });
+
   return successResponse(machine);
 });
 
@@ -72,6 +77,11 @@ export const DELETE = withErrorHandler(async (req: NextRequest, context?: RouteC
   if (!deleted) {
     return notFoundResponse('Máquina não encontrada');
   }
+
+  void auditLogRepository.log({
+    tenantId: user.tenantId, userId: user.id, userName: user.name,
+    action: 'delete', entity: 'machine', entityId: id,
+  });
 
   return successResponse({ deleted: true });
 });

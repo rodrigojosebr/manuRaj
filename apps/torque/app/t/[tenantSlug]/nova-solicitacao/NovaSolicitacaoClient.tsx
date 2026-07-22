@@ -83,14 +83,14 @@ export function NovaSolicitacaoClient({ machines, tenantSlug }: NovaSolicitacaoC
 
   if (success) {
     return (
-      <div className={S.wrapper}>
-        <div className={S.successCard}>
-          <span className={S.successIcon}>&#x2705;</span>
+      <S.Wrapper>
+        <S.SuccessCard>
+          <S.SuccessIcon icon="check-circle" size="xl" />
           <Heading as="h2">Solicitacao Enviada</Heading>
           <Text size="sm" color="muted">
             Sua solicitacao foi registrada e sera analisada pela equipe de manutencao.
           </Text>
-          <div className={S.successActions}>
+          <S.SuccessActions>
             <Button
               variant="secondary"
               fullWidth
@@ -101,22 +101,22 @@ export function NovaSolicitacaoClient({ machines, tenantSlug }: NovaSolicitacaoC
             <Button fullWidth onClick={handleReset}>
               Nova Solicitacao
             </Button>
-          </div>
-        </div>
-      </div>
+          </S.SuccessActions>
+        </S.SuccessCard>
+      </S.Wrapper>
     );
   }
 
   return (
-    <div className={S.wrapper}>
-      <div className={S.pageHeader}>
+    <S.Wrapper>
+      <S.PageHeader>
         <Heading as="h1">Nova Solicitacao</Heading>
-        <Text size="sm" className={S.subtitle}>
+        <S.Subtitle>
           Descreva o problema para a equipe de manutencao
-        </Text>
-      </div>
+        </S.Subtitle>
+      </S.PageHeader>
 
-      <form onSubmit={handleSubmit} className={S.form}>
+      <S.Form onSubmit={handleSubmit}>
         <SelectField
           label="Maquina"
           required
@@ -144,14 +144,14 @@ export function NovaSolicitacaoClient({ machines, tenantSlug }: NovaSolicitacaoC
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        {error && <div className={S.errorBox}>{error}</div>}
+        {error && <S.ErrorBox>{error}</S.ErrorBox>}
 
-        <div className={S.submitArea}>
+        <S.SubmitArea>
           <Button type="submit" fullWidth isLoading={loading}>
             Enviar Solicitacao
           </Button>
-        </div>
-      </form>
-    </div>
+        </S.SubmitArea>
+      </S.Form>
+    </S.Wrapper>
   );
 }

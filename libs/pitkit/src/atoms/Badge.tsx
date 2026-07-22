@@ -1,9 +1,12 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { styled } from '../../../../styled-system/jsx';
 import { cva } from '../../../../styled-system/css';
+import { SvgIcon } from './SvgIcon';
+import type { IconName } from './icon-registry';
 
-const badgeStyles = cva({
+const StyledBadge = styled('span', cva({
   base: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -15,48 +18,40 @@ const badgeStyles = cva({
   },
   variants: {
     variant: {
-      default: {
-        backgroundColor: 'gray.100',
-        color: 'gray.800',
-      },
-      primary: {
-        backgroundColor: 'brand.100',
-        color: 'brand.800',
-      },
-      success: {
-        backgroundColor: 'green.100',
-        color: 'green.800',
-      },
-      warning: {
-        backgroundColor: 'yellow.100',
-        color: 'yellow.800',
-      },
-      danger: {
-        backgroundColor: 'red.100',
-        color: 'red.800',
-      },
-      info: {
-        backgroundColor: 'blue.100',
-        color: 'blue.800',
-      },
+      default: { backgroundColor: 'gray.100', color: 'gray.800' },
+      primary: { backgroundColor: 'brand.100', color: 'brand.800' },
+      success: { backgroundColor: 'green.100', color: 'green.800' },
+      warning: { backgroundColor: 'yellow.100', color: 'yellow.800' },
+      danger: { backgroundColor: 'red.100', color: 'red.800' },
+      info: { backgroundColor: 'blue.100', color: 'blue.800' },
     },
   },
   defaultVariants: {
     variant: 'default',
   },
+}));
+
+const BadgeIcon = styled('span', {
+  base: { marginRight: '1', display: 'inline-flex' },
 });
 
 interface BadgeProps {
   children: ReactNode;
   variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
+  icon?: IconName;
   className?: string;
 }
 
-export function Badge({ children, variant, className }: BadgeProps) {
+export function Badge({ children, variant, icon, className }: BadgeProps) {
   return (
-    <span className={`${badgeStyles({ variant })} ${className || ''}`}>
+    <StyledBadge variant={variant} className={className}>
+      {icon && (
+        <BadgeIcon>
+          <SvgIcon icon={icon} size="xs" />
+        </BadgeIcon>
+      )}
       {children}
-    </span>
+    </StyledBadge>
   );
 }
 
