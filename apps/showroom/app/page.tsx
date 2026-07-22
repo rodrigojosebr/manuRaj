@@ -12,12 +12,13 @@ import { StepCard } from './components/StepCard/StepCard';
 import { TestimonialCard } from './components/TestimonialCard/TestimonialCard';
 import { PricingCard } from './components/PricingCard/PricingCard';
 import { FaqItem } from './components/FaqItem/FaqItem';
+import { ContactForm } from './components/ContactForm/ContactForm';
 import { Footer } from './components/Footer/Footer';
 
 // ─── Constants ───
 
 const PITLANE_URL = process.env.NEXT_PUBLIC_PITLANE_URL || 'http://localhost:3000';
-const WHATSAPP_NUMBER = '5511999999999';
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '5511999999999';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá! Tenho interesse no manuRaj.')}`;
 const SIGNUP_URL = `${PITLANE_URL}/signup`;
 
@@ -25,6 +26,7 @@ const NAV_LINKS = [
   { label: 'Recursos', href: '#features' },
   { label: 'Planos', href: '#pricing' },
   { label: 'FAQ', href: '#faq' },
+  { label: 'Contato', href: '#contato' },
 ];
 
 const HERO_FLOATING_BADGES = [
@@ -444,6 +446,18 @@ export default function LandingPage() {
           </FaqList>
         </ContainerNarrow>
       </SectionWhite>
+
+      {/* ═══ CONTATO ═══ */}
+      <SectionGray id="contato">
+        <ContainerNarrow>
+          <SectionHeader
+            tag="Contato"
+            title="Fale com a gente"
+            subtitle="Tem dúvidas ou quer conhecer o plano Enterprise? Deixe seu contato que retornamos."
+          />
+          <ContactForm />
+        </ContainerNarrow>
+      </SectionGray>
 
       {/* ═══ CTA FINAL ═══ */}
       <CtaSection>

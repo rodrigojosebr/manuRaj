@@ -6,6 +6,22 @@ export type UserRole =
   | 'general_supervisor'
   | 'super_admin';
 
+// Lead (public landing capture — pre-tenant, not tenant-scoped)
+export type LeadStatus = 'new' | 'contacted' | 'converted' | 'discarded';
+
+export interface Lead {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  message?: string;
+  source: string;
+  status: LeadStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Tenant
 export interface Tenant {
   _id: string;

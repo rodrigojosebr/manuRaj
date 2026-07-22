@@ -20,8 +20,9 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const rawCallbackUrl = searchParams.get('callbackUrl');
   const callbackUrl = rawCallbackUrl?.startsWith('/') && !rawCallbackUrl.startsWith('//') ? rawCallbackUrl : null;
+  const successMessage = searchParams.get('message');
 
-  const [tenantSlug, setTenantSlug] = useState('');
+  const [tenantSlug, setTenantSlug] = useState(searchParams.get('tenant') || '');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -249,6 +250,29 @@ function LoginForm() {
               marginTop: '6',
             })}
           >
+            {successMessage && (
+              <div
+                className={css({
+                  backgroundColor: '#f0fdf4',
+                  border: '1px solid',
+                  borderColor: '#bbf7d0',
+                  borderRadius: 'md',
+                  padding: '3',
+                  paddingX: '4',
+                })}
+              >
+                <p
+                  className={css({
+                    color: 'success.600',
+                    fontSize: 'sm',
+                    textAlign: 'center',
+                  })}
+                >
+                  {successMessage}
+                </p>
+              </div>
+            )}
+
             <Input
               label="Identificador da empresa"
               placeholder="ex: minha-empresa"

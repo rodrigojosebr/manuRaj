@@ -181,8 +181,18 @@ export const workOrderQuerySchema = paginationSchema.extend({
   assignedTo: objectIdSchema.optional(),
 });
 
+// --- Lead Schema (public landing — pre-tenant) ---
+export const leadSchema = z.object({
+  name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres').max(100).transform(stripTags),
+  email: z.string().email('Email inválido'),
+  phone: z.string().max(30).transform(sanitize).optional(),
+  company: z.string().max(100).transform(stripTags).optional(),
+  message: z.string().max(2000).transform(stripTags).optional(),
+});
+
 // Export types inferred from schemas
 export type LoginInput = z.infer<typeof loginSchema>;
+export type LeadInput = z.infer<typeof leadSchema>;
 export type SignupInput = z.infer<typeof signupSchema>;
 export type CreateTenantInput = z.infer<typeof createTenantSchema>;
 export type UpdateTenantInput = z.infer<typeof updateTenantSchema>;
