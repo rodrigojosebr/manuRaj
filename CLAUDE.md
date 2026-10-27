@@ -1,9 +1,10 @@
 # manuRaj - Documentação do Projeto
 
 > Lido automaticamente pelo Claude Code em toda sessão. Mantenha conciso.
-> Última atualização: 11 de Fevereiro de 2026
+> Última atualização: 28 de Agosto de 2026
 >
 > **Docs especializados** (ler sob demanda):
+> - `PLANO.md` — **Roadmap, escada kaizen, decisões pendentes e falsos positivos já investigados**
 > - `PITKIT.md` — Catálogo completo do Design System (componentes, props, exemplos)
 > - `STYLES.md` — Paletas de cores, layouts, tipografia, padrões visuais
 > - `TORQUE.md` — Padrões mobile-first do app operacional (sidebar, páginas, PWA)
@@ -34,7 +35,7 @@
 
 | Camada | Tecnologia | Versão |
 |--------|------------|--------|
-| Monorepo | NX Workspaces | 22.x |
+| Monorepo | **npm workspaces** (`apps/*`, `libs/*`) + `paths` do `tsconfig.base.json` | — |
 | Frontend | Next.js (App Router, Turbopack) | 16.x |
 | Estilização | PandaCSS (styled, cva, design tokens) | 1.8.x |
 | Autenticação | NextAuth.js v5 (Credentials + JWT) | 5.0-beta |
@@ -52,7 +53,8 @@ manuRaj/
 ├── apps/
 │   ├── pitlane/                    # Admin (supervisores)
 │   │   ├── app/
-│   │   │   ├── api/                # 17 API routes (garage-pitlane)
+│   │   │   ├── api/                # 21 API routes (ver §13)
+│   │   │   ├── docs/               # Swagger UI (OpenAPI 3.1)
 │   │   │   ├── login/, signup/
 │   │   │   └── t/[tenantSlug]/(dashboard)/   # 12 páginas
 │   │   ├── proxy.ts, panda.config.ts
@@ -75,10 +77,10 @@ manuRaj/
 │
 ├── libs/
 │   ├── domain/         # Tipos, schemas Zod, constantes, RBAC
-│   ├── data-access/    # Conexão MongoDB, models, repositories
+│   ├── data-access/    # Conexão MongoDB, models, repositories (inclui audit-log)
 │   ├── auth/           # NextAuth config (Edge + Node.js)
 │   ├── pitkit/         # Design System (atoms → molecules → organisms)
-│   ├── shared-utils/   # API client, formatadores
+│   ├── shared-utils/   # API client, formatadores, logger (Pino)
 │   ├── ads/            # Google AdSense components
 │   └── config/         # Variáveis de ambiente tipadas
 │
@@ -106,6 +108,12 @@ manuRaj/
 - Estilos dinâmicos: usar `cva()` variants dentro do `styled()` — ex: `styled('div', cva({ variants: { status: {...} } }))`
 - Componentes PitKit internos usam `cva()` em `libs/pitkit/src/`
 - Detalhes em `STYLES.md`
+
+> ⚠️ **Dívida conhecida — o Pitlane NÃO cumpre esta regra.** Torque e Showroom estão 100% em
+> `styled()` (0 `className`). O Pitlane tem **261 `className`** e **12 arquivos importando `{ css }`**:
+> o commit `65274c7` migrou PitKit e Torque e não voltou pro Pitlane. Plano de migração página-por-página
+> no `PLANO.md` (Degrau 3). **Ao editar arquivo do Pitlane, migrar para `styled()` — não replicar o `css()`.**
+> Os `className={className}` do PitKit são repasse de prop, API legítima do design system, não violação.
 
 ### Multi-tenant
 - **TODAS** as queries DEVEM filtrar por `tenantId` — violação = vazamento de dados
@@ -200,6 +208,7 @@ if (hasPermission(user.role, PERMISSIONS.WORK_ORDERS_START)) { /* ... */ }
 | `WorkOrder` | tenantId, machineId, type, status, priority, assignedTo, dueDate |
 | `PreventivePlan` | tenantId, machineId, periodicityDays, nextDueDate |
 | `MachineDocument` | tenantId, machineId, type, s3Key, title |
+| `AuditLog` | tenantId, userId, action, entity, entityId, before/after (13 mutations, fire-and-forget) |
 
 ### Repositories (sempre requerem tenantId)
 ```ts
@@ -215,6 +224,11 @@ workOrderRepository.findAssignedToUser(tenantId, userId, { limit? })
 ---
 
 ## 8. Utilitários Compartilhados
+
+### Logger (`@manuraj/shared-utils`)
+`logger` (Pino) e `createLogger(context)`. **Server-side apenas** — auth, DB, cron, guards e
+`withErrorHandler`. Client component (`'use client'`) usa `console.error` mesmo: é log de navegador.
+Nível por `LOG_LEVEL` (silenciado nos testes via config do vitest).
 
 ### Formatadores (`@manuraj/shared-utils`)
 `formatDate`, `formatDateTime`, `formatMinutes`, `formatFileSize`, `formatRelativeTime`, `daysUntil`, `isOverdue`, `truncate`
@@ -242,6 +256,12 @@ Tokens semânticos de spacing (ambos apps):
 
 Paletas completas em `STYLES.md`.
 
+> ℹ️ **Como isso funciona (não "consertar").** Os 4 `panda.config.ts` (raiz + 3 apps) apontam `outdir`
+> para o **mesmo** `styled-system/` da raiz — parece colisão, não é. O CSS real é gerado **por app**
+> pelo PostCSS (cada app tem seu `postcss.config.cjs` e seu `global.css`); conferido no CSS compilado:
+> Torque `#059669`, Pitlane `#2563eb`. O `styled-system/` compartilhado só fornece a factory `jsx`/`css`
+> e os tipos. **Ninguém usa `token()` em runtime — se passar a usar, aí sim vira colisão real.**
+
 ---
 
 ## 10. Scripts e Comandos
@@ -253,13 +273,14 @@ npm run dev:torque       # Torque (3001)
 npm run dev:all          # Todos em paralelo
 
 # Build
-npm run build:torque     # node_modules/.bin/next build apps/torque (bypassa bug NX)
+npm run build:torque     # next build apps/torque
 npm run build:pitlane    # Build pitlane
 npm run build:all        # Build todos
 
-# Testes
-npx vitest run           # 265 testes unitários (~1s)
+# Testes e tipos
+npm run test:run         # 265 testes unitários (~1,5s)
 npm run test             # Watch mode
+npm run typecheck        # OS 3 APPS — use este, nunca `tsc -p tsconfig.json` (raiz não checa nada)
 
 # PandaCSS
 npm run panda:codegen    # OBRIGATÓRIO após mudar panda.config.ts
@@ -283,9 +304,11 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 | Erro | Causa | Solução |
 |------|-------|---------|
 | Edge runtime `crypto` | MongoDB importado no proxy | Proxy importar apenas `@manuraj/auth/auth.config` |
-| `/_global-error` prerendering | Bug NX plugin Next.js 16 | Usar `node_modules/.bin/next build apps/X` |
+| `/_global-error` prerendering | Era bug do plugin NX com Next 16 | **NX foi removido em 28/ago/2026** — se voltar a aparecer, é outra causa |
 | Estilos não aplicam | PandaCSS desatualizado | `npm run panda:codegen` |
 | "Credenciais inválidas" | Banco vazio ou senha errada | `npm run db:seed` (senha: `demo1234`) |
+| `tsc` passa em 0,6s sem erro | `tsconfig.json` da raiz tem `files: []` — **não checa nada** | `npm run typecheck` (roda os 3 apps) |
+| Estilo do app errado (cor do outro app) | codegen rodou com a config errada | CSS é por app via PostCSS — ver nota em §9 antes de mexer |
 
 ---
 
@@ -297,62 +320,79 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 
 ---
 
-## 13. Estado Atual (11 Fevereiro 2026)
+## 13. Estado Atual (28 Agosto 2026)
+
+> Verificado rodando, não lendo doc: 265 testes passando (1,57s), typecheck limpo nos 3 apps,
+> zero `TODO`/`FIXME` no código, nenhum segredo rastreado.
 
 ### Status por App
-| App | Páginas | Completude |
-|-----|---------|------------|
-| **Pitlane** (admin) | 12 páginas + 17 API endpoints | ~85% |
-| **Torque** (campo) | 9 páginas (server actions, sem API routes) | ~100% |
-| **Showroom** (landing) | 1 página estática | ~30% |
+| App | Superfície | Completude | Padrão `styled()` |
+|-----|-----------|------------|-------------------|
+| **Pitlane** (admin) | 12 páginas + **21 API routes** | ~85% | ❌ **0%** — ver dívida em §4 |
+| **Torque** (campo) | 9 páginas, server actions, PWA | ~100% | ✅ 100% (9 `.styles.ts`) |
+| **Showroom** (landing) | 1 rota + Hero/Header/Footer/ContactForm | ~70% | ✅ 100% (11 `.styles.ts`) |
 
-### Torque — Páginas Implementadas
-| Rota | Descrição |
-|------|-----------|
-| `/login` | Login com tenant + email + senha |
-| `/t/[slug]` | Dashboard: stats, OS recentes clicáveis, ações rápidas |
-| `/t/[slug]/minhas-os` | Lista de OS com tabs + cards clicáveis |
-| `/t/[slug]/minhas-os/[id]` | Detalhe OS: info completa + iniciar/finalizar |
-| `/t/[slug]/nova-solicitacao` | Formulário para abrir solicitação |
-| `/t/[slug]/maquinas` | Lista máquinas com tabs + cards clicáveis |
-| `/t/[slug]/maquinas/[id]` | Detalhe máquina: info + OS recentes |
-| `/t/[slug]/config` | Perfil, troca de senha, logout |
+### Duas arquiteturas convivendo (intencional, não bug)
+| | Pitlane | Torque / Showroom |
+|---|---|---|
+| Componentes | `'use client'` (14 arquivos) | Server components + `*Client.tsx` |
+| Dados | `fetch` no cliente → API routes | Repository no servidor |
+| Mutations | API routes (com OpenAPI publicado) | Server Actions |
 
-### Infraestrutura
-- 3 builds passando — 0 erros TypeScript
-- 265 testes unitários passando
-- MongoDB Atlas conectado (seed: 6 users, 7 machines, 7 WOs, 5 plans)
-- NextAuth + JWT funcionando
-- PitKit Card com variants (default/elevated/outlined/filled + colorScheme + interactive + borderPosition)
-- Torque: sidebar colapsável (64px/240px) + server actions para mutations
-- Torque: loading.tsx em todas as rotas, error.tsx + not-found.tsx no layout tenant, feedback visual em ações de OS
+As API routes do Pitlane **não são legado**: têm OpenAPI em `/docs`, são superfície de produto.
 
----
+### API routes do Pitlane (21)
+`auth/[...nextauth]` · `health` · `metrics` · `docs/spec` · `lead` · `signup` ·
+`cron/generate-preventive-orders` · `machines` (+`[id]`, `[id]/documents`, `prepare-upload`,
+`confirm-upload`) · `work-orders` (+`[id]`, `assign`, `start`, `finish`) · `preventive-plans` (+`[id]`) ·
+`users` (+`[id]`)
+
+### Infraestrutura (detalhes em `INFRA.md`)
+- **Logging estruturado** (Pino) em auth, DB, cron e guards
+- **Audit log** — model + repository, integrado em 13 mutations (fire-and-forget)
+- **OpenAPI 3.1 + Swagger UI** em `/docs`, spec em `/api/docs/spec`
+- **PWA do Torque** · **Health check** `/api/health` · **Métricas** `/api/metrics`
+- **Cron de preventivas** · **Transactions** no signup · **Input sanitization** (Zod + `sanitize()`)
+- MongoDB Atlas conectado (seed: 6 users, 7 máquinas, 7 OS, 5 planos)
+- Torque: sidebar colapsável (64px/240px), `loading.tsx` em todas as rotas, `error.tsx` + `not-found.tsx`
+
+### Pendências travando o repo
+- 🚨 **Nunca foi deployado.** Não existe `.vercel/` nem `vercel.json`; `.env.example` só tem
+  `localhost:3000`. O app roda apenas local, com MongoDB Atlas na nuvem. Serão **3 projetos na
+  Vercel** (um por app, mesmo repo, Root Directory diferente) — plano em `PLANO.md` §3.3.
+- `package.json` **modificado e não commitado desde 22/jul**: meia-migração `nx dev` → `next dev`
+  (`start` e `lint` continuam em `nx`). Decisão em `PLANO.md` §3.1.
+
 
 ## 14. Roadmap
 
-### Torque (~100% — polido)
-- [x] Todas as 9 páginas implementadas
-- [x] Loading skeletons em todas as rotas (PitKit Skeleton)
-- [x] Error boundary (error.tsx) + 404 (not-found.tsx)
-- [x] Feedback visual em ações de OS (banner de sucesso)
+**Roadmap completo, escada kaizen e decisões pendentes: `PLANO.md`.** Resumo:
 
-### Showroom (~30% → apresentável)
-- [ ] Formulário de contato/lead capture
-- [ ] Fluxo real de signup → criar tenant → redirect pro Pitlane
+### Feito
+- [x] Torque 100% — 9 páginas, loading/error/404, server actions, PWA
+- [x] Showroom — lead capture (`ContactForm` + `/api/lead`) e signup real (`/api/signup`)
+- [x] Infra fase 1 e 2 parcial: Pino, audit log, OpenAPI, cron, transactions, sanitization
+- [x] Ferramental: `npm run typecheck` que checa de verdade os 3 apps
 
-### Pitlane (melhorias)
-- [ ] Dashboard com gráficos visuais
-- [ ] Notificações (OS atribuída/alterada)
-- [ ] Exportação de relatórios (PDF/Excel)
+### Aberto — em ordem
+- [ ] **Decidir NX: fica ou sai** (trava o `package.json` pendurado) — `PLANO.md` §3.1
+- [ ] **Pitlane no padrão `styled()`** — 12 páginas, uma por sessão — `PLANO.md` Degrau 3
+- [ ] Rate limiting e CSRF — `INFRA.md` (antes de escala, não é kaizen)
+- [ ] Pitlane: dashboard com gráficos, notificações, exportação de relatórios
 
-### Técnico
-- [x] Testes de auth guards (66 testes: guards + auth-config)
-- [x] Migrar middleware para proxy (Next.js 16 deprecou middleware)
+## 15. Kaizen — melhoria pequena e contínua, todo dia
 
----
+**Achou, já trata.** Typo em doc, nome ruim de variável, função morta, `console.log` esquecido, doc que
+descreve o que o código não faz mais: se o conserto é pequeno e seguro, conserta **no mesmo passo** e
+avisa numa linha.
 
-## 15. Checklist para Novas Features
+- **Pequeno e seguro** = poucas linhas, não muda comportamento, não pede dependência nova.
+- **Grande ou arriscado** = registra no `PLANO.md` e avisa. Kaizen **não** é refactor de brinde.
+- **Todo dia, um degrau.** Toda sessão deixa o repo melhor do que encontrou.
+- Neste repo o kaizen tem endereço: **tocou arquivo do Pitlane, migra ele pro `styled()`.**
+
+
+## 16. Checklist para Novas Features
 
 1. [ ] **Tipos** — `libs/domain/src/types.ts`
 2. [ ] **Schema Zod** — `libs/domain/src/schemas.ts`
@@ -367,7 +407,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 
 ---
 
-## 16. Referências
+## 17. Referências
 
 - **Repositório**: `/Users/raj/reposRAJ/manuRaj`
 - **GitHub**: https://github.com/rodrigojosebr/manuRaj.git

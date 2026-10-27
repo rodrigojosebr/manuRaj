@@ -142,8 +142,9 @@ npm run start            # Start Pitlane em producao
 
 ```bash
 npm run test             # Watch mode
-npm run test:run         # Roda uma vez (175 testes, ~1s)
+npm run test:run         # Roda uma vez (265 testes, ~1,5s)
 npm run test:coverage    # Com relatorio de cobertura
+npm run typecheck        # Typecheck dos 3 apps (nao usar `tsc -p tsconfig.json`: a raiz nao checa nada)
 ```
 
 ### Banco de Dados

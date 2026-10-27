@@ -11,7 +11,6 @@ export default defineConfig({
       '@manuraj/config': path.resolve(__dirname, 'libs/config/src/index.ts'),
       '@pitkit': path.resolve(__dirname, 'libs/pitkit/src/index.ts'),
       '@manuraj/pitkit': path.resolve(__dirname, 'libs/pitkit/src/index.ts'),
-      '@manuraj/ui': path.resolve(__dirname, 'libs/pitkit/src/index.ts'),
       '@manuraj/ads': path.resolve(__dirname, 'libs/ads/src/index.ts'),
       '@manuraj/shared-utils': path.resolve(__dirname, 'libs/shared-utils/src/index.ts'),
     },
@@ -19,6 +18,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    env: { LOG_LEVEL: 'silent' },   // Pino silenciado nos testes
     include: ['tests/**/*.test.ts'],
     exclude: ['tests/**/*.integration.test.ts', 'tests/tenant-isolation.test.ts', 'node_modules'],
     coverage: {
