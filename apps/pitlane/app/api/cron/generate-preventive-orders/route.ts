@@ -9,16 +9,20 @@ import { createLogger } from '@manuraj/shared-utils';
 
 const log = createLogger({ module: 'cron', job: 'generate-preventive-orders' });
 
+/** Vercel Cron may run longer than the default function timeout. */
+export const maxDuration = 60;
+
 /**
- * POST /api/cron/generate-preventive-orders
+ * GET | POST /api/cron/generate-preventive-orders
  *
  * Cron job that generates work orders from due preventive plans.
  * Protected by CRON_SECRET header validation.
  *
- * Schedule: daily via Vercel Cron or external scheduler.
- * Header: Authorization: Bearer <CRON_SECRET>
+ * Schedule: daily. Vercel Cron issues a GET and sends
+ * `Authorization: Bearer <CRON_SECRET>` automatically when CRON_SECRET is set;
+ * POST is kept for external schedulers and manual runs.
  */
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest) {
   // Validate cron secret
   const authHeader = req.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
@@ -114,3 +118,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const GET = handler;
+export const POST = handler;
