@@ -3,9 +3,14 @@
 import { Suspense, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { css } from '../../../../styled-system/css';
 import { Button, Input } from '@pitkit';
+import * as S from './page.styles';
+
+const FEATURES = [
+  { icon: '⚙️', text: 'Cadastro completo de máquinas e equipamentos' },
+  { icon: '📋', text: 'Ordens corretivas, preventivas e solicitações' },
+  { icon: '👥', text: 'Multi-tenant com controle de acesso por cargo' },
+];
 
 export default function LoginPage() {
   return (
@@ -54,223 +59,48 @@ function LoginForm() {
   };
 
   return (
-    <div
-      className={css({
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: { base: 'column', lg: 'row' },
-      })}
-    >
+    <S.Wrapper>
       {/* Branding panel */}
-      <div
-        className={css({
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: { base: '8', md: '12', lg: '16' },
-          backgroundColor: 'brand.700',
-          color: 'white',
-          width: { base: '100%', lg: '50%' },
-          minHeight: { base: 'auto', lg: '100vh' },
-          position: 'relative',
-          overflow: 'hidden',
-        })}
-      >
-        {/* Background decoration */}
-        <div
-          className={css({
-            position: 'absolute',
-            top: '-20%',
-            right: '-10%',
-            width: '400px',
-            height: '400px',
-            borderRadius: 'full',
-            backgroundColor: 'brand.600',
-            opacity: 0.3,
-            pointerEvents: 'none',
-          })}
-        />
-        <div
-          className={css({
-            position: 'absolute',
-            bottom: '-15%',
-            left: '-10%',
-            width: '300px',
-            height: '300px',
-            borderRadius: 'full',
-            backgroundColor: 'brand.800',
-            opacity: 0.3,
-            pointerEvents: 'none',
-          })}
-        />
+      <S.BrandPanel>
+        <S.BlobTop />
+        <S.BlobBottom />
 
-        <div
-          className={css({
-            position: 'relative',
-            zIndex: 1,
-            textAlign: 'center',
-            maxWidth: '440px',
-          })}
-        >
-          <h1
-            className={css({
-              fontSize: { base: '3xl', md: '4xl', lg: '5xl' },
-              fontWeight: 'bold',
-              letterSpacing: '-0.025em',
-              marginBottom: '4',
-            })}
-          >
-            manuRaj
-          </h1>
-          <p
-            className={css({
-              fontSize: { base: 'md', md: 'lg' },
-              opacity: 0.9,
-              lineHeight: '1.6',
-              marginBottom: '8',
-            })}
-          >
-            Gestao de manutencao industrial inteligente.
-            Controle suas maquinas, equipes e ordens de servico em um so lugar.
-          </p>
+        <S.BrandContent>
+          <S.BrandTitle>manuRaj</S.BrandTitle>
+          <S.BrandText>
+            Gestão de manutenção industrial inteligente.
+            Controle suas máquinas, equipes e ordens de serviço em um só lugar.
+          </S.BrandText>
 
-          <div
-            className={css({
-              display: { base: 'none', lg: 'flex' },
-              flexDirection: 'column',
-              gap: '4',
-              marginTop: '4',
-            })}
-          >
-            {[
-              { icon: '⚙️', text: 'Cadastro completo de maquinas e equipamentos' },
-              { icon: '📋', text: 'Ordens corretivas, preventivas e solicitacoes' },
-              { icon: '👥', text: 'Multi-tenant com controle de acesso por cargo' },
-            ].map((item) => (
-              <div
-                key={item.text}
-                className={css({
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '3',
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  borderRadius: 'lg',
-                  padding: '3',
-                  paddingX: '4',
-                  fontSize: 'sm',
-                })}
-              >
-                <span className={css({ fontSize: 'lg', flexShrink: 0 })}>{item.icon}</span>
+          <S.FeatureList>
+            {FEATURES.map((item) => (
+              <S.FeatureItem key={item.text}>
+                <S.FeatureIcon>{item.icon}</S.FeatureIcon>
                 <span>{item.text}</span>
-              </div>
+              </S.FeatureItem>
             ))}
-          </div>
-        </div>
-      </div>
+          </S.FeatureList>
+        </S.BrandContent>
+      </S.BrandPanel>
 
       {/* Form panel */}
-      <div
-        className={css({
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: { base: '6', md: '8', lg: '16' },
-          width: { base: '100%', lg: '50%' },
-          minHeight: { base: 'auto', lg: '100vh' },
-          backgroundColor: 'white',
-        })}
-      >
-        <div
-          className={css({
-            width: '100%',
-            maxWidth: '400px',
-          })}
-        >
-          {/* Mobile-only logo */}
-          <div
-            className={css({
-              display: { base: 'none', lg: 'block' },
-              marginBottom: '2',
-            })}
-          >
-            <h2
-              className={css({
-                fontSize: '2xl',
-                fontWeight: 'bold',
-                color: 'gray.900',
-              })}
-            >
-              Acesse sua conta
-            </h2>
-            <p
-              className={css({
-                fontSize: 'sm',
-                color: 'gray.500',
-                marginTop: '1',
-              })}
-            >
-              Insira seus dados para entrar no sistema
-            </p>
-          </div>
+      <S.FormPanel>
+        <S.FormCard>
+          <S.HeadingDesktop>
+            <S.Title size="desktop">Acesse sua conta</S.Title>
+            <S.Subtitle>Insira seus dados para entrar no sistema</S.Subtitle>
+          </S.HeadingDesktop>
 
-          <div
-            className={css({
-              display: { base: 'block', lg: 'none' },
-              marginBottom: '2',
-            })}
-          >
-            <h2
-              className={css({
-                fontSize: 'xl',
-                fontWeight: 'bold',
-                color: 'gray.900',
-              })}
-            >
-              Entrar
-            </h2>
-            <p
-              className={css({
-                fontSize: 'sm',
-                color: 'gray.500',
-                marginTop: '1',
-              })}
-            >
-              Insira seus dados para acessar o sistema
-            </p>
-          </div>
+          <S.HeadingMobile>
+            <S.Title size="mobile">Entrar</S.Title>
+            <S.Subtitle>Insira seus dados para acessar o sistema</S.Subtitle>
+          </S.HeadingMobile>
 
-          <form
-            onSubmit={handleSubmit}
-            className={css({
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '5',
-              marginTop: '6',
-            })}
-          >
+          <S.Form onSubmit={handleSubmit}>
             {successMessage && (
-              <div
-                className={css({
-                  backgroundColor: '#f0fdf4',
-                  border: '1px solid',
-                  borderColor: '#bbf7d0',
-                  borderRadius: 'md',
-                  padding: '3',
-                  paddingX: '4',
-                })}
-              >
-                <p
-                  className={css({
-                    color: 'success.600',
-                    fontSize: 'sm',
-                    textAlign: 'center',
-                  })}
-                >
-                  {successMessage}
-                </p>
-              </div>
+              <S.Alert tone="success">
+                <S.AlertText tone="success">{successMessage}</S.AlertText>
+              </S.Alert>
             )}
 
             <Input
@@ -298,55 +128,22 @@ function LoginForm() {
             />
 
             {error && (
-              <div
-                className={css({
-                  backgroundColor: '#fef2f2',
-                  border: '1px solid',
-                  borderColor: '#fecaca',
-                  borderRadius: 'md',
-                  padding: '3',
-                  paddingX: '4',
-                })}
-              >
-                <p
-                  className={css({
-                    color: 'danger.600',
-                    fontSize: 'sm',
-                    textAlign: 'center',
-                  })}
-                >
-                  {error}
-                </p>
-              </div>
+              <S.Alert tone="danger">
+                <S.AlertText tone="danger">{error}</S.AlertText>
+              </S.Alert>
             )}
 
             <Button type="submit" size="lg" fullWidth isLoading={isLoading}>
               Entrar
             </Button>
 
-            <p
-              className={css({
-                textAlign: 'center',
-                fontSize: 'sm',
-                color: 'gray.500',
-                marginTop: '2',
-              })}
-            >
-              Nao tem uma conta?{' '}
-              <Link
-                href="/signup"
-                className={css({
-                  color: 'brand.600',
-                  fontWeight: 'medium',
-                  _hover: { textDecoration: 'underline' },
-                })}
-              >
-                Cadastre sua empresa
-              </Link>
-            </p>
-          </form>
-        </div>
-      </div>
-    </div>
+            <S.SignupHint>
+              Não tem uma conta?{' '}
+              <S.SignupLink href="/signup">Cadastre sua empresa</S.SignupLink>
+            </S.SignupHint>
+          </S.Form>
+        </S.FormCard>
+      </S.FormPanel>
+    </S.Wrapper>
   );
 }
