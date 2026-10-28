@@ -18,7 +18,7 @@ import { Footer } from './components/Footer/Footer';
 // ─── Constants ───
 
 const PITLANE_URL = process.env.NEXT_PUBLIC_PITLANE_URL || 'http://localhost:3000';
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '5511999999999';
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '5511954278210';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá! Tenho interesse no manuRaj.')}`;
 const SIGNUP_URL = `${PITLANE_URL}/signup`;
 

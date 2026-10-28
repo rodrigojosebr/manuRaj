@@ -5,6 +5,7 @@
 >
 > **Docs especializados** (ler sob demanda):
 > - `PLANO.md` — **Roadmap, escada kaizen, decisões pendentes e falsos positivos já investigados**
+> - `HANDOFF.md` — Montar a máquina do zero: env vars, Atlas/Docker, seed, como validar
 > - `PITKIT.md` — Catálogo completo do Design System (componentes, props, exemplos)
 > - `STYLES.md` — Paletas de cores, layouts, tipografia, padrões visuais
 > - `TORQUE.md` — Padrões mobile-first do app operacional (sidebar, páginas, PWA)
@@ -109,8 +110,9 @@ manuRaj/
 - Componentes PitKit internos usam `cva()` em `libs/pitkit/src/`
 - Detalhes em `STYLES.md`
 
-> ⚠️ **Dívida conhecida — o Pitlane NÃO cumpre esta regra.** Torque e Showroom estão 100% em
-> `styled()` (0 `className`). O Pitlane tem **261 `className`** e **12 arquivos importando `{ css }`**:
+> ⚠️ **Dívida conhecida — o Pitlane ainda NÃO cumpre esta regra.** Torque e Showroom estão 100% em
+> `styled()` (0 `className`). Migração do Pitlane em andamento: **`login/page.tsx` feito (27/out/2026)**,
+> restam **11 arquivos** e ~240 `className`:
 > o commit `65274c7` migrou PitKit e Torque e não voltou pro Pitlane. Plano de migração página-por-página
 > no `PLANO.md` (Degrau 3). **Ao editar arquivo do Pitlane, migrar para `styled()` — não replicar o `css()`.**
 > Os `className={className}` do PitKit são repasse de prop, API legítima do design system, não violação.
@@ -328,7 +330,7 @@ Tenant: demo (slug: "demo") — Senha: demo1234
 ### Status por App
 | App | Superfície | Completude | Padrão `styled()` |
 |-----|-----------|------------|-------------------|
-| **Pitlane** (admin) | 12 páginas + **21 API routes** | ~85% | ❌ **0%** — ver dívida em §4 |
+| **Pitlane** (admin) | 12 páginas + **21 API routes** | ~85% | 🔨 **1/12 páginas** — ver dívida em §4 |
 | **Torque** (campo) | 9 páginas, server actions, PWA | ~100% | ✅ 100% (9 `.styles.ts`) |
 | **Showroom** (landing) | 1 rota + Hero/Header/Footer/ContactForm | ~70% | ✅ 100% (11 `.styles.ts`) |
 

@@ -66,7 +66,7 @@ Ordem sugerida — da mais isolada para a mais acoplada:
 
 | # | Arquivo | Por que nesta posição |
 |---|---|---|
-| 1 | `app/login/page.tsx` | menor e isolada — define o padrão de referência |
+| ~~1~~ | ~~`app/login/page.tsx`~~ | ✅ **feito 27/out/2026** — 352 → 149 linhas + `page.styles.ts` (207). Padrão de referência para as outras |
 | 2 | `app/signup/page.tsx` | irmã do login, mesmo formato |
 | 3 | `app/page.tsx` | landing interna, sem dados |
 | 4 | `t/[tenantSlug]/TenantLayoutClient.tsx` | layout — também tem 2 `<button>` cru a trocar por PitKit |
@@ -198,9 +198,8 @@ real do pacote, usado no `transpilePackages`).
 
 ### 3.1.2 Sanitização ainda aberta
 
-- [ ] **`HANDOFF.md` não existe** — o padrão da casa exige (montar a máquina: env vars, MongoDB Atlas,
-      S3, `db:seed`, como validar). Hoje a informação está espalhada entre `README.md` e `.env.example`,
-      e nada explica como obter as credenciais.
+- [x] **`HANDOFF.md`** criado em 27/out/2026 — env vars obrigatórias x opcionais, Atlas e Docker,
+      seed com os 6 usuários demo, validação e armadilhas conhecidas.
 - [ ] **Restos do NX nos `tsconfig.json` dos 3 apps**: `include` de `../../dist/apps/<app>/.next/types`
       (output do NX, não existe mais), `exclude` de `out-tsc`, `jest.config.ts` e `jest.config.cts`
       (**não há jest no projeto**). Cosmético — mexer em `include` pede rebuild pra validar.
@@ -269,12 +268,25 @@ próprio entra quando existir. **A troca depois é barata**, mas não é grátis
 - [ ] Env vars por projeto na Vercel: `MONGODB_URI`, `AUTH_SECRET`, `NEXTAUTH_URL` (**um por app**),
       `AUTH_TRUST_HOST`, AWS S3 (4), `NEXT_PUBLIC_APP_URL`, `CRON_SECRET`, flags de signup/ads
 - [ ] Allowlist do MongoDB Atlas liberando os IPs da Vercel
-- [ ] `CRON_SECRET` + agendamento do cron de preventivas (`vercel.json` ou Vercel Cron)
+- [x] **`apps/pitlane/vercel.json`** com o cron diário às 09:00 UTC (06:00 BRT). ⚠️ **A rota estava
+      quebrada para cron**: o Vercel Cron dispara **GET** e ela só tinha `POST` — nunca teria rodado.
+      Corrigida em 27/out/2026 para exportar `GET` e `POST` no mesmo handler, com `maxDuration = 60`.
+      Falta só definir `CRON_SECRET` na Vercel (ela injeta o header `Authorization: Bearer` sozinha).
+- [x] `NEXT_PUBLIC_WHATSAPP_NUMBER` = `5511954278210`
 - [ ] Rate limiting (`INFRA.md` 2.1) — sai de "antes de escala" e passa a ser **antes de expor**
-- [ ] Confirmar que o `withNx` nos `next.config.js` builda na Vercel (ver §3.1)
+- [x] ~~Confirmar que o `withNx` builda na Vercel~~ — NX removido, build é Next puro
 
-**Ordem sugerida:** subir o Showroom primeiro (1 rota, sem banco, sem auth — valida o pipeline com
-risco zero), depois o Pitlane, depois o Torque.
+**Ordem — corrigida em 27/out/2026.** O Showroom **não é independente**: consome
+`NEXT_PUBLIC_PITLANE_URL` (o `ContactForm` faz `POST ${PITLANE_URL}/api/lead`) e os CTAs de signup
+apontam para o Pitlane. Subir só ele deixa form e botões caindo no fallback `localhost:3000`.
+
+1. **Showroom** — como **teste de pipeline**, não lançamento. Root Directory `apps/showroom`, sem banco
+   e sem auth. Risco zero, valida build e domínio.
+2. **Pitlane** — é o que destrava o Showroom de verdade. Root Directory `apps/pitlane`. Precisa de
+   todas as env vars, allowlist do Atlas e `CRON_SECRET`.
+3. Voltar no Showroom e apontar `NEXT_PUBLIC_PITLANE_URL` para a URL real do Pitlane. **Exige
+   redeploy** — a var é `NEXT_PUBLIC_*` e fica inlinada no build.
+4. **Torque** — Root Directory `apps/torque`, mesmas env vars do Pitlane com `NEXTAUTH_URL` próprio.
 
 ---
 
